@@ -317,8 +317,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   accelerationForce: 100
-  startMaxSpeed: 100
-  dodgeForce: 50
+  startMaxSpeed: 25
+  dodgeForce: 40
   leanRange: 30
   healthBarValue: {fileID: 1441335325}
   healthBarMaterial: {fileID: 2100000, guid: 159a58f3d0cd26b43af6e432254c5363, type: 2}
@@ -337,7 +337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62770dadd90a2af4fbf042e37a3ee2b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touchSensitivity: 10
+  touchSensitivity: 15
 --- !u!1 &255680015
 GameObject:
   m_ObjectHideFlags: 0
