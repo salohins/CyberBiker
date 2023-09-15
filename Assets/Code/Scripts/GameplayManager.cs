@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-
 namespace Gameplay {
     public enum GameState {
         GameOver,
@@ -12,27 +11,37 @@ namespace Gameplay {
         Pause,
         Intro
     }
-    public class GameplayManager : MonoBehaviour {
-        public GameState gameState;
-        public float difficulty;
-        public float score;
 
-        private float pauseTimerValue = 4f;
-        private bool isTimerRunning = false;
+    public class GameplayManager : MonoBehaviour {                
+        [Header("Difficulty Settings")]
+        [SerializeField] private AnimationCurve difficultyCurve;
+        [Tooltip("Speed multiplier for difficultyCurve period")]
+        [SerializeField] private float difficultySpeed = 1;
 
+        private float difficultyPeriod;        
+
+        public float difficulty { get; private set; }
+        public float score { get; private set; }
+
+        [HideInInspector] public GameState gameState;
+
+        [Header("Obj Refs")]
+        [SerializeField] private new CameraController camera;
         [SerializeField] private GameObject player;
-
         [SerializeField] private GameObject gameOverScreen;
         [SerializeField] private GameObject pauseScreen;
         [SerializeField] private GameObject menuConfirmation;
-
+        [SerializeField] private GameObject pauseMenuTimerText;
 
         [SerializeField] private TMP_Text[] scoreText;
         [SerializeField] private TMP_Text difficultyText;
         [SerializeField] private TMP_Text speedText;
-        [SerializeField] private GameObject pauseMenuTimerText;
 
-        private bool showMenuConfirmation = false;        
+        private float totalCalculatedDifficulty;
+        private bool showMenuConfirmation = false;
+        private float pauseTimerValue = 4f;
+        private bool isTimerRunning = false;
+        private int periodCount = 0;
 
         private void Start() {
             Application.targetFrameRate = 60;
@@ -48,22 +57,34 @@ namespace Gameplay {
                 menuConfirmation.SetActive(false);
 
             pauseMenuTimerText.SetActive(false);
+
+            camera.SetTarget(player.transform);
         }
 
         private void Update() {
             ProcessPauseTimer();
             ProcessScore();
             ProcessDifficulty();
-            ProcessDebugValues();
+            ProcessDebugValues();            
         }
 
         private void ProcessDebugValues() {
-            difficultyText.text = "Difficulty: " + ((int)difficulty).ToString();
-            speedText.text = "Speed: " + player.GetComponent<PlayerController>().zVelocity.ToString();
+            difficultyText.text = "Difficulty: " + difficulty.ToString("F2");
+            speedText.text = "Speed: " + player.GetComponent<PlayerController>().zVelocity.ToString("F2");
         }
 
+        
+
         private void ProcessDifficulty() {
-            difficulty += Time.deltaTime / 10f;            
+            difficultyPeriod += Time.deltaTime / 50f * difficultySpeed;    // DifficultySpeed
+            
+            if (difficultyPeriod > difficultyCurve.Evaluate(1)) {
+                difficultyPeriod = 0;
+                periodCount++;
+                totalCalculatedDifficulty = periodCount * (difficultyCurve.Evaluate(1) - difficultyCurve.Evaluate(0));      
+            }
+
+            difficulty = periodCount + difficultyCurve.Evaluate(difficultyPeriod);
         }
 
         private void ProcessScore() {
