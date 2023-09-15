@@ -12,5 +12,5 @@ public class Biome : MonoBehaviour
     [SerializeField] public int minLength;
     [SerializeField] public int maxLength;
 
-    public GameObject GetRandomTile() => tiles[Random.Range(0, tiles.Length - 1)];
+    public GameObject GetRandomTile() => tiles[Random.Range(0, tiles.Length)];
 }

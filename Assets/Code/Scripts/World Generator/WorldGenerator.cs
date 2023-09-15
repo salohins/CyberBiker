@@ -7,6 +7,17 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private GameObject ground;
     [SerializeField] private Biome[] biomes;
 
+    [Header("Car Spawn Settings")]
+    public GameObject[] cars;
+    [Tooltip("When cars start spawning")]
+    public float carSpawnStartDistance;
+    [Tooltip("Minimum interval between cars")]
+    public float carMinSpawnInterval;
+    [Tooltip("Maximun interval between cars")]
+    public float carMaxSpawnInterval;
+    [Tooltip("Car probability to spawn. 1 to ? the higher the number the lower chance of spawning. 1 - 100%, 2 - 50%, 3-33% and so on")]
+    public int carSpawnRatio;    
+
     [Tooltip("-1 for random")]
     [SerializeField] private int startBiomeIndex;
 
@@ -35,8 +46,8 @@ public class WorldGenerator : MonoBehaviour
             if (i == 0) {
                 _activeTiles[i] = Instantiate(startTile, transform.position, transform.rotation, transform);
             }
-            else {
-                Vector3 spawnPosition = _activeTiles[i - 1].transform.position + transform.forward * getTileSize(_activeTiles[i - 1]);
+            else {                
+                Vector3 spawnPosition = _activeTiles[i - 1].transform.GetChild(_activeTiles[i - 1].transform.childCount - 1).transform.position; 
                 _activeTiles[i] = Instantiate(biomes[_biomeIndex].GetRandomTile(), spawnPosition, transform.rotation, transform);
             }
         }
@@ -51,14 +62,7 @@ public class WorldGenerator : MonoBehaviour
             StartCoroutine(ShiftTiles());
         }
 
-        ground.transform.position = new Vector3(player.transform.position.x, 0, player.transform.position.z);
-    }
-
-    private float getTileSize(GameObject tile) {
-        Vector3 tileTileMeshSize = tile.GetComponent<MeshRenderer>().bounds.size;
-        Vector3 tileTileMeshScale = tile.transform.localScale;
         
-        return tileTileMeshSize.z;
     }
 
     IEnumerator ShiftTiles() {
@@ -70,7 +74,7 @@ public class WorldGenerator : MonoBehaviour
 
         yield return null;        
 
-        Vector3 spawnPosition = _activeTiles[bufferSize - 2].transform.position + transform.forward * getTileSize(_activeTiles[bufferSize - 2]);
+        Vector3 spawnPosition = _activeTiles[bufferSize - 2].transform.GetChild(_activeTiles[bufferSize - 2].transform.childCount - 1).transform.position;
 
         _activeTiles[bufferSize - 1] = Instantiate(biomes[_biomeIndex].GetRandomTile(), spawnPosition, transform.rotation, transform);        
     }
