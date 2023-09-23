@@ -9,6 +9,8 @@ public class WorldGenerator : MonoBehaviour
 
     [Header("Car Spawn Settings")]
     public GameObject[] cars;
+    public float carMinSpeed;
+    public float carMaxSpeed;
     [Tooltip("When cars start spawning")]
     public float carSpawnStartDistance;
     [Tooltip("Minimum interval between cars")]
@@ -56,7 +58,7 @@ public class WorldGenerator : MonoBehaviour
     void Update() {
          _playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
 
-        Vector3 shiftTriggerPosition = _activeTiles[1].transform.position;
+        Vector3 shiftTriggerPosition = _activeTiles[1].transform.position + Vector3.forward * 10f;
 
         if (_playerPosition.z > shiftTriggerPosition.z) {
             StartCoroutine(ShiftTiles());

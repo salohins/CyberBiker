@@ -112,7 +112,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0, g: 0.86206913, b: 1, a: 0.99607843}
+    - _Color: {r: 0, g: 0.8638501, b: 1, a: 0.99607843}
     - _CurvedWorldBendSettings: {r: 2, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 4.2, g: 0, b: 1.9853616, a: 4.2}
     - _EmissionMap_Scroll: {r: 0, g: 0, b: 0, a: 0}

@@ -9,10 +9,8 @@ public class PlayerController : MonoBehaviour
 {
     [Tooltip("Force that pushes motorcycle the bigger the value the faster motorcycle will accelerate. Be careful if the value is too low motorcycle will not reach max speed")]
     [SerializeField] private float accelerationForce;
-
     [Tooltip("Motorcycle speed at the start")]
     [SerializeField] private float startMaxSpeed;
-
     [Tooltip("Motorcycle rotation sensitivity on Y axis")]
     [SerializeField] private float rotationSensitivity;
     [Tooltip("Force power that pushes motorcycle sideways")]
@@ -21,95 +19,144 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Maximum angle for motorcycle lean animation (it's just visual thing and does not affect the gameplay)")]
     [SerializeField] private float leanRange;
 
-
     [Header("Do not touch :)")]
+    [SerializeField] CameraController camera;
+    [SerializeField] ParticleSystem wheelParticle;
+
+    
+    [SerializeField] GameObject ragDoll;    
+    [SerializeField] public Transform ragDollTarget;
+    
     [SerializeField] private TMP_Text healthBarValue;
-    private float health;
+    [SerializeField] private Material healthBarMaterial;    
 
-    [SerializeField] private Material healthBarMaterial;
-
+    [SerializeField] private GameObject helmetLight;
     [SerializeField] private Transform motorcycleMesh;
+    [SerializeField] private GameObject playerMesh;    
 
-    public float xVelocity, zVelocity;
+    [HideInInspector] public float xVelocity, zVelocity;
+    [HideInInspector] public float xThrow;
 
+    private float yawRotation;
     private float animationFrame;    
-
-    private float xSpeed, zSpeed;
-    private float maxSpeed;
+    private float maxSpeed;    
+    private float health;
+    
+    private int wallDirection;
 
     private Rigidbody rb;
     private Animator animator;
     private TouchInputManager tim;
     private GameplayManager gm;
+    private TeleportController tc;
 
-    private bool grounded;
-    
+    private bool grounded;    
 
-    Vector3 yawRotation = Vector3.zero;
+    private GameObject hitCar;
 
-    
+        
     void Start() {
         health = 100f;
         rb = GetComponent<Rigidbody>();
+        tc = GetComponent<TeleportController>();
         animator = GetComponent<Animator>();
-        tim = FindObjectOfType<TouchInputManager>();
-        gm = FindObjectOfType<GameplayManager>();
+        tim = FindFirstObjectByType<TouchInputManager>();
+        gm = FindFirstObjectByType<GameplayManager>();
 
         healthBarMaterial.SetFloat("_Cutoff", 0);
 
         maxSpeed = startMaxSpeed;
-    }
 
+        SwitchRagDoll(false);
+    }
 
     private void FixedUpdate() {
-        processVelocity();
+        if (gm.gameState == GameState.Playing)
+            processVelocity();
         
-        rb.maxLinearVelocity = maxSpeed;
-
-        if (Mathf.Abs(rb.velocity.x) > dodgeMaxSpeed)
-            rb.velocity = new Vector3(Mathf.Sign(rb.velocity.x) * dodgeMaxSpeed, rb.velocity.y, rb.velocity.z);        
-
-        if (Physics.CheckSphere(transform.position - transform.up * 0.2f, 0.1f)) {
-            grounded = true;
-        } else {
-            grounded = false;
-        }
+        grounded = Physics.CheckSphere(transform.position - transform.up * 0.2f, 0.1f);
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+  
+        if (Physics.CheckSphere(ragDollTarget.transform.position + transform.right * transform.GetComponent<BoxCollider>().bounds.size.x/2, 1f, LayerMask.GetMask("WorldObject"))) {
+            wallDirection = 1;
+        } else if (Physics.CheckSphere(ragDollTarget.transform.position - transform.right * transform.GetComponent<BoxCollider>().bounds.size.x/2, 1f, LayerMask.GetMask("WorldObject"))) {
+            wallDirection = -1;
+        }
+        else {
+            wallDirection = 0;
+        }        
+
+        if (gm.gameState == GameState.Playing)
+            xThrow = tim.drag.x == 0 ? 0 : Mathf.Sign(tim.drag.x) == wallDirection ? 0 : tim.drag.x;
+        else
+            xThrow = 0;
+
+
     }
 
-    void Update()
-    {
-        processYaw();
-        processLeans();
-        processAnimations();
-        ProcessPitch();        
+    private void Update() {
 
-        healthBarValue.text = health.ToString() + '%';        
+        ProcessYaw(); //Rotation on Y axis
+
+        ProcessPitch(); //Rotation on X axis
+
+
+        ProcessLeans();
+        ProcessAnimations();
+        ProcessParticleEffects();
+        
+
+        healthBarValue.text = health.ToString() + '%';
+
+        if (health <= 0)
+            gm.SwitchGameState(GameState.GameOver);
 
         if (gm.gameState == GameState.GameOver)
             maxSpeed = 0;
-
-        if (health <= 0) {
-            gm.SwitchGameState(GameState.GameOver);
-        }        
     }
 
-    private void processYaw() {        
-        yawRotation = Vector3.up * tim.drag.x;
+    private void processVelocity() {
+        rb.maxLinearVelocity = maxSpeed;
 
-        transform.eulerAngles += yawRotation * Time.deltaTime * rotationSensitivity;
-    }
+        xVelocity = transform.InverseTransformDirection(rb.velocity).x;
+        zVelocity = transform.InverseTransformDirection(rb.velocity).z;
+               
 
-    private float InspectorRotation(float angle) {
-        if (angle > 180) {
-            angle -= 360;
+        //Limit max dodge speed
+
+        if (Mathf.Abs(xVelocity) > dodgeMaxSpeed) { 
+                //rb.velocity = new Vector3(Mathf.Sign(xVelocity) * dodgeMaxSpeed, rb.velocity.y, rb.velocity.z);
+            }
+            else {
+                rb.AddForce((transform.right * (xThrow) * dodgeAccelerationForce), ForceMode.Acceleration);
+            }
+        
+
+        if (grounded) {
+            rb.AddForce(transform.forward * (accelerationForce), ForceMode.Acceleration);
         }
-        return angle;
+        else {
+            rb.AddForce(Vector3.forward * (accelerationForce / 2), ForceMode.Acceleration);
+        }
+
+        // Stop motorcycle if no control input
+        if (Mathf.Abs(rb.velocity.x) != 0 && tim.drag.x == 0) {
+            rb.velocity = new Vector3(Mathf.Lerp(rb.velocity.x, 0, Time.deltaTime), rb.velocity.y, rb.velocity.z);
+        }
+
+        if (wallDirection != 0)
+            rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, rb.maxLinearVelocity);
+    }
+
+    private void ProcessYaw() {
+        yawRotation = Mathf.Lerp(yawRotation, xThrow * rotationSensitivity, Time.deltaTime * 3f);
+
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, yawRotation, transform.eulerAngles.z);
     }
 
     private void ProcessPitch() {
-        float currentRotationX = InspectorRotation(transform.eulerAngles.x);
+        float currentRotationX = GetInspectorRotation(transform.eulerAngles.x);
         float clampedRotationX = Mathf.Clamp(currentRotationX, -30, 10);
 
 
@@ -120,55 +167,114 @@ public class PlayerController : MonoBehaviour
         transform.eulerAngles = targetRotation;
     }
 
-
-
-    private void processAnimations() {
-        animationFrame = Mathf.Lerp(animationFrame, tim.drag.x, Time.deltaTime * 5f);
-
+    private void ProcessAnimations() {
+        animationFrame = Mathf.Lerp(animationFrame, xThrow, Time.deltaTime * 5f);
         animator.SetFloat("dragX", animationFrame);
     }
 
-    private void processVelocity() {
-        xVelocity = transform.InverseTransformDirection(rb.velocity).x;
-        zVelocity = transform.InverseTransformDirection(rb.velocity).z;
-
-
-        if (Mathf.Abs(rb.velocity.x) > dodgeMaxSpeed)
-            rb.velocity = new Vector3(Mathf.Sign(rb.velocity.x) * dodgeMaxSpeed, rb.velocity.y, rb.velocity.z);
-        else {
-            rb.AddForce(transform.right * tim.drag.x * dodgeAccelerationForce, ForceMode.Acceleration);
-        }
-
-        
-
-        if (grounded) {
-            rb.AddForce(transform.forward * (accelerationForce), ForceMode.Acceleration);        
-        } else {
-            rb.AddForce(Vector3.forward * (accelerationForce / 2), ForceMode.Acceleration);
-        }
-    }
-
-    private void processLeans() {
+    private void ProcessLeans() {
         Vector3 targetRotation = Vector3.zero;
 
-        targetRotation.z = leanRange * -tim.drag.x;
+        targetRotation.z = leanRange * -xThrow;
 
-        motorcycleMesh.transform.localRotation = Quaternion.Lerp(
+        motorcycleMesh.transform.localRotation = Quaternion.Slerp(
             motorcycleMesh.transform.localRotation,
             Quaternion.Euler(targetRotation),
             Time.deltaTime * 3f
         );
     }
 
-    private void OnCollisionEnter(Collision collision) {
-        if (collision.transform.tag == "Obstacle") {
-            Destroy(collision.gameObject);
-            getDamage(collision.gameObject.GetComponent<Obstacle>().damage);
-        }        
+    private void ProcessParticleEffects() {
+      
     }
 
-    private void getDamage(int amount) {
+    private void GetDamage(int amount) {
         health -= amount;
         healthBarMaterial.SetFloat("_Cutoff", healthBarMaterial.GetFloat("_Cutoff") + (amount * 0.39f / 100f));
+    }
+
+    public void ResetRagDoll() {
+        playerMesh.SetActive(true);
+        if (hitCar.transform.tag != "Wall" && hitCar != null) {
+            Destroy(hitCar);
+            transform.position = new Vector3(0, transform.position.y, transform.position.z);
+        }
+        else {
+            transform.position = new Vector3(hitCar.transform.parent.transform.position.x, hitCar.transform.parent.transform.position.y, hitCar.transform.parent.transform.position.z + 10f);
+        }
+        tc.startFade(false);        
+        SwitchRagDoll(false);
+    }
+
+    private void SwitchRagDoll(bool on) {
+        
+
+        foreach (Rigidbody ragRB in ragDoll.GetComponentsInChildren<Rigidbody>()) {
+            ragRB.isKinematic = !on;
+            ragRB.detectCollisions = on;
+            ragRB.maxLinearVelocity = on ? 60 : 0;
+            if (on)
+                ragRB.GetComponent<Rigidbody>().AddForce((Vector3.up / 1.5f + transform.forward) * 50f, ForceMode.VelocityChange);
+        }
+
+        foreach (SkinnedMeshRenderer smr in ragDoll.GetComponentsInChildren<SkinnedMeshRenderer>()) {
+            smr.enabled = on;
+        }
+
+        ragDoll.GetComponent<Animator>().enabled = !on;
+        ragDoll.transform.SetParent(on ? null : motorcycleMesh.transform);
+
+        if (!on) {
+            ragDoll.transform.position = motorcycleMesh.transform.position;
+            ragDoll.transform.SetPositionAndRotation(motorcycleMesh.transform.position, motorcycleMesh.transform.rotation);
+        }
+
+        
+
+    }
+
+    public void turnHelmetLight(bool on) {
+        helmetLight.SetActive(on);
+    }
+        
+    private float GetInspectorRotation(float angle) {
+        if (angle > 180) {
+            angle -= 360;
+        }
+        return angle;
+    }
+
+    
+
+    private void OnCollisionEnter(Collision collision) {
+        if (collision.transform.tag == "Obstacle" && gm.gameState == GameState.Playing) {
+            gm.gameState = GameState.Hit;            
+            tc.startFade(true);       
+            hitCar = collision.gameObject;
+
+            SwitchRagDoll(true);
+
+            turnHelmetLight(false);
+
+            playerMesh.SetActive(false);
+
+            collision.gameObject.GetComponent<Car>().speed = 0;
+
+            GetDamage(collision.gameObject.GetComponent<Obstacle>().damage);
+        }
+
+        if (collision.transform.tag == "Wall" && gm.gameState == GameState.Playing && wallDirection == 0) {
+            gm.gameState = GameState.Hit;
+            tc.startFade(true);
+            hitCar = collision.gameObject;
+
+            SwitchRagDoll(true);
+
+            turnHelmetLight(false);
+
+            playerMesh.SetActive(false);            
+
+            //GetDamage(collision.gameObject.GetComponent<Obstacle>().damage);
+        }
     }
 }

@@ -77,9 +77,11 @@ ModelImporter:
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-shin.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'Player_GunBack.001' has import animation warnings that might lower retargeting
-      quality:\n\t'DEF-upper_arm.L.001' is inbetween humanoid transforms and has
-      rotation animation that will be discarded.\n\t'DEF-forearm.L.001' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
+      quality:\n\t'DEF-spine.004' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n\t'DEF-spine.006' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-thigh.L.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-shin.L.001'
@@ -91,9 +93,11 @@ ModelImporter:
       rotation animation that will be discarded.\n\t'DEF-forearm.R.001' is inbetween
       humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'Player_GunGrab.001' has import animation warnings that might lower retargeting
-      quality:\n\t'DEF-upper_arm.L.001' is inbetween humanoid transforms and has
-      rotation animation that will be discarded.\n\t'DEF-forearm.L.001' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
+      quality:\n\t'DEF-spine.004' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n\t'DEF-spine.006' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-thigh.L.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-shin.L.001'
@@ -133,9 +137,11 @@ ModelImporter:
       rotation animation that will be discarded.\n\t'DEF-forearm.R.001' is inbetween
       humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'Player_GunShoot.001' has import animation warnings that might lower retargeting
-      quality:\n\t'DEF-upper_arm.L.001' is inbetween humanoid transforms and has
-      rotation animation that will be discarded.\n\t'DEF-forearm.L.001' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
+      quality:\n\t'DEF-spine.004' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n\t'DEF-spine.006' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'Player_Idle.001' has import animation warnings that might lower retargeting
@@ -181,9 +187,11 @@ ModelImporter:
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'Player_SwordAttackRight.002' has import animation warnings that might lower
-      retargeting quality:\n\t'DEF-upper_arm.L.001' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'DEF-forearm.L.001' is
-      inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
+      retargeting quality:\n\t'DEF-spine.004' is inbetween humanoid transforms and
+      has rotation animation that will be discarded.\n\t'DEF-spine.006' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
       has translation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.R.001'
       has translation animation that will be discarded.\n\t'DEF-forearm.R.001' is
@@ -193,9 +201,11 @@ ModelImporter:
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-shin.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'Player_SwordBack.001' has import animation warnings that might lower retargeting
-      quality:\n\t'DEF-upper_arm.L.001' is inbetween humanoid transforms and has
-      rotation animation that will be discarded.\n\t'DEF-forearm.L.001' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
+      quality:\n\t'DEF-spine.004' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n\t'DEF-spine.006' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-thigh.L.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-shin.L.001'
@@ -203,9 +213,11 @@ ModelImporter:
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-shin.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'Player_SwordGrab.001' has import animation warnings that might lower retargeting
-      quality:\n\t'DEF-upper_arm.L.001' is inbetween humanoid transforms and has
-      rotation animation that will be discarded.\n\t'DEF-forearm.L.001' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
+      quality:\n\t'DEF-spine.004' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n\t'DEF-spine.006' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-thigh.L.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-shin.L.001'
@@ -225,9 +237,11 @@ ModelImporter:
       and has rotation animation that will be discarded.\n\t'DEF-forearm.R.001' is
       inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'Player_SwordIdleLeft.002' has import animation warnings that might lower retargeting
-      quality:\n\t'DEF-upper_arm.L.001' is inbetween humanoid transforms and has
-      rotation animation that will be discarded.\n\t'DEF-forearm.L.001' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
+      quality:\n\t'DEF-spine.004' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n\t'DEF-spine.006' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.L.001'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
       has translation animation that will be discarded.\n\t'DEF-upper_arm.R.001'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-forearm.R.001'
       has translation animation that will be discarded.\n\t'DEF-forearm.R.001' is
@@ -1278,8 +1292,300 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
-      transformMask: []
-      maskType: 3
+      transformMask:
+      - path: 
+        weight: 1
+      - path: gameRig
+        weight: 1
+      - path: gameRig/DEF-spine
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001/DEF-foot.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001/DEF-foot.L/DEF-toe.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001/DEF-foot.L/DEF-toe.L/DEF-toe.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001/DEF-foot.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001/DEF-foot.R/DEF-toe.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001/DEF-foot.R/DEF-toe.R/DEF-toe.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_index.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_index.01.L/DEF-f_index.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_index.01.L/DEF-f_index.02.L/DEF-f_index.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_index.01.L/DEF-f_index.02.L/DEF-f_index.03.L/DEF-f_index.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_middle.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_middle.01.L/DEF-f_middle.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_middle.01.L/DEF-f_middle.02.L/DEF-f_middle.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_middle.01.L/DEF-f_middle.02.L/DEF-f_middle.03.L/DEF-f_middle.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_pinky.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_pinky.01.L/DEF-f_pinky.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_pinky.01.L/DEF-f_pinky.02.L/DEF-f_pinky.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_pinky.01.L/DEF-f_pinky.02.L/DEF-f_pinky.03.L/DEF-f_pinky.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_ring.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_ring.01.L/DEF-f_ring.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_ring.01.L/DEF-f_ring.02.L/DEF-f_ring.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_ring.01.L/DEF-f_ring.02.L/DEF-f_ring.03.L/DEF-f_ring.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.01.L/DEF-palm.01.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.02.L/DEF-palm.02.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.03.L/DEF-palm.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.04.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.04.L/DEF-palm.04.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-thumb.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-thumb.01.L/DEF-thumb.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-thumb.01.L/DEF-thumb.02.L/DEF-thumb.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-thumb.01.L/DEF-thumb.02.L/DEF-thumb.03.L/DEF-thumb.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_index.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_index.01.R/DEF-f_index.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_index.01.R/DEF-f_index.02.R/DEF-f_index.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_index.01.R/DEF-f_index.02.R/DEF-f_index.03.R/DEF-f_index.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_middle.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_middle.01.R/DEF-f_middle.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_middle.01.R/DEF-f_middle.02.R/DEF-f_middle.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_middle.01.R/DEF-f_middle.02.R/DEF-f_middle.03.R/DEF-f_middle.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_pinky.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_pinky.01.R/DEF-f_pinky.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_pinky.01.R/DEF-f_pinky.02.R/DEF-f_pinky.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_pinky.01.R/DEF-f_pinky.02.R/DEF-f_pinky.03.R/DEF-f_pinky.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_ring.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_ring.01.R/DEF-f_ring.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_ring.01.R/DEF-f_ring.02.R/DEF-f_ring.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_ring.01.R/DEF-f_ring.02.R/DEF-f_ring.03.R/DEF-f_ring.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.01.R/DEF-palm.01.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.02.R/DEF-palm.02.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.03.R/DEF-palm.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.04.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.04.R/DEF-palm.04.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-thumb.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-thumb.01.R/DEF-thumb.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-thumb.01.R/DEF-thumb.02.R/DEF-thumb.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-thumb.01.R/DEF-thumb.02.R/DEF-thumb.03.R/DEF-thumb.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-spine.006_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01/jacket_01_02
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01/jacket_01_02/jacket_01_03
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01/jacket_01_02/jacket_01_03/jacket_01_03_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.L/jacket_01_02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.L/jacket_01_02.L/jacket_01_03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.L/jacket_01_02.L/jacket_01_03.L/jacket_01_03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.R/jacket_01_02.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.R/jacket_01_02.R./jacket_01_03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.R/jacket_01_02.R./jacket_01_03.R/jacket_01_03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.L/jacket_02_02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.L/jacket_02_02.L/jacket_02_03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.L/jacket_02_02.L/jacket_02_03.L/jacket_02_03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.R./jacket_02_02.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.R./jacket_02_02.R./jacket_02_03.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.R./jacket_02_02.R./jacket_02_03.R./jacket_02_03.R._end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.L/jacket_03_02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.L/jacket_03_02.L/jacket_03_03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.L/jacket_03_02.L/jacket_03_03.L/jacket_03_03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.R./jacket_03_02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.R./jacket_03_02.R/jacket_03_03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.R./jacket_03_02.R/jacket_03_03.R/jacket_03_03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.L/jacket_04_02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.L/jacket_04_02.L/jacket_04_03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.L/jacket_04_02.L/jacket_04_03.L/jacket_04_03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.R./jacket_04_02.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.R./jacket_04_02.R./jacket_04_03.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.R./jacket_04_02.R./jacket_04_03.R./jacket_04_03.R._end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/Sword_Holder
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/Sword_Holder/Sword_Main
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/Sword_Holder/Sword_Main/Sword_Main_end
+        weight: 1
+      - path: gameRig/Gun_Main
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Mag
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Mag/Gun_Mag_end
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Slider
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Slider/Gun_Slider_end
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Trigger
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Trigger/Gun_Trigger_end
+        weight: 1
+      - path: Jacket
+        weight: 0
+      - path: MotorcycleMesh
+        weight: 0
+      - path: MotorcycleMesh/Ammo_Bar
+        weight: 1
+      - path: MotorcycleMesh/Ammo_Icon
+        weight: 1
+      - path: MotorcycleMesh/Health_Bar
+        weight: 1
+      - path: PlayerMesh
+        weight: 0
+      maskType: 0
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
@@ -1307,8 +1613,300 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
-      transformMask: []
-      maskType: 3
+      transformMask:
+      - path: 
+        weight: 1
+      - path: gameRig
+        weight: 1
+      - path: gameRig/DEF-spine
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001/DEF-foot.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001/DEF-foot.L/DEF-toe.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L/DEF-shin.L.001/DEF-foot.L/DEF-toe.L/DEF-toe.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001/DEF-foot.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001/DEF-foot.R/DEF-toe.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R/DEF-shin.R.001/DEF-foot.R/DEF-toe.R/DEF-toe.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_index.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_index.01.L/DEF-f_index.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_index.01.L/DEF-f_index.02.L/DEF-f_index.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_index.01.L/DEF-f_index.02.L/DEF-f_index.03.L/DEF-f_index.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_middle.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_middle.01.L/DEF-f_middle.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_middle.01.L/DEF-f_middle.02.L/DEF-f_middle.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_middle.01.L/DEF-f_middle.02.L/DEF-f_middle.03.L/DEF-f_middle.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_pinky.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_pinky.01.L/DEF-f_pinky.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_pinky.01.L/DEF-f_pinky.02.L/DEF-f_pinky.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_pinky.01.L/DEF-f_pinky.02.L/DEF-f_pinky.03.L/DEF-f_pinky.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_ring.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_ring.01.L/DEF-f_ring.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_ring.01.L/DEF-f_ring.02.L/DEF-f_ring.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-f_ring.01.L/DEF-f_ring.02.L/DEF-f_ring.03.L/DEF-f_ring.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.01.L/DEF-palm.01.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.02.L/DEF-palm.02.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.03.L/DEF-palm.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.04.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-palm.04.L/DEF-palm.04.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-thumb.01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-thumb.01.L/DEF-thumb.02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-thumb.01.L/DEF-thumb.02.L/DEF-thumb.03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L/DEF-upper_arm.L/DEF-upper_arm.L.001/DEF-forearm.L/DEF-forearm.L.001/DEF-hand.L/DEF-thumb.01.L/DEF-thumb.02.L/DEF-thumb.03.L/DEF-thumb.03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_index.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_index.01.R/DEF-f_index.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_index.01.R/DEF-f_index.02.R/DEF-f_index.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_index.01.R/DEF-f_index.02.R/DEF-f_index.03.R/DEF-f_index.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_middle.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_middle.01.R/DEF-f_middle.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_middle.01.R/DEF-f_middle.02.R/DEF-f_middle.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_middle.01.R/DEF-f_middle.02.R/DEF-f_middle.03.R/DEF-f_middle.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_pinky.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_pinky.01.R/DEF-f_pinky.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_pinky.01.R/DEF-f_pinky.02.R/DEF-f_pinky.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_pinky.01.R/DEF-f_pinky.02.R/DEF-f_pinky.03.R/DEF-f_pinky.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_ring.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_ring.01.R/DEF-f_ring.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_ring.01.R/DEF-f_ring.02.R/DEF-f_ring.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-f_ring.01.R/DEF-f_ring.02.R/DEF-f_ring.03.R/DEF-f_ring.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.01.R/DEF-palm.01.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.02.R/DEF-palm.02.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.03.R/DEF-palm.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.04.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-palm.04.R/DEF-palm.04.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-thumb.01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-thumb.01.R/DEF-thumb.02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-thumb.01.R/DEF-thumb.02.R/DEF-thumb.03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R/DEF-upper_arm.R/DEF-upper_arm.R.001/DEF-forearm.R/DEF-forearm.R.001/DEF-hand.R/DEF-thumb.01.R/DEF-thumb.02.R/DEF-thumb.03.R/DEF-thumb.03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004/DEF-spine.005/DEF-spine.006/DEF-spine.006_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01/jacket_01_02
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01/jacket_01_02/jacket_01_03
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01/jacket_01_02/jacket_01_03/jacket_01_03_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.L/jacket_01_02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.L/jacket_01_02.L/jacket_01_03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.L/jacket_01_02.L/jacket_01_03.L/jacket_01_03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.R/jacket_01_02.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.R/jacket_01_02.R./jacket_01_03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.R/jacket_01_02.R./jacket_01_03.R/jacket_01_03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.L/jacket_02_02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.L/jacket_02_02.L/jacket_02_03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.L/jacket_02_02.L/jacket_02_03.L/jacket_02_03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.R./jacket_02_02.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.R./jacket_02_02.R./jacket_02_03.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.R./jacket_02_02.R./jacket_02_03.R./jacket_02_03.R._end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.L/jacket_03_02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.L/jacket_03_02.L/jacket_03_03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.L/jacket_03_02.L/jacket_03_03.L/jacket_03_03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.R./jacket_03_02.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.R./jacket_03_02.R/jacket_03_03.R
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.R./jacket_03_02.R/jacket_03_03.R/jacket_03_03.R_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.L/jacket_04_02.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.L/jacket_04_02.L/jacket_04_03.L
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.L/jacket_04_02.L/jacket_04_03.L/jacket_04_03.L_end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.R./jacket_04_02.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.R./jacket_04_02.R./jacket_04_03.R.
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_04_01.R./jacket_04_02.R./jacket_04_03.R./jacket_04_03.R._end
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/Sword_Holder
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/Sword_Holder/Sword_Main
+        weight: 1
+      - path: gameRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/Sword_Holder/Sword_Main/Sword_Main_end
+        weight: 1
+      - path: gameRig/Gun_Main
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Mag
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Mag/Gun_Mag_end
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Slider
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Slider/Gun_Slider_end
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Trigger
+        weight: 1
+      - path: gameRig/Gun_Main/Gun_Trigger/Gun_Trigger_end
+        weight: 1
+      - path: Jacket
+        weight: 0
+      - path: MotorcycleMesh
+        weight: 0
+      - path: MotorcycleMesh/Ammo_Bar
+        weight: 1
+      - path: MotorcycleMesh/Ammo_Icon
+        weight: 1
+      - path: MotorcycleMesh/Health_Bar
+        weight: 1
+      - path: PlayerMesh
+        weight: 0
+      maskType: 0
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
@@ -2315,7 +2913,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: DEF-spine.005
+    - boneName: DEF-spine.006
       humanName: Head
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -2397,14 +2995,6 @@ ModelImporter:
         modified: 0
     - boneName: DEF-toe.R
       humanName: RightToes
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: DEF-spine.006
-      humanName: RightEye
       limit:
         min: {x: 0, y: 0, z: 0}
         max: {x: 0, y: 0, z: 0}

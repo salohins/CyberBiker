@@ -1,21 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Gameplay;
 
 public class Car : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f;
+    [SerializeField] public float speed = 10f;
     [SerializeField] public int whichWall;
+
+    private GameObject player;
+    private GameplayManager gm;
 
     // Start is called before the first frame update
     void Start()
     {
         transform.SetParent(null);
+        player = GameObject.FindGameObjectWithTag("Player");
+        gm = FindFirstObjectByType<GameplayManager>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (player.transform.position.y - 15f > transform.position.y)
+            return;
+
+
+        if (transform.position.z + GetComponent<BoxCollider>().bounds.size.z / 2 < player.transform.position.z - player.GetComponent<BoxCollider>().bounds.size.z / 2) {            
+            return;
+        }
+
         LayerMask wallMask = LayerMask.GetMask("WorldObject");
 
         RaycastHit hit;

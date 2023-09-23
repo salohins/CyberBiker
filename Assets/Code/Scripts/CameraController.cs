@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Gameplay;
 
 public class CameraController : MonoBehaviour
 {
@@ -14,47 +15,62 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float angleShiftOffset = -30f;
 
     private Transform target;
+    private GameplayManager gm;
     private TouchInputManager tim;
 
     private Vector3 offset;
 
-    private float velocity;    
+    private float velocity;
+    private float rotationX, rotationY;
+
     private float sideOffset;
     private float rotationOffset;
+
+    private PlayerController playerController;
     
     private void Start()
     {
         tim = FindFirstObjectByType<TouchInputManager>();
+        gm = FindFirstObjectByType<GameplayManager>();
+        playerController = FindFirstObjectByType<PlayerController>();
     }
 
     private void Update() {
-        sideOffset = Mathf.Lerp(sideOffset, tim.drag.x, Time.deltaTime);
+        sideOffset = Mathf.Lerp(sideOffset, playerController.xThrow, Time.deltaTime);
     }
 
     private void LateUpdate() {
         Vector3 targetOffset;
 
         velocity = Mathf.Lerp(velocity, 5f, Time.deltaTime);
+        
+        if (!(gm.gameState == GameState.Hit)) {
+            targetOffset = this.targetOffset;
+            targetOffset -= transform.right * sideOffset * xShiftOffset;
+            targetOffset += transform.up * Mathf.Abs(sideOffset) * yShiftOffset;
 
-        targetOffset = this.targetOffset;
-        targetOffset -= transform.right * sideOffset * xShiftOffset;
-        targetOffset += transform.up * Mathf.Abs(sideOffset) * yShiftOffset;
+            rotationX = 0;
+        } else {
+            targetOffset = new Vector3(0, 0, this.targetOffset.z);
+
+            rotationX = Mathf.Lerp(rotationX, 60f, Time.deltaTime);
+        }               
 
         offset = Vector3.Lerp(
             offset,
             targetOffset,
             Time.deltaTime * smoothness
         );
+        transform.position = target.position - transform.TransformDirection(offset);
 
         Vector3 targetRotation;
+        Vector3 targetRotationShift = new Vector3(rotationX, rotationY, 0);
 
-        rotationOffset = Mathf.Lerp(rotationOffset, tim.drag.x * angleShiftOffset, Time.deltaTime);
+        rotationOffset = Mathf.Lerp(rotationOffset, playerController.xThrow * angleShiftOffset, Time.deltaTime);
 
-        targetRotation = new Vector3(0, target.eulerAngles.y, rotationOffset);
+        targetRotation = new Vector3(0, 0, rotationOffset);
 
-        transform.rotation = (Quaternion.Lerp(transform.rotation, Quaternion.Euler(targetRotation), Time.deltaTime * 5f));
-
-        transform.position = target.position - transform.TransformDirection(offset);
+        transform.rotation = (Quaternion.Lerp(transform.rotation, Quaternion.Euler(targetRotation + targetRotationShift), Time.deltaTime * 5f));        
     }
 
     public void SetTarget(Transform target) {

@@ -1162,12 +1162,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2002088401190015804}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1609935085572843924}
+  m_Father: {fileID: 593786287902722632}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &3098483502832608699
 SkinnedMeshRenderer:
@@ -1518,9 +1518,7 @@ Transform:
   m_LocalScale: {x: 1.7, y: 1.7, z: 1.7}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4150259355030361813}
   - {fileID: 7871109685260025775}
-  - {fileID: 593786287902722632}
   - {fileID: 1907798611781512530}
   - {fileID: 2618228117125994670}
   - {fileID: 3792619661468995630}
@@ -1614,6 +1612,9 @@ MonoBehaviour:
   dodgeAccelerationForce: 30
   dodgeMaxSpeed: 30
   leanRange: 30
+  leftParticle: {fileID: 0}
+  rightParticle: {fileID: 0}
+  ragDoll: {fileID: 0}
   healthBarValue: {fileID: 1270177884870047121}
   healthBarMaterial: {fileID: 2100000, guid: 159a58f3d0cd26b43af6e432254c5363, type: 2}
   motorcycleMesh: {fileID: 7871109685260025775}
@@ -3639,12 +3640,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5748802798662482957}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071067}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.010000001, y: 0.010000002, z: 0.010000002}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1609935085572843924}
+  m_Children:
+  - {fileID: 4150259355030361813}
+  m_Father: {fileID: 8208717406211927643}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &7713313868992137056
 SkinnedMeshRenderer:
@@ -4761,6 +4763,7 @@ Transform:
   m_Children:
   - {fileID: 1204879683796341450}
   - {fileID: 6050037327587764525}
+  - {fileID: 593786287902722632}
   m_Father: {fileID: 7871109685260025775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7238776197300388867
