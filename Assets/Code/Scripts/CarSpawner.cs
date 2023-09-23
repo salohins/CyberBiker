@@ -37,34 +37,37 @@ public class CarSpawner : MonoBehaviour
         if (Random.Range(0, spawnRatio) == 0) {
             GameObject car = Instantiate(carArray[Random.Range(0, carArray.Length)], transform.position, transform.rotation);
             car.GetComponent<Car>().whichWall = linePosition;
+            car.GetComponent<Car>().speed = Random.Range(wg.carMaxSpeed, wg.carMaxSpeed);
 
             return car;
         } else
             return null;
     }
 
+    float a;
+
     // Update is called once per frame
     void FixedUpdate()
     {
-       
-        if (player.transform.position.z < transform.position.z && Vector3.Distance(transform.position, player.transform.position) < 300) {
-            transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + Random.Range(minSpawnInterval, maxSpawnInterval));
-            
-            RaycastHit hit;
+        for (int i = 0; i < (player.transform.position.y - 5f > transform.position.y ? 10 : 1); i++) {
+            if (player.transform.position.z < transform.position.z && Vector3.Distance(transform.position, player.transform.position) < (player.transform.position.y - 5f > transform.position.y ? 100 : 300) ) {
 
-            if (Physics.Raycast(transform.position + Vector3.up/2, -Vector3.up, out hit)) {
-                transform.position = hit.point;
+                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + Random.Range(minSpawnInterval, maxSpawnInterval));
+                currentCar = null;
 
-                if (Physics.Raycast(transform.position + Vector3.up/2, transform.right)) {
+                RaycastHit hit;
 
-                    currentCar = spawnCar();
+                if (Physics.Raycast(transform.position + Vector3.up / 2, -Vector3.up, out hit)) {
+                    transform.position = hit.point;
+                    if (Physics.Raycast(transform.position + Vector3.up * 20f, transform.right)) {
+
+                        currentCar = spawnCar();
+                    }
                 }
-            }            
-        } else {
-            if (currentCar != null)
-                transform.position = new Vector3(transform.position.x, transform.position.y, currentCar.transform.position.z);
+            }
         }
 
-        
+        if (currentCar != null)
+            transform.position = new Vector3(transform.position.x, transform.position.y, currentCar.transform.position.z);
     }
 }

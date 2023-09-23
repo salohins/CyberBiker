@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ddc616e4b2b9ae94a81f71c75ef79c13
+timeCreated: 1518274985
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111370
+  packageName: Teleport Fade Shader
+  packageVersion: 1.2
+  assetPath: Assets/TeleportFade/Samples/Scenes/TeleportFadeSample.unity
+  uploadId: 565372

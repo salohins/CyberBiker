@@ -9,6 +9,7 @@ namespace Gameplay {
         GameOver,
         Playing,
         Pause,
+        Hit,
         Intro
     }
 
@@ -23,7 +24,7 @@ namespace Gameplay {
         public float difficulty { get; private set; }
         public float score { get; private set; }
 
-        [HideInInspector] public GameState gameState;
+        public GameState gameState;
 
         [Header("Obj Refs")]
         [SerializeField] private new CameraController camera;
@@ -58,7 +59,7 @@ namespace Gameplay {
 
             pauseMenuTimerText.SetActive(false);
 
-            camera.SetTarget(player.transform);
+            camera.SetTarget(player.GetComponent<PlayerController>().ragDollTarget);
         }
 
         private void Update() {
@@ -88,7 +89,8 @@ namespace Gameplay {
         }
 
         private void ProcessScore() {
-            score += Time.deltaTime * player.GetComponent<PlayerController>().zVelocity / 100;
+            if (gameState == GameState.Playing)
+                score += Time.deltaTime * player.GetComponent<PlayerController>().zVelocity / 100;
 
             foreach (TMP_Text text in scoreText) {
                 text.text = ((int)score).ToString();

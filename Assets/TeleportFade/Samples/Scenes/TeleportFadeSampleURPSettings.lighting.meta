@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fac4af646a94c0b4c923e61d7d74e191
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4890085278179872738
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111370
+  packageName: Teleport Fade Shader
+  packageVersion: 1.2
+  assetPath: Assets/TeleportFade/Samples/Scenes/TeleportFadeSampleURPSettings.lighting
+  uploadId: 565372

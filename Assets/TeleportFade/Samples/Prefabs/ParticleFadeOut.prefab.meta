@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f435baaec6c336544a1f4d1f2ebfed0d
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111370
+  packageName: Teleport Fade Shader
+  packageVersion: 1.2
+  assetPath: Assets/TeleportFade/Samples/Prefabs/ParticleFadeOut.prefab
+  uploadId: 565372

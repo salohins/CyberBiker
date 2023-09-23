@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6a860a0312834de43b0c629a7311c5f5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 111370
+  packageName: Teleport Fade Shader
+  packageVersion: 1.2
+  assetPath: Assets/TeleportFade/Samples/Materials/TeleportFadeURP.mat
+  uploadId: 565372
