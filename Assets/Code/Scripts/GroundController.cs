@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GroundController : MonoBehaviour
-{
-    [SerializeField] private Transform player;
-    [SerializeField] private Transform rayCheck;
+{    
+    private Transform rayCheck;    
+    private Transform player;
+
+    private void Start() {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        rayCheck = player.GetComponent<PlayerController>().rayCheck[0];
+    }
 
     void FixedUpdate()
     {

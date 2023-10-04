@@ -27,17 +27,20 @@ namespace Gameplay {
         public GameState gameState;
 
         [Header("Obj Refs")]
-        [SerializeField] private new CameraController camera;
-        [SerializeField] private GameObject player;
+        [SerializeField] private new CameraController camera;        
         [SerializeField] private GameObject gameOverScreen;
         [SerializeField] private GameObject pauseScreen;
         [SerializeField] private GameObject menuConfirmation;
         [SerializeField] private GameObject pauseMenuTimerText;
+        [SerializeField] private GameObject aimButton;
+
+        [SerializeField] private GameObject canvas;
 
         [SerializeField] private TMP_Text[] scoreText;
         [SerializeField] private TMP_Text difficultyText;
         [SerializeField] private TMP_Text speedText;
-
+        
+        private GameObject player;
         private float totalCalculatedDifficulty;
         private bool showMenuConfirmation = false;
         private float pauseTimerValue = 4f;
@@ -45,6 +48,8 @@ namespace Gameplay {
         private int periodCount = 0;
 
         private void Start() {
+            player = GameObject.FindGameObjectWithTag("Player");
+
             Application.targetFrameRate = 60;
             isTimerRunning = false;
 
@@ -59,21 +64,24 @@ namespace Gameplay {
 
             pauseMenuTimerText.SetActive(false);
 
-            camera.SetTarget(player.GetComponent<PlayerController>().ragDollTarget);
+            camera.SetTarget(player.GetComponent<PlayerController>().cameraTarget.transform);
         }
 
-        private void Update() {
+        private void Update() {           
             ProcessPauseTimer();
             ProcessScore();
             ProcessDifficulty();
-            ProcessDebugValues();            
+            ProcessDebugValues();         
+            
+            
+            aimButton.SetActive(!(gameState == GameState.Hit));
+            
         }
 
         private void ProcessDebugValues() {
             difficultyText.text = "Difficulty: " + difficulty.ToString("F2");
             speedText.text = "Speed: " + player.GetComponent<PlayerController>().zVelocity.ToString("F2");
         }
-
         
 
         private void ProcessDifficulty() {

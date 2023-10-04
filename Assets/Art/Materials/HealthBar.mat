@@ -19,7 +19,6 @@ Material:
   - CURVEDWORLD_BEND_ID_1
   - CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE
   - _EMISSION
-  - _ENABLEDETAILMASK_ON
   - _ENABLETRIPLANARPROJECTION_ON
   - _TEXTUREMIX_NONE
   - _USEAOFROMMAINPROPERTIES_ON
@@ -116,7 +115,7 @@ Material:
     - _BumpScale: 1
     - _ContrastDetailMap: 0
     - _Cull: 0
-    - _Cutoff: 0.39
+    - _Cutoff: 0.15599999
     - _DetailBrightness: 1
     - _DetailGlossiness: 0.5
     - _DetailNormalMapScale: 1
@@ -124,11 +123,11 @@ Material:
     - _DetailSource: 0
     - _DetailSpecularIntensity: 0.2
     - _DstBlend: 0
-    - _EmissionIntensity: 2
-    - _EnableDetailMask: 1
+    - _EmissionIntensity: 0.123
+    - _EnableDetailMask: 0
     - _EnableTriplanarProjection: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 0.662
     - _GlossyReflections: 1
     - _IncludeVertexColor: 0
     - _IntensityCutoutMap: 0.5
@@ -152,7 +151,7 @@ Material:
     - _Source: 0
     - _SourceMask: 0
     - _SpecularHighlights: 1
-    - _SpecularIntensity: 0.2
+    - _SpecularIntensity: 0
     - _SpreadDetailMap: 0
     - _SrcBlend: 1
     - _TextureMix: 0
@@ -167,11 +166,11 @@ Material:
     - _ZWrite: 1
     - __dirty: 1
     m_Colors:
-    - _Color: {r: 1, g: 0, b: 0, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _CurvedWorldBendSettings: {r: 0, g: 1, b: 0, a: 0}
-    - _DetailColor: {r: 1, g: 0, b: 0, a: 0}
+    - _DetailColor: {r: 1, g: 1, b: 1, a: 0}
     - _DetailSpecularColor: {r: 1, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 5.655452, g: 0, b: 0, a: 11.299999}
+    - _EmissionColor: {r: 10.080474, g: 0.80834, b: 0.80834, a: 11.299999}
     - _EmissionMap_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _GlobalXYTilingXYZWOffsetXY: {r: 1, g: 1, b: 0, a: 0}
     - _MainTex_Scroll: {r: 0, g: 0, b: 0, a: 0}
@@ -180,6 +179,6 @@ Material:
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondaryNormalMap_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _SecondaryTex_Scroll: {r: 0, g: 0, b: 0, a: 0}
-    - _SpecularColor: {r: 1, g: 0, b: 0, a: 0}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 0}
     - _TriplanarXYTilingXYZWOffsetXY1: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
