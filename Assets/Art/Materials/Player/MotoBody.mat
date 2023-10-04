@@ -13,6 +13,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE
+  - _REFLECTION
   m_InvalidKeywords:
   - CURVEDWORLD_BEND_ID_1
   - _TEXTUREMIX_NONE
@@ -72,7 +73,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionCubeMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8900000, guid: f8f6face145e1a84289130e4806f6440, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SecondaryNormalMap:
@@ -98,11 +99,11 @@ Material:
     - _MatcapIntensity: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalMapStrength: 1
+    - _NormalMapStrength: 306.19
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionFresnelBias: 0
-    - _ReflectionMaskOffset: 0
+    - _ReflectionFresnelBias: -0.088
+    - _ReflectionMaskOffset: -0.857
     - _RimBias: 0
     - _SecondaryTex_Blend: 0
     - _SmoothnessTextureChannel: 0

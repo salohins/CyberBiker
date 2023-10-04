@@ -1,0 +1,5 @@
+C:/Users/Sergey/cb/.utmp/Debug/g4l4b5u4/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Sergey/cb/.utmp/Debug/g4l4b5u4/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+C:/Users/Sergey/cb/.utmp/Debug/g4l4b5u4/armeabi-v7a/FramePacing/CMakeFiles/swappywrapper.dir
+C:/Users/Sergey/cb/.utmp/Debug/g4l4b5u4/armeabi-v7a/FramePacing/CMakeFiles/edit_cache.dir
+C:/Users/Sergey/cb/.utmp/Debug/g4l4b5u4/armeabi-v7a/FramePacing/CMakeFiles/rebuild_cache.dir

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Gameplay;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerController : MonoBehaviour
 {
@@ -20,28 +21,30 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float leanRange;
 
     [Header("Do not touch :)")]
-    [SerializeField] CameraController camera;
-    [SerializeField] ParticleSystem wheelParticle;
 
-    
-    [SerializeField] GameObject ragDoll;    
-    [SerializeField] public Transform ragDollTarget;
-    
-    [SerializeField] private TMP_Text healthBarValue;
-    [SerializeField] private Material healthBarMaterial;    
-
-    [SerializeField] private GameObject helmetLight;
-    [SerializeField] private Transform motorcycleMesh;
-    [SerializeField] private GameObject playerMesh;    
+    public Transform[] rayCheck;
+    public GameObject cameraTarget;
 
     [HideInInspector] public float xVelocity, zVelocity;
     [HideInInspector] public float xThrow;
+    
+    [SerializeField] CameraController camera;    
+    [SerializeField] GameObject ragDoll;
+    [SerializeField] GameObject muzzleFlash;    
 
+    [SerializeField] private TMP_Text healthBarValue;
+    [SerializeField] private Material healthBarMaterial;            
+    [SerializeField] private GameObject playerMesh;    
+    [SerializeField] private GameObject scope;    
+    
     private float yawRotation;
     private float animationFrame;    
     private float maxSpeed;    
     private float health;
-    
+
+    public bool grounded;
+
+    private bool armed;
     private int wallDirection;
 
     private Rigidbody rb;
@@ -49,10 +52,13 @@ public class PlayerController : MonoBehaviour
     private TouchInputManager tim;
     private GameplayManager gm;
     private TeleportController tc;
+    private RigBuilder animationRigging;
+    private Transform motorcycleMesh;
 
-    private bool grounded;    
+    private GameObject hitObject;
+    private GameObject _ragDoll;
 
-    private GameObject hitCar;
+    
 
         
     void Start() {
@@ -60,6 +66,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         tc = GetComponent<TeleportController>();
         animator = GetComponent<Animator>();
+        animationRigging = GetComponent<RigBuilder>();
+        motorcycleMesh = transform.GetChild(0);
         tim = FindFirstObjectByType<TouchInputManager>();
         gm = FindFirstObjectByType<GameplayManager>();
 
@@ -70,54 +78,85 @@ public class PlayerController : MonoBehaviour
         SwitchRagDoll(false);
     }
 
-    private void FixedUpdate() {
+    public bool shoot = false;
+
+    public void SwitchShoot() {
+        shoot = false;        
+    }
+
+    private void FixedUpdate() {              
         if (gm.gameState == GameState.Playing)
             processVelocity();
         
         grounded = Physics.CheckSphere(transform.position - transform.up * 0.2f, 0.1f);
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-  
-        if (Physics.CheckSphere(ragDollTarget.transform.position + transform.right * transform.GetComponent<BoxCollider>().bounds.size.x/2, 1f, LayerMask.GetMask("WorldObject"))) {
+
+
+        wallDirection = 0;
+        for (int i = 0; i < rayCheck.Length; i++) {
+            
+
+            if (Physics.Raycast(new Ray(rayCheck[i].position, Vector3.right), 1.5f, LayerMask.GetMask("WorldObject"))) {
+                wallDirection = 1;
+            } else if (Physics.Raycast(new Ray(rayCheck[i].position, Vector3.left), 1.5f, LayerMask.GetMask("WorldObject"))) {
+                wallDirection = -1;
+            }
+        }
+
+        /*if (Physics.Raycast(new Ray(rayCheck[1].transform.position, Vector3.right), 1.5f, LayerMask.GetMask("WorldObject"))) {
             wallDirection = 1;
-        } else if (Physics.CheckSphere(ragDollTarget.transform.position - transform.right * transform.GetComponent<BoxCollider>().bounds.size.x/2, 1f, LayerMask.GetMask("WorldObject"))) {
+            
+        } else if (Physics.Raycast(new Ray(rayCheck[1].transform.position, Vector3.left), 1.5f, LayerMask.GetMask("WorldObject"))) {
             wallDirection = -1;
+            
         }
         else {
             wallDirection = 0;
-        }        
+        }  */
 
         if (gm.gameState == GameState.Playing)
             xThrow = tim.drag.x == 0 ? 0 : Mathf.Sign(tim.drag.x) == wallDirection ? 0 : tim.drag.x;
         else
             xThrow = 0;
 
+        RaycastHit hit;
 
+        if (Physics.Raycast(new Ray(camera.transform.position, camera.transform.forward), out hit)) {
+            if (tim.aim) {
+                if (hit.transform.gameObject.GetComponent<Car>() != null) {
+                    if (!shoot && animationRigging.layers[0].rig.weight > .8f) {
+                        shoot = true;
+                        Shoot();
+                    }
+                }
+            }
+        }
     }
 
-    private void Update() {
+    private void Update() {    
+        //Rotation of the character when aiming
+        cameraTarget.transform.eulerAngles = new Vector3(0, camera.transform.eulerAngles.y + 10f, 0);
 
-        ProcessYaw(); //Rotation on Y axis
-
-        ProcessPitch(); //Rotation on X axis
-
-
-        ProcessLeans();
-        ProcessAnimations();
-        ProcessParticleEffects();
-        
-
+        scope.SetActive(animationRigging.layers[0].rig.weight > .2f && gm.gameState == GameState.Playing);
         healthBarValue.text = health.ToString() + '%';
 
+        ProcessYaw(); //Rotation on Y axis
+        ProcessPitch(); //Rotation on X axis        
+        ProcessLeans();
+        ProcessAnimations();        
+                
         if (health <= 0)
             gm.SwitchGameState(GameState.GameOver);
 
         if (gm.gameState == GameState.GameOver)
-            maxSpeed = 0;
+            maxSpeed = 0;                
     }
 
+    private void TakeGun() => armed = true;
+
     private void processVelocity() {
-        rb.maxLinearVelocity = maxSpeed;
+        rb.maxLinearVelocity = gm.gameState == GameState.Hit ? 0 : maxSpeed;
 
         xVelocity = transform.InverseTransformDirection(rb.velocity).x;
         zVelocity = transform.InverseTransformDirection(rb.velocity).z;
@@ -125,8 +164,8 @@ public class PlayerController : MonoBehaviour
 
         //Limit max dodge speed
 
-        if (Mathf.Abs(xVelocity) > dodgeMaxSpeed) { 
-                //rb.velocity = new Vector3(Mathf.Sign(xVelocity) * dodgeMaxSpeed, rb.velocity.y, rb.velocity.z);
+        if (Mathf.Abs(rb.velocity.x) > dodgeMaxSpeed) { 
+                rb.velocity = new Vector3(Mathf.Sign(rb.velocity.x) * dodgeMaxSpeed, rb.velocity.y, rb.velocity.z);
             }
             else {
                 rb.AddForce((transform.right * (xThrow) * dodgeAccelerationForce), ForceMode.Acceleration);
@@ -140,17 +179,12 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector3.forward * (accelerationForce / 2), ForceMode.Acceleration);
         }
 
-        // Stop motorcycle if no control input
-        if (Mathf.Abs(rb.velocity.x) != 0 && tim.drag.x == 0) {
-            rb.velocity = new Vector3(Mathf.Lerp(rb.velocity.x, 0, Time.deltaTime), rb.velocity.y, rb.velocity.z);
-        }
-
         if (wallDirection != 0)
             rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, rb.maxLinearVelocity);
     }
 
     private void ProcessYaw() {
-        yawRotation = Mathf.Lerp(yawRotation, xThrow * rotationSensitivity, Time.deltaTime * 3f);
+        yawRotation = Mathf.Lerp(yawRotation, xThrow * rotationSensitivity, Time.deltaTime * 4f);
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, yawRotation, transform.eulerAngles.z);
     }
@@ -167,9 +201,36 @@ public class PlayerController : MonoBehaviour
         transform.eulerAngles = targetRotation;
     }
 
+    public void Shoot() {
+        muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
+        animator.SetTrigger("Shoot");
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(new Ray(camera.transform.position, camera.transform.forward), out hit)) {
+            if (hit.transform.gameObject.GetComponent<Car>() != null) {
+                hit.transform.gameObject.GetComponent<Car>().GetDamage();
+            }
+        }        
+    }
+
     private void ProcessAnimations() {
-        animationFrame = Mathf.Lerp(animationFrame, xThrow, Time.deltaTime * 5f);
-        animator.SetFloat("dragX", animationFrame);
+        animationFrame = Mathf.Lerp(animationFrame, xThrow, Time.deltaTime * 5.5f);
+        animator.SetFloat("dragX", animationFrame);        
+        animator.SetBool("Aim", tim.aim);
+
+        if (tim.aim && armed) {
+            animationRigging.layers[0].rig.weight = Mathf.Lerp(animationRigging.layers[0].rig.weight, 1, Time.deltaTime * 3f);
+            animationRigging.layers[1].rig.weight = 1;
+            animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 1, Time.deltaTime));
+        }
+        else {
+            animationRigging.layers[0].rig.weight = 0;
+            animationRigging.layers[1].rig.weight = 0;
+            animator.SetLayerWeight(1, 0);
+            armed = false;
+            animator.SetFloat("dragY", 0);
+        }
     }
 
     private void ProcessLeans() {
@@ -184,10 +245,6 @@ public class PlayerController : MonoBehaviour
         );
     }
 
-    private void ProcessParticleEffects() {
-      
-    }
-
     private void GetDamage(int amount) {
         health -= amount;
         healthBarMaterial.SetFloat("_Cutoff", healthBarMaterial.GetFloat("_Cutoff") + (amount * 0.39f / 100f));
@@ -195,46 +252,36 @@ public class PlayerController : MonoBehaviour
 
     public void ResetRagDoll() {
         playerMesh.SetActive(true);
-        if (hitCar.transform.tag != "Wall" && hitCar != null) {
-            Destroy(hitCar);
-            transform.position = new Vector3(0, transform.position.y, transform.position.z);
+        
+        if (hitObject != null) {
+            if (hitObject.transform.tag != "Wall") {
+                Destroy(hitObject);
+                transform.position = new Vector3(0, transform.position.y, transform.position.z);
+            }
+            else {
+                transform.position = new Vector3(hitObject.transform.parent.transform.position.x, hitObject.transform.parent.transform.position.y, hitObject.transform.parent.transform.position.z + 10f);
+            }
         }
-        else {
-            transform.position = new Vector3(hitCar.transform.parent.transform.position.x, hitCar.transform.parent.transform.position.y, hitCar.transform.parent.transform.position.z + 10f);
-        }
+        
+        camera.SetTarget(cameraTarget.transform);
         tc.startFade(false);        
         SwitchRagDoll(false);
     }
 
+    
+
     private void SwitchRagDoll(bool on) {
-        
+        if (on) {
+            _ragDoll = Instantiate(ragDoll, motorcycleMesh.position, motorcycleMesh.rotation);
+            camera.SetTarget(_ragDoll.transform.GetChild(0).transform.GetChild(0));
 
-        foreach (Rigidbody ragRB in ragDoll.GetComponentsInChildren<Rigidbody>()) {
-            ragRB.isKinematic = !on;
-            ragRB.detectCollisions = on;
-            ragRB.maxLinearVelocity = on ? 60 : 0;
-            if (on)
+            foreach (Rigidbody ragRB in _ragDoll.GetComponentsInChildren<Rigidbody>()) {                
                 ragRB.GetComponent<Rigidbody>().AddForce((Vector3.up / 1.5f + transform.forward) * 50f, ForceMode.VelocityChange);
-        }
+            }
 
-        foreach (SkinnedMeshRenderer smr in ragDoll.GetComponentsInChildren<SkinnedMeshRenderer>()) {
-            smr.enabled = on;
-        }
-
-        ragDoll.GetComponent<Animator>().enabled = !on;
-        ragDoll.transform.SetParent(on ? null : motorcycleMesh.transform);
-
-        if (!on) {
-            ragDoll.transform.position = motorcycleMesh.transform.position;
-            ragDoll.transform.SetPositionAndRotation(motorcycleMesh.transform.position, motorcycleMesh.transform.rotation);
-        }
-
-        
-
-    }
-
-    public void turnHelmetLight(bool on) {
-        helmetLight.SetActive(on);
+        } else {
+            Destroy(_ragDoll);
+        }        
     }
         
     private float GetInspectorRotation(float angle) {
@@ -242,35 +289,37 @@ public class PlayerController : MonoBehaviour
             angle -= 360;
         }
         return angle;
-    }
-
-    
+    }    
 
     private void OnCollisionEnter(Collision collision) {
         if (collision.transform.tag == "Obstacle" && gm.gameState == GameState.Playing) {
-            gm.gameState = GameState.Hit;            
-            tc.startFade(true);       
-            hitCar = collision.gameObject;
 
-            SwitchRagDoll(true);
+            Vector3 carBack = collision.transform.position - collision.transform.forward * (collision.collider.bounds.size.z/2);
 
-            turnHelmetLight(false);
+            Vector3 toHit = (carBack - transform.position).normalized;
 
-            playerMesh.SetActive(false);
+            if (transform.position.z + GetComponent<BoxCollider>().bounds.size.z/2 < carBack.z) {
+                gm.gameState = GameState.Hit;
+                tc.startFade(true);
+                hitObject = collision.gameObject;
 
-            collision.gameObject.GetComponent<Car>().speed = 0;
+                SwitchRagDoll(true);
 
-            GetDamage(collision.gameObject.GetComponent<Obstacle>().damage);
+
+                playerMesh.SetActive(false);
+                
+
+                GetDamage(collision.gameObject.GetComponent<Obstacle>().damage);
+            }            
         }
 
         if (collision.transform.tag == "Wall" && gm.gameState == GameState.Playing && wallDirection == 0) {
             gm.gameState = GameState.Hit;
             tc.startFade(true);
-            hitCar = collision.gameObject;
+            hitObject = collision.gameObject;
 
             SwitchRagDoll(true);
 
-            turnHelmetLight(false);
 
             playerMesh.SetActive(false);            
 
