@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
 {
+    [SerializeField] private GameObject[] carSpawners;
     [SerializeField] private GameObject ground;
     [SerializeField] private Biome[] biomes;
 
@@ -35,10 +36,13 @@ public class WorldGenerator : MonoBehaviour
 
     private GameObject player;
 
+    private List<Vector3> carSpawnPos;
+
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        carSpawnPos = new List<Vector3>();
 
         ChangeBiome(startBiomeIndex);
 
@@ -52,7 +56,7 @@ public class WorldGenerator : MonoBehaviour
                 Vector3 spawnPosition = _activeTiles[i - 1].transform.GetChild(_activeTiles[i - 1].transform.childCount - 1).transform.position; 
                 _activeTiles[i] = Instantiate(biomes[_biomeIndex].GetRandomTile(), spawnPosition, transform.rotation, transform);
             }
-        }
+        }        
     }
     
     void Update() {
@@ -62,9 +66,14 @@ public class WorldGenerator : MonoBehaviour
 
         if (_playerPosition.z > shiftTriggerPosition.z) {
             StartCoroutine(ShiftTiles());
-        }
+        }        
 
-        
+        foreach (GameObject tile in _activeTiles) {
+            if (Vector3.Distance(tile.transform.position, player.transform.position) < 400 && !tile.GetComponent<Tile>().carsSpawned) {
+                carSpawnPos = tile.GetComponent<Tile>().SpawnCars(carSpawnPos);
+                tile.GetComponent<Tile>().carsSpawned = true;
+            }
+        }
     }
 
     IEnumerator ShiftTiles() {
@@ -101,5 +110,5 @@ public class WorldGenerator : MonoBehaviour
 
         Biome _biome = biomes[_biomeIndex];
         _biomeLength = Random.Range(_biome.minLength, _biome.maxLength);
-    }    
+    }      
 }
