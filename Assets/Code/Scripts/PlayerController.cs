@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
     public bool grounded;
 
     private bool armed;
-    private int wallDirection;
+    public int wallDirection { get; private set; }
 
     private Rigidbody rb;
     private Animator animator;

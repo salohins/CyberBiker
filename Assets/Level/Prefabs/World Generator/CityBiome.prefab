@@ -45,15 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 3273467597460763324, guid: a11d6ee7fb063fd4c8de9d9b90287cc1, type: 3}
-  - {fileID: 7959437519909852275, guid: e7dbfe3f74703994194bb5e1e8c42cfb, type: 3}
-  - {fileID: 7959437519909852275, guid: e7dbfe3f74703994194bb5e1e8c42cfb, type: 3}
-  - {fileID: 7959437519909852275, guid: e7dbfe3f74703994194bb5e1e8c42cfb, type: 3}
-  - {fileID: 7959437519909852275, guid: e7dbfe3f74703994194bb5e1e8c42cfb, type: 3}
-  - {fileID: 7959437519909852275, guid: e7dbfe3f74703994194bb5e1e8c42cfb, type: 3}
-  - {fileID: 7959437519909852275, guid: e7dbfe3f74703994194bb5e1e8c42cfb, type: 3}
-  - {fileID: 7959437519909852275, guid: e7dbfe3f74703994194bb5e1e8c42cfb, type: 3}
-  - {fileID: 7959437519909852275, guid: e7dbfe3f74703994194bb5e1e8c42cfb, type: 3}
   - {fileID: 7959437519909852275, guid: e7dbfe3f74703994194bb5e1e8c42cfb, type: 3}
   startTiles:
   - {fileID: 7959437519909852275, guid: e7dbfe3f74703994194bb5e1e8c42cfb, type: 3}
