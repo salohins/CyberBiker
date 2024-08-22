@@ -119,8 +119,18 @@ public class WorldGenerator : MonoBehaviour {
         for (int i = activeCars.Count - 1; i >= 0; i--) {
             GameObject car = activeCars[i];
 
-            if (car.transform.position.z < player.transform.position.z - 20f) {
-                Destroy(car);
+            // Check if the car object is still valid (i.e., not destroyed)
+            if (car != null) {
+                if (car.transform.position.z < player.transform.position.z - 20f) {
+                    // Destroy the car object
+                    Destroy(car);
+
+                    // Remove it from the activeCars list
+                    activeCars.RemoveAt(i);
+                }
+            }
+            else {
+                // If the car is null (maybe already destroyed elsewhere), remove it from the list
                 activeCars.RemoveAt(i);
             }
         }
