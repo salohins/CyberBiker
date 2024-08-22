@@ -79,8 +79,8 @@ Material:
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
-    - _ObjectFadeHeight: -99998.984
-    - _ObjectHeight: -99998.984
+    - _ObjectFadeHeight: -99999
+    - _ObjectHeight: -99999
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _RisePower: 0.95

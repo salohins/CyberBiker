@@ -24,11 +24,11 @@ public class Car : MonoBehaviour
     public int lineNumber;
 
     private void Awake() {
-        foreach (Transform line in Scanner.GetLines(transform.position + Vector3.up)) {
+        /*foreach (Transform line in Scanner.GetLines(transform.position + Vector3.up)) {
             if (line.transform.position.x == transform.position.x) {
                 lineNumber = line.GetComponent<Line>().number;
             }
-        }
+        }*/
     }
 
     // Start is called before the first frame update
@@ -63,6 +63,7 @@ public class Car : MonoBehaviour
 
         if (hit) {
             speed = Mathf.Lerp(speed, 0, Time.deltaTime * 10f);
+            
         }
     }
     // Update is called once per frame
@@ -70,7 +71,8 @@ public class Car : MonoBehaviour
     private void OnCollisionEnter(Collision collision) {        
 
         if (collision.gameObject.tag == "Player") {
-            hit = true;            
+            hit = true;
+            GetComponent<BoxCollider>().enabled = false;
         }
     }
 
@@ -99,11 +101,11 @@ public class Car : MonoBehaviour
 
 
             //aiController.activeCars.Remove(gameObject);
-            Destroy(gameObject);            
+            //Destroy(gameObject);            
             
 
             return;
-        }        
+        }      
 
         if (player.transform.position.y - 15f > transform.position.y)
             return;

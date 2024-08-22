@@ -17,9 +17,7 @@ public class Obstacle : MonoBehaviour {
 
     private void Awake() {
         bc = GetComponent<BoxCollider>();
-        aiController = FindFirstObjectByType<AIController>();
-
-       
+        aiController = FindFirstObjectByType<AIController>();       
     }
 
     private void Update() {
@@ -35,6 +33,29 @@ public class Obstacle : MonoBehaviour {
     }
 
     public int GetLine() => line;
+
+
+    public List<DodgePoint> GetDodgePoints2(int direction) {
+        Transform[] lines = Scanner.GetLines(transform.position + bc.center);
+
+        float offsetX = Mathf.Abs(lines[1].position.x - lines[0].position.x);
+
+        Vector3 point1Pos = transform.position;
+
+        point1Pos.y = GetComponent<BoxCollider>().center.y;
+        point1Pos.x += offsetX * direction;
+        point1Pos.z -= GetComponent<MeshRenderer>().bounds.size.z / 2;
+
+        DodgePoint point1 = new DodgePoint(point1Pos, gameObject);
+
+        Vector3 point2Pos = point1Pos;
+        point2Pos.z = transform.position.z + GetComponent<MeshRenderer>().bounds.size.z / 2;
+
+        DodgePoint point2 = new DodgePoint(point2Pos, gameObject);
+
+        return new List<DodgePoint> { point1, point2 };
+    }
+
 
     public List<DodgePoint> GetDodgePoints(float passLength) {
         BoxCollider bc = GetComponent<BoxCollider>(); ;
@@ -61,11 +82,11 @@ public class Obstacle : MonoBehaviour {
                 rayPos.x = lines[line + j].position.x;
                 rayPos += Vector3.forward * (bc.bounds.size.z / 2) * i; // Vertical Offset                                
 
-                Collider[] c = Physics.OverlapBox(rayPos, new Vector3(1, 10f, passLength/2), transform.rotation, LayerMask.GetMask("WorldObject")); 
+                Collider[] c = Physics.OverlapBox(rayPos, new Vector3(1, 10f, 1), transform.rotation, LayerMask.GetMask("WorldObject")); 
 
                 if (c.Length == 0 || (c.Length == 1 && c[0].gameObject == gameObject)) { 
                     if (j == 0)
-                        rayPos += Vector3.forward * passLength/2 * i;
+                        rayPos -= Vector3.forward * passLength * i;
 
                     points.Add(new DodgePoint(rayPos, gameObject));                    
                 }
@@ -89,7 +110,7 @@ public class Obstacle : MonoBehaviour {
         return GetComponent<BoxCollider>().bounds.size;
     }
 
-    private void OnDrawGizmos() {
+    /*private void OnDrawGizmos() {
         BoxCollider bc = GetComponent<BoxCollider>(); ;        
 
         Transform[] lines = Scanner.GetLines(transform.position + bc.center);
@@ -107,16 +128,16 @@ public class Obstacle : MonoBehaviour {
                 rayPos += Vector3.right * offsetX * j; // Horizontal Offset
                 rayPos += Vector3.forward * (bc.bounds.size.z / 2) * i; // Vertical Offset
                               
-                Collider[] c = Physics.OverlapBox(rayPos, new Vector3(1, 1, aiController.passLength/2f), transform.rotation, LayerMask.GetMask("WorldObject"));
+                Collider[] c = Physics.OverlapBox(rayPos, new Vector3(1, 1, 25), transform.rotation, LayerMask.GetMask("WorldObject"));
 
                 foreach (Collider col in c) {
                       if (col.gameObject != gameObject) {
                           Gizmos.color = Color.red;
-                         Gizmos.DrawWireCube(rayPos, new Vector3(1, 1, aiController.passLength));
+                         Gizmos.DrawWireCube(rayPos, new Vector3(1, 1,50 ));
                         Gizmos.DrawWireSphere(col.gameObject.transform.position, .1f);
                     }
                 }
             }
         }
-    }
+    }*/
 }

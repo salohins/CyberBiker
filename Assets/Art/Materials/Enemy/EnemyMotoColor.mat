@@ -14,6 +14,7 @@ Material:
   m_ValidKeywords:
   - CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE
   - _REFLECTION
+  - _RIM
   m_InvalidKeywords:
   - CURVEDWORLD_BEND_ID_1
   - _TEXTUREMIX_NONE
@@ -104,7 +105,7 @@ Material:
     - _Parallax: 0.02
     - _ReflectionFresnelBias: 0
     - _ReflectionMaskOffset: 0
-    - _RimBias: 0
+    - _RimBias: 0.467
     - _SecondaryTex_Blend: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -120,7 +121,7 @@ Material:
     - _MainTex_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _NormalMap_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RimColor: {r: 1, g: 0, b: 0, a: 1}
     - _SecondaryNormalMap_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _SecondaryTex_Scroll: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
