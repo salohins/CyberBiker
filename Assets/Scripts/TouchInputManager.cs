@@ -26,8 +26,8 @@ public class TouchInputManager : MonoBehaviour
     {
         pc = GetComponent<PlayerController>();
         //aim = true;
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
 
         gm = FindFirstObjectByType<GameplayManager>();
     }
@@ -52,7 +52,7 @@ public class TouchInputManager : MonoBehaviour
                 delta = Vector2.zero;
             }
         }
-        else {      
+        else {     
             foreach (Touch touch in Input.touches) {
 
                 

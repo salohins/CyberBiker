@@ -56,8 +56,7 @@ public class Enemy : MonoBehaviour {
     
     Vector3 followTarget;
 
-    List<DodgePoint> path;
-    List<List<DodgePoint>> paths;
+    DodgePoint path;    
 
     void Start() {
         player = GameObject.FindGameObjectWithTag("Player");    
@@ -80,7 +79,7 @@ public class Enemy : MonoBehaviour {
             transform.LookAt(followTarget, Vector3.up);
         }
         else {
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.identity, Time.deltaTime * 5f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.identity, Time.deltaTime * 10f);
         }
     }
 
@@ -107,34 +106,16 @@ public class Enemy : MonoBehaviour {
             }
         }
 
-        if (path == null || path != null && Physics.Raycast(new Ray(path.Last().GetPosition(), Vector3.forward), aiConntroller.passLength) || Scanner.GetOverlay(path.Last().GetPosition(), aiConntroller.passLength).Length > 0) {
-            RaycastHit hit;
-
-            if (Physics.Raycast(new Ray(rayCheck[1].position, Vector3.forward), out hit, Mathf.Infinity, LayerMask.GetMask("WorldObject"))) {
-                                
+        if (path == null) {
+                             
                 followTarget = new Vector3(rayCheck[1].position.x, transform.position.y, rayCheck[1].position.z) + transform.forward * 10f;
-                path = aiConntroller.GetPath(new DodgePoint(transform.position, gameObject));
+                path = aiConntroller.GetPath(new DodgePoint(transform.position, gameObject));                
 
-                paths = aiConntroller.GetAllPaths(new DodgePoint(transform.position, gameObject));
-
-                if (paths.Count > 1)
-                    path = paths[Random.Range(0, paths.Count)];
-                
-
-                currentWaypointIndex = 1;
-                
-            }
-
-            
-        }
-
-        if (path != null && path.Count == 1) {
-            EditorApplication.isPaused = true;
-            ClearPath();
+                currentWaypointIndex = 1;                            
         }
 
         if (path != null) {            
-                Vector3 currentWaypoint = new Vector3(path[currentWaypointIndex].GetPosition().x, transform.position.y, path[currentWaypointIndex].GetPosition().z);
+                Vector3 currentWaypoint = new Vector3(path.GetPosition().x, transform.position.y, path.GetPosition().z);
                 float step = speed * Time.deltaTime;
                 followTarget = Vector3.MoveTowards(followTarget, currentWaypoint, step);
 
@@ -142,7 +123,7 @@ public class Enemy : MonoBehaviour {
                     currentWaypointIndex++;
                 }
 
-                if (followTarget.z >= path.Last().GetPosition().z) {
+                if (followTarget.z >= path.GetPosition().z) {
                     ClearPath();
                 }                        
         }
@@ -171,18 +152,16 @@ public class Enemy : MonoBehaviour {
 
     private void OnDrawGizmosSelected() {        
         if (path != null) {
-            foreach (DodgePoint point in path) {
+
                 Gizmos.color = Color.green;
-                Gizmos.DrawSphere(point.GetPosition(), 1);
-            }
-
-            for (int i = 0; i < path.Count; i++) {
-                if (i > 0) {
-                    Gizmos.DrawLine(path[i - 1].GetPosition(), path[i].GetPosition());
-                }
-
-            }
+                Gizmos.DrawSphere(path.GetPosition(), 1);
+                Gizmos.DrawLine(transform.position, path.GetPosition());
         }
+            
+                
+            
+            
+                  
 
         if (followTarget != null && followTarget != Vector3.zero) {
             Gizmos.color = Color.blue;

@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour {
 
     private Vector3 offset;
 
-    private float fov = 70f;
+    private float fov = 50f;
     private float velocity;
     private float rotationX, rotationY;
 
@@ -55,7 +55,7 @@ public class CameraController : MonoBehaviour {
             if (tim.aim) {
                 targetOffset = aimOffset;
 
-                fov = Mathf.Lerp(fov, 50f, Time.deltaTime * 1.5f);
+                fov = Mathf.Lerp(fov, 70f, Time.deltaTime * 1.5f);
                 GetComponent<Camera>().fieldOfView = fov;
                 //frameX = Mathf.Lerp(frameX, rotationX, Time.deltaTime * 5f);
                 //frameY = Mathf.Lerp(frameY, rotationY, Time.deltaTime * 5f);

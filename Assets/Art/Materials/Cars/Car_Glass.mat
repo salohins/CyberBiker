@@ -13,7 +13,8 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_Z_POSITIVE
-  - CURVEDWORLD_NORMAL_TRANSFORMATION_ON
+  - _ALPHABLEND_ON
+  - _NORMALMAP
   - _REFLECTION
   m_InvalidKeywords:
   - CURVEDWORLD_BEND_ID_1
@@ -21,9 +22,9 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap:
-    RenderType: CurvedWorld_Opaque
+    RenderType: Transparent
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -88,10 +89,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
-    - _Cull: 0
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _GlossMapScale: 1
     - _Glossiness: 0.576
     - _GlossyReflections: 1
@@ -99,29 +100,29 @@ Material:
     - _MatcapBlendMode: 1
     - _MatcapIntensity: 1
     - _Metallic: 0.464
-    - _Mode: 0
+    - _Mode: 2
     - _NormalMapStrength: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionFresnelBias: 0
-    - _ReflectionMaskOffset: 0
-    - _RimBias: 0
+    - _ReflectionFresnelBias: -1
+    - _ReflectionMaskOffset: 1
+    - _RimBias: 0.454
     - _SecondaryTex_Blend: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _TextureMix: 0
     - _UVSec: 0
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
     - _Color: {r: 0, g: 0, b: 0, a: 1}
-    - _CurvedWorldBendSettings: {r: 2, g: 1, b: 1, a: 0}
+    - _CurvedWorldBendSettings: {r: 2, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionMap_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _MainTex_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _NormalMap_Scroll: {r: 0, g: 0, b: 0, a: 0}
-    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ReflectionColor: {r: 0.27607688, g: 0.41509432, b: 0.3363736, a: 1}
+    - _RimColor: {r: 0, g: 1, b: 0.8916161, a: 1}
     - _SecondaryNormalMap_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _SecondaryTex_Scroll: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

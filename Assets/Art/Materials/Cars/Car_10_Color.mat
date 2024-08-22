@@ -14,7 +14,7 @@ Material:
   m_ValidKeywords:
   - CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_Z_POSITIVE
   - CURVEDWORLD_NORMAL_TRANSFORMATION_ON
-  - _MATCAP
+  - _REFLECTION
   m_InvalidKeywords:
   - CURVEDWORLD_BEND_ID_1
   - _TEXTUREMIX_NONE
@@ -74,7 +74,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ReflectionCubeMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8900000, guid: f8f6face145e1a84289130e4806f6440, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SecondaryNormalMap:
@@ -103,8 +103,8 @@ Material:
     - _NormalMapStrength: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionFresnelBias: 0
-    - _ReflectionMaskOffset: 0
+    - _ReflectionFresnelBias: -0.397
+    - _ReflectionMaskOffset: -0.392
     - _RimBias: 0
     - _SecondaryTex_Blend: 0
     - _SmoothnessTextureChannel: 0
@@ -120,7 +120,7 @@ Material:
     - _EmissionMap_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _MainTex_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _NormalMap_Scroll: {r: 0, g: 0, b: 0, a: 0}
-    - _ReflectionColor: {r: 0.5864016, g: 0, b: 0.7169812, a: 1}
+    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondaryNormalMap_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _SecondaryTex_Scroll: {r: 0, g: 0, b: 0, a: 0}
