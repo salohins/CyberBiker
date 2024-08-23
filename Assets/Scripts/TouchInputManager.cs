@@ -4,6 +4,7 @@ using UnityEngine;
 using Gameplay;
 using UnityEngine.UI;
 using UnityEngine.Animations.Rigging;
+using Unity.VisualScripting;
 
 public class TouchInputManager : MonoBehaviour
 {
@@ -75,31 +76,32 @@ public class TouchInputManager : MonoBehaviour
         else { 
 
             }
-        /*foreach (Touch touch in Input.touches) {
+        foreach (Touch touch in Input.touches) {
 
 
-                if (aim && touch.fingerId == aimTouch.fingerId) {                    
+            if (aim && touch.fingerId == aimTouch.fingerId) {
 
-                    if (touch.phase == TouchPhase.Moved) {
-                        delta = touch.deltaPosition;
-                    }
-                    if (touch.phase == TouchPhase.Ended) {
-                        delta = Vector2.zero;
-                    }
+                if (touch.phase == TouchPhase.Moved) {
+                    delta = touch.deltaPosition;
+                }
+                if (touch.phase == TouchPhase.Ended) {
+                    delta = Vector2.zero;
+                }
 
-                    if (touch.phase == TouchPhase.Stationary) {
-                        delta = Vector2.zero;
-                    }
-                    //aimTouch = touch;
-                } else {
-                    drag += touch.deltaPosition / (2000 - 100 * touchSensitivity);
-                    drag = touch.phase == TouchPhase.Ended && Input.touchCount == 1 ? Vector2.zero : Vector2.ClampMagnitude(drag, 1);
+                if (touch.phase == TouchPhase.Stationary) {
+                    delta = Vector2.zero;
+                }
+                //aimTouch = touch;
+            }
+            else {
+                drag += touch.deltaPosition / (2000 - 100 * touchSensitivity);
+                drag = touch.phase == TouchPhase.Ended && Input.touchCount == 1 ? Vector2.zero : Vector2.ClampMagnitude(drag, 1);
 
-                    if (touch.phase == TouchPhase.Ended) {
-                        drag = Vector2.zero;
-                    }
-                }                            
-        */
+                if (touch.phase == TouchPhase.Ended) {
+                    drag = Vector2.zero;
+                }
+            }
+        }
         
 
         if (pc.xThrow == 0)
@@ -131,6 +133,7 @@ public class TouchInputManager : MonoBehaviour
     private int lastPressed = 0; // -1 for left, 1 for right, 0 for none
 
     public void setLeftPressed(bool pressed) {
+        Debug.Log(1);
         leftPressed = pressed;
         if (pressed) {
             lastPressed = -1;  // Left was pressed last
