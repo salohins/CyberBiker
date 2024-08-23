@@ -73,7 +73,7 @@ public class Enemy : MonoBehaviour {
         motoMesh.transform.localRotation = Quaternion.Slerp(
             motoMesh.transform.localRotation,
             Quaternion.Euler(targetRotation),
-            Time.deltaTime * 7f
+            Time.deltaTime * 10f
         );          
         if (followTarget != null && followTarget != Vector3.zero) {
             transform.LookAt(followTarget, Vector3.up);
@@ -89,7 +89,7 @@ public class Enemy : MonoBehaviour {
 
         transform.Translate(Vector3.forward * Time.deltaTime * speed);
 
-        if (Vector3.Distance(transform.position, player.transform.position) < 20) {
+        if (Vector3.Distance(transform.position, player.transform.position) < 10) {
             state = EnemyState.Attack;
             moveDirection = 1;
         }

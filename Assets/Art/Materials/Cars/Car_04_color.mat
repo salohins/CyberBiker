@@ -103,7 +103,7 @@ Material:
     - _NormalMapStrength: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ReflectionFresnelBias: -0.397
+    - _ReflectionFresnelBias: 0.05
     - _ReflectionMaskOffset: -0.392
     - _RimBias: 0
     - _SecondaryTex_Blend: 0

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Gameplay;
 using UnityEngine.UI;
+using UnityEngine.Animations.Rigging;
 
 public class TouchInputManager : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class TouchInputManager : MonoBehaviour
 
     Touch aimTouch;
 
+    public bool leftPressed;
+    public bool rightPressed;
+
     public Vector2 drag { get; private set; }
     
     // Start is called before the first frame update
@@ -34,7 +38,23 @@ public class TouchInputManager : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        
+
+        if (leftPressed && rightPressed) {
+            // If both are pressed, prioritize the last pressed button
+            drag = new Vector2(lastPressed == -1 ? -1 : 1, drag.y);
+        }
+        else if (leftPressed) {
+            drag = new Vector2(-1, drag.y);
+        }
+        else if (rightPressed) {
+            drag = new Vector2(1, drag.y);
+        }
+        else {
+            drag = new Vector2(0, drag.y);  // No button pressed
+        }
+
+
+
         if (!UnityEditor.EditorApplication.isRemoteConnected) {
             drag = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
             delta = new Vector2(Input.GetAxis("Mouse X") * 5f, Input.GetAxis("Mouse Y") * 5f);
@@ -52,44 +72,46 @@ public class TouchInputManager : MonoBehaviour
                 delta = Vector2.zero;
             }
         }
-        else {     
-            foreach (Touch touch in Input.touches) {
+        else { 
 
-                
-                    if (aim && touch.fingerId == aimTouch.fingerId) {                    
-
-                        if (touch.phase == TouchPhase.Moved) {
-                            delta = touch.deltaPosition;
-                        }
-                        if (touch.phase == TouchPhase.Ended) {
-                            delta = Vector2.zero;
-                        }
-
-                        if (touch.phase == TouchPhase.Stationary) {
-                            delta = Vector2.zero;
-                        }
-                        //aimTouch = touch;
-                    } else {
-                        drag += touch.deltaPosition / (2000 - 100 * touchSensitivity);
-                        drag = touch.phase == TouchPhase.Ended && Input.touchCount == 1 ? Vector2.zero : Vector2.ClampMagnitude(drag, 1);
-
-                        if (touch.phase == TouchPhase.Ended) {
-                            drag = Vector2.zero;
-                        }
-                    }                            
             }
-        }
+        /*foreach (Touch touch in Input.touches) {
+
+
+                if (aim && touch.fingerId == aimTouch.fingerId) {                    
+
+                    if (touch.phase == TouchPhase.Moved) {
+                        delta = touch.deltaPosition;
+                    }
+                    if (touch.phase == TouchPhase.Ended) {
+                        delta = Vector2.zero;
+                    }
+
+                    if (touch.phase == TouchPhase.Stationary) {
+                        delta = Vector2.zero;
+                    }
+                    //aimTouch = touch;
+                } else {
+                    drag += touch.deltaPosition / (2000 - 100 * touchSensitivity);
+                    drag = touch.phase == TouchPhase.Ended && Input.touchCount == 1 ? Vector2.zero : Vector2.ClampMagnitude(drag, 1);
+
+                    if (touch.phase == TouchPhase.Ended) {
+                        drag = Vector2.zero;
+                    }
+                }                            
+        */
+        
 
         if (pc.xThrow == 0)
             return;
         if (gm.gameState == GameState.Hit) {
            
-            SwitchAim(false);
+            //SwitchAim(false);
         }
     }
 
     public void SwitchAim(bool on) {
-        aim = on;
+        aim = !aim;
 
         
         if (gm.gameState == GameState.Playing)
@@ -104,5 +126,21 @@ public class TouchInputManager : MonoBehaviour
             }
 
         
+    }
+
+    private int lastPressed = 0; // -1 for left, 1 for right, 0 for none
+
+    public void setLeftPressed(bool pressed) {
+        leftPressed = pressed;
+        if (pressed) {
+            lastPressed = -1;  // Left was pressed last
+        }
+    }
+
+    public void setRightPressed(bool pressed) {
+        rightPressed = pressed;
+        if (pressed) {
+            lastPressed = 1;  // Right was pressed last
+        }
     }
 }
