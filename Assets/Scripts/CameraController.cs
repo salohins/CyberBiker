@@ -55,7 +55,7 @@ public class CameraController : MonoBehaviour {
             if (tim.aim) {
                 targetOffset = aimOffset;
 
-                fov = Mathf.Lerp(fov, 70f, Time.deltaTime * 1.5f);
+                fov = Mathf.Lerp(fov, 50f, Time.deltaTime * 1.5f);
                 GetComponent<Camera>().fieldOfView = fov;
                 //frameX = Mathf.Lerp(frameX, rotationX, Time.deltaTime * 5f);
                 //frameY = Mathf.Lerp(frameY, rotationY, Time.deltaTime * 5f);
@@ -73,7 +73,7 @@ public class CameraController : MonoBehaviour {
                 targetOffset += transform.forward * Mathf.Abs(sideOffset) * 2;
 
                 if (playerController.grounded) {
-                    fov = Mathf.Lerp(fov, 70f, Time.deltaTime * 1.5f);
+                    fov = Mathf.Lerp(fov, 60f, Time.deltaTime * 1.5f);
                     GetComponent<Camera>().fieldOfView = fov;
                 } else {
                     fov = Mathf.Lerp(fov, 80f, Time.deltaTime * 1f);
@@ -86,7 +86,7 @@ public class CameraController : MonoBehaviour {
         }
         else {
             targetOffset = new Vector3(0, 0, this.targetOffset.z - 2f);
-            fov = Mathf.Lerp(fov, 90f, Time.deltaTime * 3f);            
+            fov = Mathf.Lerp(fov, 60f, Time.deltaTime * 3f);            
             GetComponent<Camera>().fieldOfView = fov;
         }
 
