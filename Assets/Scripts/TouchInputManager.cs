@@ -57,8 +57,11 @@ public class TouchInputManager : MonoBehaviour
 
 
         if (!UnityEditor.EditorApplication.isRemoteConnected) {
+#if UNITY_EDITOR
+            // Code specific to Unity Editor
             drag = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
             delta = new Vector2(Input.GetAxis("Mouse X") * 5f, Input.GetAxis("Mouse Y") * 5f);
+
             if (Input.GetMouseButtonDown(1)) {
                 SwitchAim(true);
             }
@@ -69,13 +72,13 @@ public class TouchInputManager : MonoBehaviour
 
             if (aim) {
                 //drag = Vector2.zero;
-            } else {
+            }
+            else {
                 delta = Vector2.zero;
             }
+#endif
         }
-        else { 
 
-            }
         foreach (Touch touch in Input.touches) {
 
 
@@ -101,7 +104,9 @@ public class TouchInputManager : MonoBehaviour
                     drag = Vector2.zero;
                 }
             }
-        }
+        } 
+
+         
         
 
         if (pc.xThrow == 0)
