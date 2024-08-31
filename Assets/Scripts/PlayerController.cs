@@ -35,8 +35,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TMP_Text healthBarValue;
     [SerializeField] private Material healthBarMaterial;            
     [SerializeField] private GameObject playerMesh;    
-    [SerializeField] private GameObject scope;    
-    
+    [SerializeField] private GameObject scope;
+
+    [SerializeField] private ParticleSystem collectibleParticle;
+
     private float yawRotation;
     private float animationFrame;    
     private float maxSpeed;    
@@ -57,6 +59,10 @@ public class PlayerController : MonoBehaviour
 
     private GameObject hitObject;
     private GameObject _ragDoll;
+
+    public void PlayCollectibleParticle() {
+        collectibleParticle.Play();
+    }
 
     
 

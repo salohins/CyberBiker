@@ -14,6 +14,10 @@ public class CameraController : MonoBehaviour {
     [Tooltip("Dynamic Y axis rotation offset. Triggered by dragging the screeen left/right.")]
     [SerializeField] private float angleShiftOffset = -30f;
 
+    [Tooltip("Dynamic Y axis rotation offset. Triggered by dragging the screeen left/right.")]
+    [SerializeField] private float cameraXangle = 0;
+    [SerializeField] private float cameraYangle = 0;
+
     private Transform target;
     private GameplayManager gm;
     private TouchInputManager tim;
@@ -35,7 +39,7 @@ public class CameraController : MonoBehaviour {
         tim = FindFirstObjectByType<TouchInputManager>();
         gm = FindFirstObjectByType<GameplayManager>();
         playerController = FindFirstObjectByType<PlayerController>();
-        animator = GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();       
+        animator = GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>();
     }
 
     private void Update() {
@@ -45,7 +49,7 @@ public class CameraController : MonoBehaviour {
     }
 
     private void LateUpdate() {
-        
+
 
         Vector3 targetOffset;
 
@@ -73,20 +77,21 @@ public class CameraController : MonoBehaviour {
                 targetOffset += transform.forward * Mathf.Abs(sideOffset) * 2;
 
                 if (playerController.grounded) {
-                    fov = Mathf.Lerp(fov, 60f, Time.deltaTime * 1.5f);
+                    fov = Mathf.Lerp(fov, 50f, Time.deltaTime * 1.5f);
                     GetComponent<Camera>().fieldOfView = fov;
-                } else {
+                }
+                else {
                     fov = Mathf.Lerp(fov, 80f, Time.deltaTime * 1f);
                     GetComponent<Camera>().fieldOfView = fov;
                 }
-                
+
             }
 
 
         }
         else {
             targetOffset = new Vector3(0, 0, this.targetOffset.z - 2f);
-            fov = Mathf.Lerp(fov, 60f, Time.deltaTime * 3f);            
+            fov = Mathf.Lerp(fov, 60f, Time.deltaTime * 3f);
             GetComponent<Camera>().fieldOfView = fov;
         }
 
@@ -99,11 +104,11 @@ public class CameraController : MonoBehaviour {
         );
         transform.position = target.position - transform.TransformDirection(offset);
 
-        
+
         //aimTarget.transform.position = transform.position + transform.forward * 30f;
         //aimTarget.transform.rotation = transform.rotation;
 
-        
+
 
     }
 
@@ -114,15 +119,15 @@ public class CameraController : MonoBehaviour {
                 rotationY += tim.delta.x * Time.deltaTime * 6f;
                 rotationX -= tim.delta.y * Time.deltaTime * 6f;
 
-                rotationY = Mathf.Clamp(rotationY, -70,70);
-                rotationX = Mathf.Clamp(rotationX, -20, 20);
+                rotationY = 0;
+                rotationX = 0;
                 animator.SetFloat("dragY", rotationX);
                 animator.SetFloat("CamAngle", rotationY);
 
             }
             else {
                 rotationX = Mathf.Lerp(rotationX, 0, Time.deltaTime * 5f);
-                rotationY = Mathf.Lerp(rotationY, 0, Time.deltaTime * 5f);                   
+                rotationY = Mathf.Lerp(rotationY, 0, Time.deltaTime * 5f);
             }
         }
         else {
@@ -132,10 +137,10 @@ public class CameraController : MonoBehaviour {
         Vector3 targetRotation;
         Vector3 targetRotationShift = new Vector3(rotationX, rotationY, 0);
 
-
+         
         rotationOffset = Mathf.Lerp(rotationOffset, playerController.xThrow * (tim.aim ? 0 : angleShiftOffset), Time.deltaTime);
 
-        targetRotation = new Vector3(0, 0, rotationOffset);
+        targetRotation = new Vector3(cameraXangle, cameraYangle, rotationOffset);
 
         transform.rotation = Quaternion.Euler(targetRotation + targetRotationShift);
     }
