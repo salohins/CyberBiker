@@ -78,7 +78,6 @@ public class TouchInputManager : MonoBehaviour
             }
 #endif
         }
-
         foreach (Touch touch in Input.touches) {
 
 
@@ -105,8 +104,6 @@ public class TouchInputManager : MonoBehaviour
                 }
             }
         } 
-
-         
         
 
         if (pc.xThrow == 0)
