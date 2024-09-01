@@ -37,28 +37,14 @@ public class WorldGenerator : MonoBehaviour {
     [Tooltip("When cars start spawning")]
     public float carSpawnStartDistance;
 
-    [SerializeField]
-    private float carOffsetModifier;
 
     [SerializeField]
     private int carBufferSize;        
-    [SerializeField]
-    private int oneCarRow = 0;
-    [SerializeField]
-    private int twoCarRow = 0;    
-    [SerializeField]
-    private int threeCarRow = 1;
 
     private Vector3 carSpawnPosition;
     
     private bool carsSpawned;
 
-    [SerializeField]
-    private GameObject collectiblePrefab;
-    [SerializeField]
-    private float collectibleOffset = 5;
-    [SerializeField]
-    private float collectibleMaxLineDistance = 100;
 
 
 
@@ -69,9 +55,12 @@ public class WorldGenerator : MonoBehaviour {
     private List<Vector3> carSpawnPositionLine;
 
     // List to store rows of DodgePoints
-    private List<List<DodgePoint>> rowsOfCars;        
+    private List<List<DodgePoint>> rowsOfCars;       
+    
+    private DifficultyManager difficultyManager;
 
     void Start() {
+        difficultyManager = FindAnyObjectByType<DifficultyManager>();
         activeCars = new List<GameObject>();
         carSpawnPositionLine = new List<Vector3>();
 
@@ -171,9 +160,9 @@ public class WorldGenerator : MonoBehaviour {
 
     private List<DodgePoint> SpawnCarWave(List<DodgePoint> PrevPassPoints) {
 
-        if (carSpawnPositionLine.Count > 0) {
+        /*if (carSpawnPositionLine.Count > 0) {
             return PrevPassPoints;
-        }
+        }*/
 
         RaycastHit hit;
 
@@ -195,16 +184,17 @@ public class WorldGenerator : MonoBehaviour {
 
         GameObject spawnTile = hit.transform.gameObject;
         Transform[] carLines = spawnTile.GetComponent<Tile>().carLines;
+        Difficulty difficulty = difficultyManager.currentDifficulty;
 
         // Determine the number of cars to spawn based on the given proportions
-        int totalRows = oneCarRow + twoCarRow + threeCarRow;
+        int totalRows = difficulty.oneCarRow + difficulty.twoCarRow + difficulty.threeCarRow;
         int randomValue = UnityEngine.Random.Range(1, totalRows + 1);
 
         int carsToSpawn;
-        if (randomValue <= oneCarRow) {
+        if (randomValue <= difficulty.oneCarRow) {
             carsToSpawn = 1;
         }
-        else if (randomValue <= oneCarRow + twoCarRow) {
+        else if (randomValue <= difficulty.oneCarRow + difficulty.twoCarRow) {
             carsToSpawn = 2;
         }
         else {
@@ -273,7 +263,7 @@ public class WorldGenerator : MonoBehaviour {
 
             // Add randomness to the z offset to avoid spawning cars directly next to each other
             float randomOffset = UnityEngine.Random.Range(-2.5f, 2.5f); // Adjust the range for more or less randomness
-            spawnPosition.z = spawnOffset + randomOffset + (PrevPassPoints == null ? 0 : carOffsetModifier);
+            spawnPosition.z = spawnOffset + randomOffset + (PrevPassPoints == null ? 0 : difficulty.carOffsetModifier);
 
             if (!Physics.Raycast(spawnPosition + Vector3.up + Vector3.forward * 10f, Vector3.down)) {
                 outsidePosition = spawnPosition;
@@ -286,14 +276,11 @@ public class WorldGenerator : MonoBehaviour {
             car.GetComponent<Car>().whichWall = 1;
             car.GetComponent<Obstacle>().line = line.GetComponent<Line>().number;
 
-            /*if (Physics.Raycast(new Ray(spawnPosition + Vector3.up * 2, Vector3.back), out hit)) {
-                SpawnCollectibles(spawnPosition + Vector3.up * 2 - Vector3.forward * 30, hit.point + Vector3.forward * 10, car);
-            }*/
 
-            if (PrevPassPoints != null && !collectibleSpawned && (car.GetComponent<Obstacle>().GetBack() + Vector3.back * 50f + Vector3.up).z > PrevPassPoints.Last().GetPosition().z) {
+            /*if (PrevPassPoints != null && !collectibleSpawned && (car.GetComponent<Obstacle>().GetBack() + Vector3.back * 50f + Vector3.up).z > PrevPassPoints.Last().GetPosition().z) {
                 SpawnCollectibles(car.GetComponent<Obstacle>().GetBack() + Vector3.back * 50f + Vector3.up, PrevPassPoints.Last().GetPosition(), car);
                 collectibleSpawned = true;
-            }
+            }*/
 
 
             activeCars.Add(car);
@@ -360,7 +347,7 @@ public class WorldGenerator : MonoBehaviour {
         return degrees * Mathf.PI / 180;
     }
 
-    void SpawnCollectibles(Vector3 pointA, Vector3 pointB, GameObject parent) {        
+    /*void SpawnCollectibles(Vector3 pointA, Vector3 pointB, GameObject parent) {        
 
         float maxDistance;        
 
@@ -386,7 +373,7 @@ public class WorldGenerator : MonoBehaviour {
                 Instantiate(collectiblePrefab, spawnPosition, collectiblePrefab.transform.rotation, parent.transform);
             }
         }
-    }
+    }*/
 
     IEnumerator ShiftTiles() {
         Destroy(_activeTiles[0]);

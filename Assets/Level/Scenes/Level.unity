@@ -2542,6 +2542,11 @@ Transform:
   - {fileID: 2006132650}
   m_Father: {fileID: 317476272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &298185945 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4276723350828609493, guid: 4c9ef71d036647145bc3b362b05ba2cc, type: 3}
+  m_PrefabInstance: {fileID: 2663171251559145836}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &298517946
 GameObject:
   m_ObjectHideFlags: 0
@@ -17486,12 +17491,30 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7751382767193195630, guid: 4c9ef71d036647145bc3b362b05ba2cc, type: 3}
   m_PrefabInstance: {fileID: 2663171251559145836}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 298185945}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bcd03f714c55dab45ab39b3143c4c867, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1416553922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298185945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54982a0cf6bcc5745b636da22ecb3161, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameDuration: 3
+  difficultySections:
+  - {fileID: 3274471787456314188, guid: dee1c5dbd22449b498d7cd50197b4eea, type: 3}
+  - {fileID: 3274471787456314188, guid: 322cd40e5a347de4e8d827b4522f8add, type: 3}
+  - {fileID: 3274471787456314188, guid: 2e3ec7bc52e5cb54083510b1f11c560b, type: 3}
+  currentDifficulty: {fileID: 0}
 --- !u!1 &1421349450
 GameObject:
   m_ObjectHideFlags: 0
@@ -22006,7 +22029,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 393, y: -101}
+  m_AnchoredPosition: {x: 393, y: -101.00012}
   m_SizeDelta: {x: 789.3, y: -207.27002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1904552573
@@ -26004,7 +26027,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4276723350828609493, guid: 4c9ef71d036647145bc3b362b05ba2cc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1416553922}
   m_SourcePrefab: {fileID: 100100000, guid: 4c9ef71d036647145bc3b362b05ba2cc, type: 3}
 --- !u!1 &2674099348265860048
 GameObject:
@@ -29127,7 +29153,7 @@ PrefabInstance:
       objectReference: {fileID: 7129751277783991566, guid: d54f9fd3c352cb843a7b9ea44e386463, type: 3}
     - target: {fileID: 4039233204830137155, guid: 64822171767440d428fcf40531423e07, type: 3}
       propertyPath: carSpawnStartDistance
-      value: 400
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 4039233204830137155, guid: 64822171767440d428fcf40531423e07, type: 3}
       propertyPath: carSpawners.Array.size
@@ -29700,15 +29726,15 @@ GameObject:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 2663171251559145836}
+  - {fileID: 8059963132930623644}
+  - {fileID: 4610798509308068792}
+  - {fileID: 963194228}
+  - {fileID: 985077762}
   - {fileID: 705507995}
   - {fileID: 7992554182066142188}
   - {fileID: 458665345}
-  - {fileID: 2663171251559145836}
-  - {fileID: 8059963132930623644}
-  - {fileID: 985077762}
-  - {fileID: 963194228}
   - {fileID: 1776632350}
-  - {fileID: 4610798509308068792}
   - {fileID: 684408135}
   - {fileID: 1885148338}
   - {fileID: 1757085214}
