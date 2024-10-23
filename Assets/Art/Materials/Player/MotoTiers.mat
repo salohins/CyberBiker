@@ -100,12 +100,12 @@ Material:
     - _MatcapIntensity: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalMapStrength: 306.19
+    - _NormalMapStrength: 22.5
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionFresnelBias: -0.088
     - _ReflectionMaskOffset: -1
-    - _RimBias: 0.54
+    - _RimBias: 0.404
     - _SecondaryTex_Blend: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -114,7 +114,7 @@ Material:
     - _UVSec: 1
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.7264151, g: 0.5311054, b: 0.650427, a: 1}
     - _CurvedWorldBendSettings: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionMap_Scroll: {r: 0, g: 0, b: 0, a: 0}

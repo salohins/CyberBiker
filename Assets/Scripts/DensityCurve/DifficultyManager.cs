@@ -24,11 +24,11 @@ public class DifficultyManager : MonoBehaviour {
         if (difficultySections != null && difficultySections.Length > 0) {
             currentDifficulty = difficultySections[0];
             sectionDuration = gameDurationInSeconds / difficultySections.Length; // Calculate section duration in seconds
-            Debug.Log($"Game started. Each section duration: {sectionDuration:F2} seconds.");
-            Debug.Log($"Initial difficulty index: {currentDifficultyIndex}");
+            //Debug.Log($"Game started. Each section duration: {sectionDuration:F2} seconds.");
+           // Debug.Log($"Initial difficulty index: {currentDifficultyIndex}");
         }
         else {
-            Debug.LogError("Difficulty sections array is empty or null.");
+            //Debug.LogError("Difficulty sections array is empty or null.");
         }
     }
 
@@ -45,7 +45,7 @@ public class DifficultyManager : MonoBehaviour {
         elapsedTime += Time.deltaTime; // Track elapsed time in seconds
 
         // Log the elapsed time and current difficulty index
-        Debug.Log($"Elapsed Time: {elapsedTime:F2} seconds, Current Difficulty Index: {currentDifficultyIndex}");
+        //Debug.Log($"Elapsed Time: {elapsedTime:F2} seconds, Current Difficulty Index: {currentDifficultyIndex}");
 
         // Check if it's time to move to the next difficulty section
         if (elapsedTime >= sectionDuration) {
@@ -59,10 +59,10 @@ public class DifficultyManager : MonoBehaviour {
             currentDifficulty = difficultySections[currentDifficultyIndex];
             elapsedTime = 0f; // Reset elapsed time for the next section
 
-            Debug.Log($"Difficulty changed! New Difficulty Index: {currentDifficultyIndex}");
+            //Debug.Log($"Difficulty changed! New Difficulty Index: {currentDifficultyIndex}");
         }
         else {
-            Debug.Log("Max difficulty level reached. No more changes.");
+            //Debug.Log("Max difficulty level reached. No more changes.");
         }
     }
 

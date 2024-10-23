@@ -44,8 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a95d5d81475aa0f459f1df6d500bbf95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSpeed: 150
-  duration: 1
-  oneCarRow: 0
-  twoCarRow: 0
+  carOffsetModifier: 50
+  oneCarRow: 1
+  twoCarRow: 1
   threeCarRow: 1

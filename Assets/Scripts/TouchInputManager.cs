@@ -4,7 +4,6 @@ using UnityEngine;
 using Gameplay;
 using UnityEngine.UI;
 using UnityEngine.Animations.Rigging;
-using Unity.VisualScripting;
 
 public class TouchInputManager : MonoBehaviour
 {
@@ -54,10 +53,10 @@ public class TouchInputManager : MonoBehaviour
             drag = new Vector2(0, drag.y);  // No button pressed
         }
 
-
+#if UNITY_EDITOR
 
         if (!UnityEditor.EditorApplication.isRemoteConnected) {
-#if UNITY_EDITOR
+
             // Code specific to Unity Editor
             drag = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
             delta = new Vector2(Input.GetAxis("Mouse X") * 5f, Input.GetAxis("Mouse Y") * 5f);
@@ -76,8 +75,9 @@ public class TouchInputManager : MonoBehaviour
             else {
                 delta = Vector2.zero;
             }
-#endif
+
         }
+#endif
         foreach (Touch touch in Input.touches) {
 
 
@@ -134,8 +134,7 @@ public class TouchInputManager : MonoBehaviour
 
     private int lastPressed = 0; // -1 for left, 1 for right, 0 for none
 
-    public void setLeftPressed(bool pressed) {
-        Debug.Log(1);
+    public void setLeftPressed(bool pressed) {        
         leftPressed = pressed;
         if (pressed) {
             lastPressed = -1;  // Left was pressed last
