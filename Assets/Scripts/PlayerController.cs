@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Gameplay;
 using UnityEngine.Animations.Rigging;
+using UnityEditor;
 
 public class PlayerController : MonoBehaviour
 {
@@ -126,18 +127,74 @@ public class PlayerController : MonoBehaviour
         else
             xThrow = 0;
 
-        RaycastHit hit;
 
+
+
+
+        //if (tim.aim) {
+        //    RaycastHit hit;
+
+        //    if (Physics.Raycast(new Ray(camera.transform.position, camera.transform.forward), out hit)) {                          
+
+        //       if (hit.transform.gameObject.GetComponent<Enemy>() != null) {
+
+        //}
+        //}
+        //}
+
+        
+    }
+
+    private bool isShooting;
+
+    [SerializeField]
+    GameObject bullet;
+
+    IEnumerator ShootRate() {
+        isShooting = true;
+        
+        
+
+        
+
+        
+
+        RaycastHit hit;
         if (Physics.Raycast(new Ray(camera.transform.position, camera.transform.forward), out hit)) {
-            if (tim.aim) {
-                if (hit.transform.gameObject.GetComponent<Car>() != null) {
-                    if (!shoot && animationRigging.layers[0].rig.weight > .8f) {
-                        shoot = true;
-                        Shoot();
-                    }
-                }
-            }
+            //Debug.Log(hit.transform.name);
+
+            Vector3 targetPosition = hit.point;
+
+            Vector3 direction = targetPosition - muzzleFlash.transform.position;
+
+
+            Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
+
+            
+
+      
+                muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
+                Instantiate(bullet, muzzleFlash.transform.position, bodyTargetRotation);
+                animator.SetTrigger("Shoot");
+            
+        } else {
+            Vector3 targetPosition = camera.transform.position + camera.transform.forward * 100f;
+
+            Vector3 direction = targetPosition - muzzleFlash.transform.position;
+
+
+            Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
+
+            Instantiate(bullet, muzzleFlash.transform.position, camera.transform.rotation);
         }
+
+
+
+        //enemey.GetComponent<Enemy>().GetDamage(20);
+
+        yield return new WaitForSeconds(.2f);
+
+        isShooting = false;
     }
 
     private void Update() {    
@@ -156,7 +213,26 @@ public class PlayerController : MonoBehaviour
             gm.SwitchGameState(GameState.GameOver);
 
         if (gm.gameState == GameState.GameOver)
-            maxSpeed = 0;                
+            maxSpeed = 0;
+
+        if (tim.aim && !isShooting && animationRigging.layers[0].rig.weight > .8f) {
+
+
+
+            StartCoroutine(ShootRate());
+            
+
+            //muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
+            //animator.SetTrigger("Shoot");
+
+
+
+            //hit.transform.GetComponent<Enemy>().GetDamage(20);
+
+
+        }
+
+
     }
 
     private void TakeGun() => armed = true;
@@ -190,7 +266,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void ProcessYaw() {
-        yawRotation = Mathf.Lerp(yawRotation, xThrow * rotationSensitivity, Time.deltaTime * 4f);
+        yawRotation = Mathf.Lerp(yawRotation, xThrow * rotationSensitivity, Time.deltaTime * 3f);
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, yawRotation, transform.eulerAngles.z);
     }
@@ -214,14 +290,14 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
 
         if (Physics.Raycast(new Ray(camera.transform.position, camera.transform.forward), out hit)) {
-            if (hit.transform.gameObject.GetComponent<Car>() != null) {
-                hit.transform.gameObject.GetComponent<Car>().GetDamage();
+            if (hit.transform.gameObject.CompareTag("Enemy")) {                
+                hit.transform.GetComponent<Enemy>().GetDamage(20);
             }
         }        
     }
 
     private void ProcessAnimations() {
-        animationFrame = Mathf.Lerp(animationFrame, xThrow, Time.deltaTime * 5.5f);
+        animationFrame = Mathf.Lerp(animationFrame, xThrow, Time.deltaTime * 3f);
         animator.SetFloat("dragX", animationFrame);        
         animator.SetBool("Aim", tim.aim);
 
@@ -298,6 +374,8 @@ public class PlayerController : MonoBehaviour
     }    
 
     private void OnCollisionEnter(Collision collision) {
+        Debug.Log("Collision");
+
         if (collision.transform.tag == "Obstacle" && gm.gameState == GameState.Playing) {
 
             Vector3 carBack = collision.transform.position - collision.transform.forward * (collision.collider.bounds.size.z/2);
@@ -331,5 +409,20 @@ public class PlayerController : MonoBehaviour
 
             //GetDamage(collision.gameObject.GetComponent<Obstacle>().damage);
         }
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.transform.CompareTag("Enemy")) {
+            Instantiate(collectibleParticle, other.transform.position, Quaternion.identity, transform);
+            GetDamage(10);
+        }
+    }
+
+    private void OnParticleTrigger() {
+        GetDamage(10);
+    }
+
+    private void OnParticleCollision(GameObject other) {
+        Debug.Log("Im hit");
     }
 }

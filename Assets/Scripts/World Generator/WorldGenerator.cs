@@ -34,6 +34,11 @@ public class WorldGenerator : MonoBehaviour {
     [SerializeField]
     private GameObject[] cars;
 
+    [SerializeField]
+    private GameObject enemy;
+
+    private GameObject activeEnemy;
+
     [Tooltip("When cars start spawning")]
     public float carSpawnStartDistance;
 
@@ -60,6 +65,7 @@ public class WorldGenerator : MonoBehaviour {
     private DifficultyManager difficultyManager;
 
     void Start() {
+        activeEnemy = FindAnyObjectByType<Enemy>().gameObject;
         difficultyManager = FindAnyObjectByType<DifficultyManager>();
         activeCars = new List<GameObject>();
         carSpawnPositionLine = new List<Vector3>();
@@ -284,8 +290,14 @@ public class WorldGenerator : MonoBehaviour {
 
 
             activeCars.Add(car);
-
+            spawnPosition.z = spawnOffset + randomOffset + (PrevPassPoints == null ? 0 : difficulty.carOffsetModifier);
             spawnedObstacles.Add(line, car.GetComponent<Obstacle>());
+        }
+
+        if (activeEnemy == null && freeLines.Length > 0) {
+            Vector3 spawnPosition = freeLines[UnityEngine.Random.Range(0, freeLines.Length - 1)].transform.position;
+            spawnPosition.z = spawnOffset + difficulty.carOffsetModifier;
+            activeEnemy = Instantiate(enemy, spawnPosition, Quaternion.identity);
         }
 
         if (outsidePosition != Vector3.zero) {

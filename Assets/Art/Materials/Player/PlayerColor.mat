@@ -96,7 +96,7 @@ Material:
     - _DstBlend: 0
     - _FadeRate: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.456
+    - _Glossiness: 0.635
     - _GlossyReflections: 1
     - _IncludeVertexColor: 0
     - _MatcapBlendMode: 1
