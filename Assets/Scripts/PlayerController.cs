@@ -20,8 +20,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dodgeMaxSpeed;
     [Tooltip("Maximum angle for motorcycle lean animation (it's just visual thing and does not affect the gameplay)")]
     [SerializeField] private float leanRange;
+    [SerializeField] private float shotInterval = .2f;
 
-    [Header("Do not touch :)")]
+    [Header("Do not touch")]
 
     public Transform[] rayCheck;
     public GameObject cameraTarget;
@@ -31,21 +32,22 @@ public class PlayerController : MonoBehaviour
     
     [SerializeField] CameraController camera;    
     [SerializeField] GameObject ragDoll;
-    [SerializeField] GameObject muzzleFlash;    
+    [SerializeField] GameObject muzzleFlash;
+    [SerializeField] private GameObject bullet;
 
     [SerializeField] private TMP_Text healthBarValue;
     [SerializeField] private Material healthBarMaterial;            
-    [SerializeField] private GameObject playerMesh;    
-    [SerializeField] private GameObject scope;
-
+    [SerializeField] private GameObject playerMesh;
     [SerializeField] private ParticleSystem collectibleParticle;
-
+    
+    [SerializeField] private GameObject scope;
+               
     private float yawRotation;
     private float animationFrame;    
     private float maxSpeed;    
     private float health;
 
-    public bool grounded;
+    [HideInInspector] public bool grounded;
 
     private bool armed;
     public int wallDirection { get; private set; }
@@ -61,12 +63,12 @@ public class PlayerController : MonoBehaviour
     private GameObject hitObject;
     private GameObject _ragDoll;
 
+    private bool isShooting;
+    public bool shoot = false;
+
     public void PlayCollectibleParticle() {
         collectibleParticle.Play();
-    }
-
-    
-
+    }    
         
     void Start() {
         health = 100f;
@@ -85,7 +87,6 @@ public class PlayerController : MonoBehaviour
         SwitchRagDoll(false);
     }
 
-    public bool shoot = false;
 
     public void SwitchShoot() {
         shoot = false;        
@@ -145,37 +146,23 @@ public class PlayerController : MonoBehaviour
         
     }
 
-    private bool isShooting;
-
-    [SerializeField]
-    GameObject bullet;
+    
 
     IEnumerator ShootRate() {
         isShooting = true;
-        
-        
-
-        
-
-        
-
+                                
         RaycastHit hit;
-        if (Physics.Raycast(new Ray(camera.transform.position, camera.transform.forward), out hit)) {
-            //Debug.Log(hit.transform.name);
 
+        if (Physics.Raycast(new Ray(camera.transform.position, camera.transform.forward), out hit)) {
             Vector3 targetPosition = hit.point;
 
             Vector3 direction = targetPosition - muzzleFlash.transform.position;
 
-
             Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
-
-            
-
-      
-                muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
-                Instantiate(bullet, muzzleFlash.transform.position, bodyTargetRotation);
-                animator.SetTrigger("Shoot");
+                  
+            muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
+            Instantiate(bullet, muzzleFlash.transform.position, bodyTargetRotation);
+            animator.SetTrigger("Shoot");
             
         } else {
             Vector3 targetPosition = camera.transform.position + camera.transform.forward * 100f;
@@ -186,13 +173,9 @@ public class PlayerController : MonoBehaviour
             Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
 
             Instantiate(bullet, muzzleFlash.transform.position, camera.transform.rotation);
-        }
+        }        
 
-
-
-        //enemey.GetComponent<Enemy>().GetDamage(20);
-
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(shotInterval);
 
         isShooting = false;
     }
@@ -349,9 +332,7 @@ public class PlayerController : MonoBehaviour
         tc.startFade(false);        
         SwitchRagDoll(false);
     }
-
     
-
     private void SwitchRagDoll(bool on) {
         if (on) {
             _ragDoll = Instantiate(ragDoll, motorcycleMesh.position, motorcycleMesh.rotation);
@@ -373,9 +354,7 @@ public class PlayerController : MonoBehaviour
         return angle;
     }    
 
-    private void OnCollisionEnter(Collision collision) {
-        Debug.Log("Collision");
-
+    private void OnCollisionEnter(Collision collision) {        
         if (collision.transform.tag == "Obstacle" && gm.gameState == GameState.Playing) {
 
             Vector3 carBack = collision.transform.position - collision.transform.forward * (collision.collider.bounds.size.z/2);
@@ -405,9 +384,7 @@ public class PlayerController : MonoBehaviour
             SwitchRagDoll(true);
 
 
-            playerMesh.SetActive(false);            
-
-            //GetDamage(collision.gameObject.GetComponent<Obstacle>().damage);
+            playerMesh.SetActive(false);                        
         }
     }
 

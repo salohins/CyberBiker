@@ -14,7 +14,25 @@ public enum EnemyState {
 }
 
 public class Enemy : MonoBehaviour {
+    
+    [SerializeField] private int health = 100;
+    [SerializeField] private float shootInterval = .5f;    
+        
     [SerializeField] private Transform[] rayCheck;
+
+    [SerializeField] private GameObject motoMesh;
+    [SerializeField] private Transform bodyRotation;
+
+    [SerializeField] private Transform leftBulletSpawn;
+    [SerializeField] private Transform rightBulletSpawn;
+    [SerializeField] private GameObject bullet;
+    [SerializeField] public GameObject bulletParent;
+
+    [SerializeField] private ParticleSystem gunParticle1;
+    [SerializeField] private ParticleSystem gunParticle2;
+    [SerializeField] ParticleSystem damageParticle;
+    [SerializeField] ParticleSystem explosion;
+
     private EnemyState state;
 
     private GameObject player;
@@ -24,42 +42,17 @@ public class Enemy : MonoBehaviour {
     public float distanceController;
     private float _playerDistance;
 
-    [SerializeField]
-    private GameObject motoMesh;
-
-    [SerializeField]
-    private Transform bodyRotation;
-
-    [SerializeField]
-    private ParticleSystem gunParticle1;
-
-    [SerializeField]
-    private ParticleSystem gunParticle2;
-
-    [SerializeField]
-    private Transform leftBulletSpawn;
-
-    [SerializeField]
-    private GameObject bullet;
-
-    [SerializeField]
-    public GameObject bulletParent;
-
-    [SerializeField]
-    private Transform rightBulletSpawn;
-
-    [SerializeField]
-    float health = 100f;
-
-    [SerializeField]
-    ParticleSystem damageParticle;
-
     private Animator animator;
     private RigBuilder animationRigging;
 
     private bool armed;
+    private bool isShootingRunning;
+    private GameObject bulletHit;
 
-    [SerializeField] ParticleSystem explosion;
+    private AIController aiConntroller;
+    private int currentWaypointIndex = 1;
+    private Vector3 followTarget;
+    DodgePoint path;
 
     public float playerDistance {
         get {
@@ -78,13 +71,7 @@ public class Enemy : MonoBehaviour {
             _playerDistance = value;
         }
     }
-
-    private AIController aiConntroller;
-    private int currentWaypointIndex = 1;
-
-    Vector3 followTarget;
-
-    DodgePoint path;
+    
 
     void Start() {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -97,32 +84,7 @@ public class Enemy : MonoBehaviour {
             bulletParent = GameObject.FindGameObjectWithTag("Finish");
         }
     }
-
-    private void GunShoot1() {
-        Vector3 targetPosition = player.transform.position + Vector3.up * 3;
-       
-        Vector3 direction = targetPosition - rightBulletSpawn.transform.position;
-
-
-        Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
-
-        Instantiate(bullet, rightBulletSpawn.transform.position, bodyTargetRotation, bulletParent.transform);
-        //gunParticle1.Play();
-    }
-
-    private void GunShoot2() {
-        Vector3 targetPosition = player.transform.position + Vector3.up * 3;
-        
-        Vector3 direction = targetPosition - leftBulletSpawn.transform.position;
-
-
-        Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
-
-
-        Instantiate(bullet, leftBulletSpawn.transform.position, bodyTargetRotation, bulletParent.transform);
-        //gunParticle2.Play();
-    }
-
+   
     private void Update() {
         // Handle the enemy's body rotation based on movement or look target
         var targetRotation = transform.eulerAngles;
@@ -167,43 +129,6 @@ public class Enemy : MonoBehaviour {
             gunParticle2.transform.LookAt(player.transform.position + Vector3.up * 3f);
             gunParticle1.transform.LookAt(player.transform.position + Vector3.up * 3f);
         }
-    }
-
-    public float timeBetweenShots = .5f;
-    private bool isShootingRunning;
-
-    private void Shoot() {
-        StartCoroutine(ShootArmsWithDelay());
-    }
-
-    private IEnumerator ShootArmsWithDelay() {
-        isShootingRunning = true;
-        // First shot with the left arm
-        animator.SetLayerWeight(2, 1);
-        animator.SetLayerWeight(1, 1);
-        GunShoot1();
-
-        animator.SetTrigger("LeftArmShoot");
-         // Play particle effect for left arm
-
-        yield return new WaitForSeconds(.5f);
-
-        // Second shot with the right arm
-
-        GunShoot2();
-        animator.SetTrigger("RightArmShoot");
-         // Play particle effect for right arm
-
-        yield return new WaitForSeconds(.5f);
-
-        // Reset the layers back to prevent overriding other animations
-        animator.SetLayerWeight(2, 0);
-        animator.SetLayerWeight(1, 0);
-        isShootingRunning = false;
-    }
-
-    private void TakeGun() {
-        armed = true;
     }
 
     private void FixedUpdate() {
@@ -255,6 +180,51 @@ public class Enemy : MonoBehaviour {
         }
     }
 
+    private void Shoot() {
+        StartCoroutine(ShootArmsWithDelay());
+    }
+
+    private IEnumerator ShootArmsWithDelay() {
+        isShootingRunning = true;
+        // First shot with the left arm
+        animator.SetLayerWeight(2, 1);
+        animator.SetLayerWeight(1, 1);
+        GunShoot(0);
+
+        animator.SetTrigger("LeftArmShoot");
+         // Play particle effect for left arm
+
+        yield return new WaitForSeconds(shootInterval);
+
+        // Second shot with the right arm
+
+        GunShoot(1);
+        animator.SetTrigger("RightArmShoot");
+         // Play particle effect for right arm
+
+        yield return new WaitForSeconds(shootInterval);
+
+        // Reset the layers back to prevent overriding other animations
+        animator.SetLayerWeight(2, 0);
+        animator.SetLayerWeight(1, 0);
+        isShootingRunning = false;
+    }
+
+    private void GunShoot(int gunIndex) {
+        Transform targetGun = gunIndex == 0 ? leftBulletSpawn : rightBulletSpawn;
+
+        Vector3 targetPosition = player.transform.position + Vector3.up * 3;
+
+        Vector3 direction = targetPosition - targetGun.transform.position;
+
+        Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
+
+
+        Instantiate(bullet, targetGun.transform.position, bodyTargetRotation, bulletParent.transform);
+    }
+
+    private void TakeGun() => armed = true;      
+    
     private void ClearPath() {
         path = null;
         currentWaypointIndex = 1;
@@ -297,9 +267,7 @@ public class Enemy : MonoBehaviour {
             // Logic for handling each particle when it triggers
             Debug.Log("A particle triggered the collider!");
         }
-    }
-
-    private GameObject bulletHit;
+    }    
 
     private void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Enemy")) {

@@ -265,7 +265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f439892ba5c76f34eb0b3024698a45a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletSpeed: 500
+  bulletSpeed: 700
   trailPrefab: {fileID: 0}
 --- !u!54 &6023321392183482423
 Rigidbody:
