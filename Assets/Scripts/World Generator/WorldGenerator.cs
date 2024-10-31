@@ -295,7 +295,7 @@ public class WorldGenerator : MonoBehaviour {
         }
 
         if (activeEnemy == null && freeLines.Length > 0) {
-            Vector3 spawnPosition = freeLines[UnityEngine.Random.Range(0, freeLines.Length - 1)].transform.position;
+            Vector3 spawnPosition = freeLines[UnityEngine.Random.Range(0, freeLines.Length)].transform.position;
             spawnPosition.z = spawnOffset + difficulty.carOffsetModifier;
             activeEnemy = Instantiate(enemy, spawnPosition, Quaternion.identity);
         }

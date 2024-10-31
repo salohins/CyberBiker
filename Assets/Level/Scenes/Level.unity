@@ -17767,7 +17767,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &846141826
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17777,7 +17777,7 @@ RectTransform:
   m_GameObject: {fileID: 846141825}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.21215294, y: 0.21215294, z: 0.21215294}
+  m_LocalScale: {x: 0.03588355, y: 0.03588355, z: 0.03588355}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7992554182066142188}
@@ -19035,7 +19035,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetOffset: {x: 0, y: -1.7, z: 9}
-  aimOffset: {x: -1.38, y: -1.47, z: 2}
+  aimOffset: {x: -1.38, y: -1.47, z: 1.5}
   smoothness: 5
   xShiftOffset: -5
   yShiftOffset: 2
@@ -37092,7 +37092,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1854996881
 RectTransform:
   m_ObjectHideFlags: 0
@@ -48023,6 +48023,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3737756122124406898, guid: faa7063db795e1e4cbe53403e3b67948, type: 3}
       propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3768420809719183418, guid: faa7063db795e1e4cbe53403e3b67948, type: 3}
+      propertyPath: m_Data.m_ConstrainedRotationAxes.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3768420809719183418, guid: faa7063db795e1e4cbe53403e3b67948, type: 3}
+      propertyPath: m_Data.m_ConstrainedRotationAxes.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3910659230279519786, guid: faa7063db795e1e4cbe53403e3b67948, type: 3}
