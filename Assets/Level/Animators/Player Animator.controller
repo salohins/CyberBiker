@@ -366,6 +366,12 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
+  - m_Name: JacketSteering
+    m_Type: 1
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -436,39 +442,39 @@ BlendTree:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Blend Tree
+  m_Name: Jacket Steering While Aiming
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: -1824355364286073622, guid: af071cb15a50e334d9ba5395f2694837, type: 3}
-    m_Threshold: 0
-    m_Position: {x: -70, y: 0}
-    m_TimeScale: 1
-    m_CycleOffset: 0
-    m_DirectBlendParameter: dragX
-    m_Mirror: 0
-  - serializedVersion: 2
     m_Motion: {fileID: 1135428306378397922, guid: af071cb15a50e334d9ba5395f2694837, type: 3}
-    m_Threshold: 0.5
-    m_Position: {x: 70, y: 0}
+    m_Threshold: -1
+    m_Position: {x: -1, y: 0}
     m_TimeScale: 1
     m_CycleOffset: 0
-    m_DirectBlendParameter: dragX
+    m_DirectBlendParameter: JacketSteering
     m_Mirror: 0
   - serializedVersion: 2
     m_Motion: {fileID: -6724414226404801208, guid: af071cb15a50e334d9ba5395f2694837, type: 3}
-    m_Threshold: 1
+    m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
     m_CycleOffset: 0
-    m_DirectBlendParameter: dragX
+    m_DirectBlendParameter: JacketSteering
     m_Mirror: 0
-  m_BlendParameter: CamAngle
+  - serializedVersion: 2
+    m_Motion: {fileID: -1824355364286073622, guid: af071cb15a50e334d9ba5395f2694837, type: 3}
+    m_Threshold: 1
+    m_Position: {x: 1, y: 0}
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: JacketSteering
+    m_Mirror: 0
+  m_BlendParameter: JacketSteering
   m_BlendParameterY: dragY
-  m_MinThreshold: 0
+  m_MinThreshold: -1
   m_MaxThreshold: 1
-  m_UseAutomaticThresholds: 1
+  m_UseAutomaticThresholds: 0
   m_NormalizedBlendValues: 0
-  m_BlendType: 2
+  m_BlendType: 0
 --- !u!1107 &1403848937640531327
 AnimatorStateMachine:
   serializedVersion: 6
@@ -569,7 +575,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 5546088521696807879}
+  m_Motion: {fileID: -6724414226404801208, guid: af071cb15a50e334d9ba5395f2694837, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

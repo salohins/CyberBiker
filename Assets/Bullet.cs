@@ -1,45 +1,50 @@
 using UnityEngine;
+using CyberBiker.Combat;
 
 public class Bullet : MonoBehaviour {
-    public float bulletSpeed = 30f; // Speed of the bullet
-    private Rigidbody rb;
-    [SerializeField] GameObject trailPrefab;
-
-    
-
-    void Start() {
-        rb = GetComponent<Rigidbody>();
-        //rb.velocity = transform.forward * bulletSpeed; // Move forward based on initial direction
-        //trailPrefab = Instantiate(trailPrefab, transform.position, Quaternion.identity);
+    [Tooltip("Base projectile speed, before inheriting forward velocity from the shooter.")]
+    [Min(0)] public float bulletSpeed = 30f;
+    [Tooltip("Fallback damage for bullets spawned without a weapon. Weapon-fired bullets use the shooter's Shooting Damage setting.")]
+    [SerializeField, Min(0)] private float damage = 10;
+    [Tooltip("Maximum projectile lifetime in seconds.")]
+    [SerializeField, Min(0.1f)] private float lifetime = 5;
+    private GameObject owner;
+    private bool consumed;
+    private readonly RaycastHit[] hits = new RaycastHit[16];
+    public void Initialize(GameObject owner, float damage) {
+        this.owner = owner;
+        this.damage = damage;
+        if (owner == null) return;
+        var body = owner.GetComponent<Rigidbody>();
+        if (body != null) bulletSpeed += Mathf.Max(0, Vector3.Dot(body.linearVelocity, transform.forward));
+        foreach (var a in GetComponentsInChildren<Collider>())
+            foreach (var b in owner.GetComponentsInChildren<Collider>()) Physics.IgnoreCollision(a, b);
     }
-
+    private void Start() { Destroy(gameObject, Mathf.Max(0.1f, lifetime)); }
     private void Update() {
-        transform.position += transform.forward * Time.deltaTime * bulletSpeed;
-        //trailPrefab.transform.position = transform.localPosition;
-    }
-
-    // Destroy the bullet when it goes out of bounds after 5 seconds (optional)
-    private void OnBecameInvisible() {
-        Destroy(gameObject);
-    }
-
-    private void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("Player")) {
-            Debug.Log("Bullet hit the player!");
-            Destroy(gameObject); // Destroy the bullet after collision
+        float distance = Time.deltaTime * bulletSpeed;
+        // Sweep the travelled segment so fast shots also hit thin, static colliders.
+        int count = Physics.RaycastNonAlloc(transform.position, transform.forward, hits, distance, ~0, QueryTriggerInteraction.Collide);
+        Collider nearest = null;
+        float nearestDistance = float.PositiveInfinity;
+        for (int i = 0; i < count; i++) {
+            var candidate = hits[i].collider;
+            if (candidate.transform.IsChildOf(transform) || (owner != null && candidate.transform.IsChildOf(owner.transform))) continue;
+            if (candidate.isTrigger && candidate.GetComponentInParent<IDamageable>() == null) continue;
+            if (hits[i].distance < nearestDistance) { nearest = candidate; nearestDistance = hits[i].distance; }
         }
-        else if (other.CompareTag("Enemy")) {
-            Debug.Log("Bullet hit the enemy!");            
-            Destroy(gameObject); // Destroy the bullet after collision
-        }
-        else {
-            // Optional: Destroy bullet if it hits anything else
-            Destroy(gameObject);
-        }
-
+        if (nearest != null) Hit(nearest);
+        if (!consumed) transform.position += transform.forward * distance;
     }
-
-    private void OnCollisionEnter(Collision collision) {
+    private void OnTriggerEnter(Collider other) { Hit(other); }
+    private void OnCollisionEnter(Collision collision) { Hit(collision.collider); }
+    private void Hit(Collider other) {
+        if (consumed || (owner != null && other.transform.IsChildOf(owner.transform))) return;
+        var target = other.GetComponentInParent<IDamageable>();
+        if (other.isTrigger && target == null) return;
+        consumed = true;
+        if (target != null && target.IsAlive) target.TakeDamage(new DamageInfo(damage, owner));
+        CyberBiker.Audio.SoundEvents.Emit(CyberBiker.Audio.SoundCue.Impact, transform.position);
         Destroy(gameObject);
     }
 }

@@ -17,7 +17,7 @@ public class DifficultyManager : MonoBehaviour {
     private GameplayManager gameplayManager;
 
     // Start is called before the first frame update
-    void Start() {
+    void Awake() {
         gameplayManager = GetComponent<GameplayManager>();
         float gameDurationInSeconds = ConvertMinutesToSeconds(gameDuration); // Convert game duration to seconds
 
@@ -38,7 +38,7 @@ public class DifficultyManager : MonoBehaviour {
 
         // Pause the timer if the game state is not Playing
         if (gameplayManager != null && gameplayManager.gameState != GameState.Playing) {
-            Debug.Log("Game paused or not in Playing state. Timer paused.");
+
             return;
         }
 

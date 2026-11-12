@@ -5,14 +5,17 @@ using Gameplay;
 using UnityEngine.UI;
 using UnityEngine.Animations.Rigging;
 
-public class TouchInputManager : MonoBehaviour
+public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
 {
     [Range(0, 19)]
     [SerializeField] private float touchSensitivity = 10f;
+    public Vector2 Steering => drag;
+    public Vector2 AimDelta => delta;
+    public bool IsAiming => aim;
     public bool aim { get; private set; }
     public Vector2 delta { get; private set; }
 
-    private PlayerController pc;
+
 
     [SerializeField] public RectTransform aimButton;
 
@@ -24,23 +27,20 @@ public class TouchInputManager : MonoBehaviour
     public bool rightPressed;
 
     public Vector2 drag { get; private set; }
-    
-    // Start is called before the first frame update
+
     void Start()
     {
-        pc = GetComponent<PlayerController>();
-        //aim = true;
-        //Cursor.visible = false;
-        //Cursor.lockState = CursorLockMode.Locked;
 
-        gm = FindFirstObjectByType<GameplayManager>();
+
+        gm = FindAnyObjectByType<GameplayManager>();
     }
 
-    // Update is called once per frame
     void Update() {
+        if (gm != null && gm.gameState != GameState.Playing) { aim = false; delta = Vector2.zero; drag = Vector2.zero; return; }
+        delta = Vector2.zero;
 
         if (leftPressed && rightPressed) {
-            // If both are pressed, prioritize the last pressed button
+
             drag = new Vector2(lastPressed == -1 ? -1 : 1, drag.y);
         }
         else if (leftPressed) {
@@ -53,33 +53,27 @@ public class TouchInputManager : MonoBehaviour
             drag = new Vector2(0, drag.y);  // No button pressed
         }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
 
-        if (!UnityEditor.EditorApplication.isRemoteConnected) {
+        if (Input.touchCount == 0) {
 
-            // Code specific to Unity Editor
-            drag = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            if (horizontal != 0) drag = new Vector2(horizontal, 0);
             delta = new Vector2(Input.GetAxis("Mouse X") * 5f, Input.GetAxis("Mouse Y") * 5f);
 
             if (Input.GetMouseButtonDown(1)) {
-                SwitchAim(true);
+                SetAim(true);
             }
 
             if (Input.GetMouseButtonUp(1)) {
-                SwitchAim(false);
+                SetAim(false);
             }
 
-            if (aim) {
-                //drag = Vector2.zero;
-            }
-            else {
-                delta = Vector2.zero;
-            }
+            if (!aim) delta = Vector2.zero;
 
         }
 #endif
         foreach (Touch touch in Input.touches) {
-
 
             if (aim && touch.fingerId == aimTouch.fingerId) {
 
@@ -93,7 +87,7 @@ public class TouchInputManager : MonoBehaviour
                 if (touch.phase == TouchPhase.Stationary) {
                     delta = Vector2.zero;
                 }
-                //aimTouch = touch;
+
             }
             else {
                 drag += touch.deltaPosition / (2000 - 100 * touchSensitivity);
@@ -103,23 +97,22 @@ public class TouchInputManager : MonoBehaviour
                     drag = Vector2.zero;
                 }
             }
-        } 
-        
-
-        if (pc.xThrow == 0)
-            return;
-        if (gm.gameState == GameState.Hit) {
-           
-            //SwitchAim(false);
         }
+
     }
 
-    public void SwitchAim(bool on) {
-        aim = !aim;
+    // Existing scene buttons use this callback as a toggle, including a false argument.
+    public void SwitchAim(bool unused) {
+        SetAim(!aim);
+        if (gm != null && gm.gameState == GameState.Playing)
+            CyberBiker.Audio.SoundEvents.Emit(CyberBiker.Audio.SoundCue.UiClick, transform.position);
+    }
 
-        
-        if (gm.gameState == GameState.Playing)
-            if (Input.touchCount > 0 && aim) {
+    public void SetAim(bool on) {
+        aim = on && gm != null && gm.gameState == GameState.Playing;
+
+        if (gm != null && gm.gameState == GameState.Playing)
+            if (Input.touchCount > 0 && aim && aimButton != null) {
                 aimTouch = Input.touches[0];
 
                 foreach (Touch touch in Input.touches) {
@@ -129,12 +122,11 @@ public class TouchInputManager : MonoBehaviour
                 }
             }
 
-        
     }
 
     private int lastPressed = 0; // -1 for left, 1 for right, 0 for none
 
-    public void setLeftPressed(bool pressed) {        
+    public void setLeftPressed(bool pressed) {
         leftPressed = pressed;
         if (pressed) {
             lastPressed = -1;  // Left was pressed last

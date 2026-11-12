@@ -10,7 +10,7 @@ AvatarMask:
   m_Mask: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   m_Elements:
   - m_Path: 
-    m_Weight: 1
+    m_Weight: 0
   - m_Path: Jacket
     m_Weight: 0
   - m_Path: MotorcycleMesh
@@ -24,7 +24,7 @@ AvatarMask:
   - m_Path: PlayerMesh
     m_Weight: 0
   - m_Path: unityRig
-    m_Weight: 1
+    m_Weight: 0
   - m_Path: unityRig/DEF-spine
     m_Weight: 0
   - m_Path: unityRig/DEF-spine/DEF-pelvis.L

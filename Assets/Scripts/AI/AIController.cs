@@ -46,7 +46,7 @@ namespace AI {
             }
 
             Debug.DrawRay(position, Vector3.up, Color.yellow);
-            Debug.Break();
+
             Debug.LogWarning("Tile component not found on the hit object.");
             return null;
         }
@@ -61,13 +61,13 @@ namespace AI {
         [SerializeField] private bool showPointRelations;  // Whether to show lines connecting related dodge points
         [Range(0, 90)]
         [SerializeField] public float dodgeAngleLimit;  // The maximum angle that an AI can dodge
-        [SerializeField] private float collisionRadius;  // The radius used for collision detection between points                
+        [SerializeField] private float collisionRadius;  // The radius used for collision detection between points
 
-        public List<DodgePoint> dodgePoints;  // A list of all dodge points currently tracked by the AI
+        [System.NonSerialized] public List<DodgePoint> dodgePoints;  // A list of all dodge points currently tracked by the AI
         private List<GameObject> activeCars;  // A list of all active cars in the scene
 
         // Initialize the dodge points and active cars lists
-        private void Start() {
+        private void Awake() {
             dodgePoints = new List<DodgePoint>();
             activeCars = new List<GameObject>();
         }
@@ -97,9 +97,8 @@ namespace AI {
             }
         }
 
-        
-        private void Update() {            
-        }                
+        private void Update() {
+        }
 
         // Connects dodge points that can be reached from each other within the dodge angle limit
         private void ConnectPoints() {
@@ -113,7 +112,7 @@ namespace AI {
 
         // Finds the next dodge point along a path from a given root node
         public DodgePoint GetPath(DodgePoint rootNode) {
-            if (dodgePoints.Count == 0) return null;            
+            if (dodgePoints.Count == 0) return null;
 
             dodgePoints.Insert(0, rootNode);
 
@@ -123,7 +122,7 @@ namespace AI {
 
             if (dodgePoints[0].Children.Count != 0) {
 
-                targetNode = dodgePoints[0].Children[Random.Range(0, dodgePoints[0].Children.Count - 1)];
+                targetNode = dodgePoints[0].Children[Random.Range(0, dodgePoints[0].Children.Count)];
             }
 
             if (targetNode != null) {

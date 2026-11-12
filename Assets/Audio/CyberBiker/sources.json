@@ -1,0 +1,229 @@
+{
+  "recordings": [
+    {
+      "files": [
+        "WindLoop.wav"
+      ],
+      "author": "SketchMan3",
+      "source": "https://opengameart.org/content/wind-whoosh-loop",
+      "license": "CC0-1.0",
+      "changes": "Decoded to mono PCM WAV and level normalized"
+    },
+    {
+      "files": [
+        "impactMetal_heavy_000.ogg",
+        "impactMetal_heavy_001.ogg",
+        "impactPlate_heavy_000.ogg",
+        "explosionCrunch_000.ogg",
+        "lowFrequency_explosion_000.ogg",
+        "confirmation_001.ogg",
+        "click_003.ogg",
+        "minimize_001.ogg",
+        "maximize_001.ogg",
+        "error_006.ogg"
+      ],
+      "author": "Kenney",
+      "sources": [
+        "https://kenney.nl/assets/sci-fi-sounds",
+        "https://kenney.nl/assets/impact-sounds",
+        "https://kenney.nl/assets/interface-sounds"
+      ],
+      "license": "CC0-1.0",
+      "changes": "Selected original Ogg files, unmodified"
+    },
+    {
+      "files": [
+        "Pistol_1.wav",
+        "Pistol_2.wav"
+      ],
+      "author": "Ben Jaszczak and The Free Firearm Sound Library team",
+      "source": "https://opengameart.org/content/the-free-firearm-sound-library",
+      "download": "https://raw.githubusercontent.com/petroulacl/fps-asset-kit/main/sfx/firearm_sfx/Prepared%20SFX%20Library/Walther%20PPQ/X_31P.wav",
+      "license": "CC0-1.0",
+      "changes": "Two full-power Walther PPQ pistol discharges from X_31P.wav at 1.055-1.65s and 5.205-5.86s. Mono, level normalized, short edge fades. No handling noises, rifle or laser samples."
+    },
+    {
+      "files": [
+        "HighwayPass.wav"
+      ],
+      "author": "HenKonen",
+      "source": "https://freesound.org/people/HenKonen/sounds/682099/",
+      "download": "https://cdn.freesound.org/previews/682/682099_10938187-lq.ogg",
+      "license": "CC0-1.0",
+      "changes": "Single closest-approach section of a real high-speed highway car pass, mono, trimmed, rumble reduction and edge fades; playback at original pitch"
+    },
+    {
+      "author": "bodhistone",
+      "source": "https://freesound.org/people/bodhistone/sounds/855305/",
+      "download": "https://cdn.freesound.org/previews/855/855305_6788978-lq.ogg",
+      "license": "CC0-1.0",
+      "files": [
+        "R6_Drive_Low.wav",
+        "R6_Drive_Mid.wav",
+        "R6_Drive_High.wav",
+        "R6_Coast_Mid.wav",
+        "R6_Coast_High.wav"
+      ],
+      "changes": "Long 10-32 second source banks, mono, rumble reduction and level matching; rendered interactively with overlapping recorded grains, not cyclic short-loop playback. Audio RPM tags are calibration estimates, not measured Yamaha telemetry.",
+      "sections": [
+        {
+          "file": "R6_Drive_Low.wav",
+          "start": 900,
+          "end": 932,
+          "baseRpmCalibration": 2500,
+          "load": 1
+        },
+        {
+          "file": "R6_Drive_Mid.wav",
+          "start": 1500,
+          "end": 1532,
+          "baseRpmCalibration": 6500,
+          "load": 1
+        },
+        {
+          "file": "R6_Drive_High.wav",
+          "start": 2100,
+          "end": 2110,
+          "baseRpmCalibration": 11500,
+          "load": 1
+        },
+        {
+          "file": "R6_Coast_Mid.wav",
+          "start": 908,
+          "end": 932,
+          "baseRpmCalibration": 6500,
+          "load": 0
+        },
+        {
+          "file": "R6_Coast_High.wav",
+          "start": 2110,
+          "end": 2132,
+          "baseRpmCalibration": 11500,
+          "load": 0
+        }
+      ]
+    },
+    {
+      "files": [
+        "BMW_idle.wav",
+        "BMW_low.wav",
+        "BMW_mid.wav",
+        "BMW_upper.wav"
+      ],
+      "author": "Pole Position Production",
+      "source": "https://sonniss.com/gameaudiogdc/",
+      "license": "https://sonniss.com/gdc-bundle-license/",
+      "changes": "Neutral exhaust sections extracted from BMW S1000RR HP4 2012, GDC 2018 part 4, resampled, level adjusted and loop crossfaded. RPM values are estimates; no high RPM or on-load samples."
+    },
+    {
+      "files": [
+        "SpeedWindStereo.wav"
+      ],
+      "author": "mathiaslyhne1",
+      "source": "https://freesound.org/people/mathiaslyhne1/sounds/760989/",
+      "license": "CC0-1.0",
+      "changes": "Binaural outdoor wind, decoded from MP3 preview, filtered, normalized and crossfaded."
+    },
+    {
+      "files": [
+        "TrafficAirWhoosh.wav"
+      ],
+      "author": "DJT4NN3R",
+      "source": "https://freesound.org/people/DJT4NN3R/sounds/449992/",
+      "download": "https://cdn.freesound.org/previews/449/449992_3217484-hq.mp3",
+      "license": "CC0-1.0",
+      "changes": "HQ MP3 preview decoded to mono PCM, volume raised, shortened to 1.32s with brief fades."
+    },
+    {
+      "files": [
+        "V12Launch.wav"
+      ],
+      "author": "cheesepuff",
+      "source": "https://freesound.org/people/cheesepuff/sounds/112075/",
+      "license": "CC0-1.0",
+      "changes": "48.3–56.5 second excerpt decoded to mono, gain adjusted and edge faded."
+    },
+    {
+      "files": [
+        "V12Cruise.wav"
+      ],
+      "author": "Pole Position Production",
+      "source": "https://sonniss.com/gameaudiogdc/",
+      "download": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/Pole%20Position%20-%20Ferrari%20F12%202016/Ferrari_F12_t2_Onbrd_Start_Medium_Drive_Stop_Reverse_Stop_Drive_Stop_Off_Engine_Left_DPA4061.wav",
+      "license": "https://sonniss.com/gdc-bundle-license/",
+      "changes": "114.6–120.4 second section of Ferrari F12 onboard engine recording; mono, gain adjusted and equal-power crossfaded with 0.6 second overlap to a 5.2-second loop."
+    },
+    {
+      "files": [
+        "TrafficAirWhooshLong.wav"
+      ],
+      "author": "DJT4NN3R",
+      "source": "https://freesound.org/people/DJT4NN3R/sounds/449990/",
+      "download": "https://cdn.freesound.org/previews/449/449990_3217484-hq.mp3",
+      "license": "CC0-1.0",
+      "changes": "HQ preview decoded to mono PCM; selected 0.65–2.70 seconds, gentle compression and limiting, edge fades."
+    },
+    {
+      "files": [
+        "HighSpeedWindBed.wav",
+        "HighSpeedWindRush.wav"
+      ],
+      "author": "FunWithSound",
+      "source": "https://freesound.org/people/FunWithSound/sounds/439242/",
+      "download": "https://cdn.freesound.org/previews/439/439242_6456158-hq.mp3",
+      "license": "CC0-1.0",
+      "changes": "Stereo high-speed car-window wind recording. Bed excerpt 12–46s, 90Hz high-pass; brighter exposure excerpt 55–89s, 350Hz high-pass. Low-pass, gain adjustment and 1.5-second equal-power overlap make 32.5-second loops."
+    },
+    {
+      "files": [
+        "JacketFabricFlutter.wav"
+      ],
+      "author": "IENBA",
+      "source": "https://freesound.org/people/IENBA/sounds/701647/",
+      "download": "https://cdn.freesound.org/previews/701/701647_9616576-hq.mp3",
+      "license": "CC0-1.0",
+      "changes": "Fabric flapping foley, source 0.25–13.25s, mono, high-pass 100Hz, low-pass 9kHz, broad +3dB presence EQ around 1.5kHz, compression and gain adjustment for a stronger fabric layer; 0.35s equal-power overlap."
+    },
+    {
+      "files": [
+        "Pistol9mm_Recorded.wav"
+      ],
+      "author": "michorvath",
+      "title": "9mm pistol shot",
+      "source": "https://freesound.org/people/michorvath/sounds/427592/",
+      "download": "https://cdn.freesound.org/previews/427/427592_3094998-hq.mp3",
+      "license": "CC0-1.0",
+      "source_sha256": "8b7f20ce7c150556c49ad11bfbd0e014a68666991b5b3c063e47020d211a92b8",
+      "changes": "Downloaded HQ MP3 of a real 9mm pistol recording; decoded to mono 44.1 kHz 16-bit PCM. Removed 0.121950s of leading silence. Base peak adjusted to -2 dBFS with a +1.5 dB attack boost for the first 80ms, smoothly returning to the original gain by 160ms; resulting peak -0.5 dBFS. Preserved the recorded decay and 40ms end fade. No synthesis, added reverb, compression, layering or pitch processing.",
+      "active_use": "Player and enemy pistol shots; original pitch with existing runtime +/-1.5% variation."
+    }
+  ],
+  "sha256": {
+    "click_003.ogg": "2fa929138bc3a0f432696588f66eac94b8f6d463905ec8808c6461ce4b054292",
+    "confirmation_001.ogg": "063564703b6094d70718a3e787a55cc9141611e4ecd6b6637f8828f79b4a8c3a",
+    "error_006.ogg": "a97513d7fd2b12b1210c423be943b4c1ab0e899b11db95855e9b74836e646ae0",
+    "explosionCrunch_000.ogg": "4b597d658d0ae101f0a030fbeea5fc3a4292ab85f017470a8254a8e7959cbd69",
+    "HighwayPass.wav": "91806985db17e0460f225a9209d0330b68b7decba94c43cbc4e4e9ede136c02c",
+    "impactMetal_heavy_000.ogg": "e07045693e4a2b3d165c424e3dab4c781d9ff8880a386880ac89a51315d7f831",
+    "impactMetal_heavy_001.ogg": "83554049f81f4db9209379e103c30bfa63f65c42189a03f300b045c2c82e23ae",
+    "impactPlate_heavy_000.ogg": "112d4f93ddcc370b410630f971c0f5d991856102da9c76bc5c5540d388e75aaa",
+    "lowFrequency_explosion_000.ogg": "3cb48d86dab63140cfb9aaeea4d4a6846abaca5831d157d8adbec0490da26343",
+    "maximize_001.ogg": "fd3e75e1de2f2fda90aceeacaeb0427ac8bddd3b07a6ce2a8f9ba923df3771f9",
+    "minimize_001.ogg": "8481912bc7fa5828924a00ef15b6cd613b994956e0817bd3122065c9b2896d2d",
+    "Pistol_1.wav": "e454f529bee24b36220cb7480dc7893152211d09d317e856335dac5629b65ccf",
+    "Pistol_2.wav": "56c810d9e4722a6b0b9b4ba4699d6d88ccc39f2acc620a1f4b8892c5f814a480",
+    "R6_Coast_High.wav": "6556e8f8a2a476a0613d494589f2f4703aa677b4b35c0d7031fc6b35e6c284a5",
+    "R6_Coast_Mid.wav": "e7dddd678c2d0e94b1365b5b531261d9af34d3bf4c93752f9f15cdfd95c4c4bc",
+    "R6_Drive_High.wav": "d57c2d5757a2a1451e07bd2b7426969a5f6e1868191286f4ed00d0714dc09a90",
+    "R6_Drive_Low.wav": "56d01ba695a38778a710a56410670df2a16f0b175da05d93cce1241129da9fe7",
+    "R6_Drive_Mid.wav": "4bd365c5dd85edf12ba438e1864718e1a3aea6266016e9143826b503fb84d6f1",
+    "WindLoop.wav": "f2b2c9211ac24307e35eb7fd6a3e5c8fa16c75159aaa40c3daa4fc36ec7ef0c0",
+    "V12Launch.wav": "2673dafc6c9969840076f724d07b42cceeabe5d9cfd611bc38f752bab947e4ed",
+    "V12Cruise.wav": "0548e1ce61976a7791d4e193d3aabd2a014fe5a02cb060c24ed5a21ca143e65b",
+    "TrafficAirWhooshLong.wav": "ba26fa810f2ba5ff500a5d0fe46d844a772ba7c014f97decfd2ca1d967d04375",
+    "HighSpeedWindBed.wav": "e74ac2f0944c87f1f610a7abcc997ca89ff92f569a25b18b75d8db72cce61f36",
+    "HighSpeedWindRush.wav": "56c91d0379ee106cfd833082f361a8dd7c34effb78bf4044c066e157cd0b272b",
+    "JacketFabricFlutter.wav": "310a7c59bd38ca9551826171b59ddae3d85554848d81b0303c99f2e60b1e0cc6",
+    "Pistol9mm_Recorded.wav": "f26f2cc6dfff1710a0ff15e7017a0489e5a17f8b7534960b141d0716b15ff3eb"
+  }
+}

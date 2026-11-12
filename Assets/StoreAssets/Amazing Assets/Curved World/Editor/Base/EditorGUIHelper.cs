@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using UnityEngine;
 using UnityEditor;
@@ -11,7 +11,6 @@ namespace AmazingAssets.CurvedWorldEditor
         #region GUI
         public class GUIEnabled : IDisposable
         {
-            [SerializeField]
             private bool PreviousState
             {
                 get;
@@ -35,7 +34,6 @@ namespace AmazingAssets.CurvedWorldEditor
 
         public class GUIColor : IDisposable
         {
-            [SerializeField]
             private Color PreviousColor
             {
                 get;
@@ -56,7 +54,6 @@ namespace AmazingAssets.CurvedWorldEditor
 
         public class GUIBackgroundColor : IDisposable
         {
-            [SerializeField]
             private Color PreviousColor
             {
                 get;
@@ -77,7 +74,6 @@ namespace AmazingAssets.CurvedWorldEditor
 
         public class GUISkinLabelFontStyle : IDisposable
         {
-            [SerializeField]
             private FontStyle PreviousStyle
             {
                 set;
@@ -98,7 +94,6 @@ namespace AmazingAssets.CurvedWorldEditor
 
         public class GUISkinLabelNormalTextColor : IDisposable
         {
-            [SerializeField]
             private Color PreviousTextColor
             {
                 set;
@@ -181,7 +176,6 @@ namespace AmazingAssets.CurvedWorldEditor
         #region Editor GUI
         public class EditorGUIIndentLevel : IDisposable
         {
-            [SerializeField]
             private int PreviousIndent
             {
                 get;
@@ -202,7 +196,6 @@ namespace AmazingAssets.CurvedWorldEditor
 
         public class EditorGUIUtilityLabelWidth : IDisposable
         {
-            [SerializeField]
             private float PreviousWidth
             {
                 get;
@@ -223,7 +216,6 @@ namespace AmazingAssets.CurvedWorldEditor
 
         public class EditorGUIUtilityFieldWidth : IDisposable
         {
-            [SerializeField]
             private float PreviousWidth
             {
                 get;

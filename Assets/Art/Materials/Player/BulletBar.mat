@@ -13,7 +13,6 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - CURVEDWORLD_BEND_TYPE_CLASSICRUNNER_X_POSITIVE
-  - _EMISSION
   m_InvalidKeywords:
   - CURVEDWORLD_BEND_ID_1
   - _DETAILSOURCE_SPECULARALPHA
@@ -180,3 +179,4 @@ Material:
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 0}
     - _TriplanarXYTilingXYZWOffsetXY1: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

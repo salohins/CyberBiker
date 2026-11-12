@@ -1,157 +1,100 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using TMPro;
+using CyberBiker.Runs;
+using CyberBiker.UI;
 
 namespace Gameplay {
-    public enum GameState {
-        GameOver,
-        Playing,
-        Pause,
-        Hit,
-        Intro
-    }
+    public enum GameState { GameOver, Playing, Pause, Hit, Intro }
 
-    public class GameplayManager : MonoBehaviour {                
-        [Header("Difficulty Settings")]
+    public class GameplayManager : MonoBehaviour {
         [SerializeField] private AnimationCurve difficultyCurve;
-        [Tooltip("Speed multiplier for difficultyCurve period")]
         [SerializeField] private float difficultySpeed = 1;
-
-        private float difficultyPeriod;        
-
+        [FormerlySerializedAs("gameState")]
+        [SerializeField] private GameState initialState;
+        public RunSession Session { get; private set; }
+        public GameState gameState => Session != null ? Session.State : initialState;
+        public float score => Session != null ? Session.Score : 0;
         public float difficulty { get; private set; }
-        public float score { get; private set; }
-
-        public GameState gameState;
-
-        [Header("Obj Refs")]
-        [SerializeField] private new CameraController camera;        
+        [SerializeField] private new CameraController camera;
         [SerializeField] private GameObject gameOverScreen;
         [SerializeField] private GameObject pauseScreen;
         [SerializeField] private GameObject menuConfirmation;
         [SerializeField] private GameObject pauseMenuTimerText;
         [SerializeField] private GameObject aimButton;
-
         [SerializeField] private GameObject canvas;
-
         [SerializeField] private TMP_Text[] scoreText;
         [SerializeField] private TMP_Text difficultyText;
         [SerializeField] private TMP_Text speedText;
-        
-        private GameObject player;
-        private float totalCalculatedDifficulty;
-        private bool showMenuConfirmation = false;
-        private float pauseTimerValue = 4f;
-        private bool isTimerRunning = false;
-        private int periodCount = 0;
+        private PlayerController player;
+        private ScorePresenter scorePresenter;
+        private float resumeRemaining;
+        private GameState stateBeforePause;
+        public bool IsResuming => resumeRemaining > 0;
 
+        private void Awake() {
+            Session = new RunSession(initialState);
+            Session.StateChanged += OnStateChanged;
+            scorePresenter = new ScorePresenter(Session, scoreText);
+            CyberBiker.Audio.GameAudio.EnsurePresent();
+        }
         private void Start() {
-            player = GameObject.FindGameObjectWithTag("Player");
-
+            player = FindAnyObjectByType<PlayerController>();
             Application.targetFrameRate = 60;
-            isTimerRunning = false;
-
-            if (gameOverScreen != null)
-                gameOverScreen.SetActive(false);
-
-            if (pauseScreen != null)
-                pauseScreen.SetActive(false);
-
-            if (menuConfirmation != null)
-                menuConfirmation.SetActive(false);
-
-            pauseMenuTimerText.SetActive(false);
-
-            camera.SetTarget(player.GetComponent<PlayerController>().cameraTarget.transform);
+            Time.timeScale = gameState == GameState.Pause ? 0 : 1;
+            Show(menuConfirmation, false);
+            Show(pauseMenuTimerText, false);
+            UpdateScreens();
+            if (camera != null && player != null) camera.SetTarget(player.cameraTarget.transform);
         }
-
-        private void Update() {           
-            ProcessPauseTimer();
-            ProcessScore();
-            ProcessDifficulty();
-            ProcessDebugValues();         
-            
-            
-            aimButton.SetActive(!(gameState == GameState.Hit));
-            
-        }
-
-        private void ProcessDebugValues() {
-            difficultyText.text = "Difficulty: " + difficulty.ToString("F2");
-            speedText.text = "Speed: " + player.GetComponent<PlayerController>().zVelocity.ToString("F2");
-        }
-        
-
-        private void ProcessDifficulty() {
-            difficultyPeriod += Time.deltaTime / 50f * difficultySpeed;    // DifficultySpeed
-            
-            if (difficultyPeriod > difficultyCurve.Evaluate(1)) {
-                difficultyPeriod = 0;
-                periodCount++;
-                totalCalculatedDifficulty = periodCount * (difficultyCurve.Evaluate(1) - difficultyCurve.Evaluate(0));      
+        private void Update() {
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                if (gameState == GameState.Playing || gameState == GameState.Hit) OpenPauseMenu();
+                else if (gameState == GameState.Pause && !IsResuming) ResumeGame();
             }
-
-            difficulty = periodCount + difficultyCurve.Evaluate(difficultyPeriod);
-        }
-
-        private void ProcessScore() {
-            if (gameState == GameState.Playing)
-                score += Time.deltaTime * player.GetComponent<PlayerController>().zVelocity / 100;
-
-            foreach (TMP_Text text in scoreText) {
-                text.text = ((int)score).ToString();
-            }    
-
-        }
-
-        private void ProcessPauseTimer() {
-            if(isTimerRunning) {
-                if (pauseTimerValue > 1.1f) {
-                    pauseTimerValue -= Time.unscaledDeltaTime;
-                    pauseMenuTimerText.gameObject.SetActive(true);
-                    if (pauseTimerValue != 0)
-                        pauseMenuTimerText.GetComponent<TMP_Text>().text = ((int)pauseTimerValue).ToString();
-                }
-                else {
-                    isTimerRunning = false;
-                    pauseMenuTimerText.SetActive(false);
-                    Time.timeScale = 1;
-
-                }
+            if (IsResuming) {
+                resumeRemaining -= Time.unscaledDeltaTime;
+                var label = pauseMenuTimerText != null ? pauseMenuTimerText.GetComponent<TMP_Text>() : null;
+                if (label != null) label.text = Mathf.CeilToInt(Mathf.Max(0, resumeRemaining)).ToString();
+                if (!IsResuming) { Show(pauseMenuTimerText, false); Session.ChangeState(stateBeforePause); }
             }
+            Session.Tick(Time.deltaTime, player != null ? player.zVelocity : 0);
+            float period = Session.Elapsed * Mathf.Max(0, difficultySpeed) / 50f;
+            difficulty = Mathf.Floor(period) + (difficultyCurve != null ? difficultyCurve.Evaluate(Mathf.Repeat(period, 1)) : 0);
+            if (difficultyText != null) difficultyText.text = "Difficulty: " + difficulty.ToString("F2");
+            if (speedText != null && player != null) speedText.text = "Speed: " + player.zVelocity.ToString("F2");
         }
-       
-        public void LoadMainMenu() => SceneManager.LoadScene(0);
-        public void OpenPauseMenu() => SwitchGameState(GameState.Pause);
-        public void ResumeGame() => SwitchGameState(GameState.Playing);
-
-        public void ToggleMenuConfirmation() {
-            showMenuConfirmation = !showMenuConfirmation;
-            menuConfirmation.SetActive(showMenuConfirmation);
-        }                    
-
-        public void RestartLevel() {
-            SceneManager.LoadScene(1);
-            gameOverScreen.SetActive(false);
-            
-        }       
-
         public void SwitchGameState(GameState state) {
-            gameState = state;
-
-            if (state == GameState.GameOver) {
-                gameOverScreen.SetActive(true);                
-            } else if (state == GameState.Pause) {
-                Time.timeScale = 0;
-                pauseTimerValue = 4f;
-                pauseScreen.SetActive(true);
-            } else if (state == GameState.Playing) {                                
-                pauseScreen.SetActive(false);
-                
-                isTimerRunning = true;
-            }
+            if (state == GameState.Pause && gameState != GameState.Pause) stateBeforePause = gameState;
+            Session.ChangeState(state);
+        }
+        private void OnStateChanged(GameState previous, GameState current) {
+            resumeRemaining = 0;
+            Time.timeScale = current == GameState.Pause ? 0 : 1;
+            Show(pauseMenuTimerText, false);
+            UpdateScreens();
+        }
+        private void UpdateScreens() {
+            Show(gameOverScreen, gameState == GameState.GameOver);
+            Show(pauseScreen, gameState == GameState.Pause);
+            Show(aimButton, gameState == GameState.Playing);
+        }
+        private static void Show(GameObject target, bool visible) { if (target != null) target.SetActive(visible); }
+        public void OpenPauseMenu() { if (gameState == GameState.Playing || gameState == GameState.Hit) SwitchGameState(GameState.Pause); }
+        public void ResumeGame() {
+            if (gameState != GameState.Pause || IsResuming) return;
+            resumeRemaining = 3;
+            Show(pauseScreen, false);
+            Show(pauseMenuTimerText, true);
+        }
+        public void ToggleMenuConfirmation() { CyberBiker.Audio.SoundEvents.Emit(CyberBiker.Audio.SoundCue.UiClick, Vector3.zero); if (menuConfirmation != null) menuConfirmation.SetActive(!menuConfirmation.activeSelf); }
+        public void LoadMainMenu() { Time.timeScale = 1; SceneManager.LoadScene(0); }
+        public void RestartLevel() { Time.timeScale = 1; SceneManager.LoadScene(1); }
+        private void OnDestroy() {
+            scorePresenter?.Dispose();
+            if (Session != null) Session.StateChanged -= OnStateChanged;
+            Time.timeScale = 1;
         }
     }
 }

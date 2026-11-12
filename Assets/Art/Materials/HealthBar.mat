@@ -115,7 +115,7 @@ Material:
     - _BumpScale: 1
     - _ContrastDetailMap: 0
     - _Cull: 0
-    - _Cutoff: 0
+    - _Cutoff: 0.15599999
     - _DetailBrightness: 1
     - _DetailGlossiness: 0.5
     - _DetailNormalMapScale: 1
@@ -182,3 +182,4 @@ Material:
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 0}
     - _TriplanarXYTilingXYZWOffsetXY1: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

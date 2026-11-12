@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &100000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 400000}
+  - component: {fileID: 11400000}
+  m_Layer: 0
+  m_Name: CyberBikerAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &400000
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42ae12fbece11ce4aa0d2cac96895c06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterVolume: 1
+  engineVolume: 0.518
+  windVolume: 1
+  trafficVolume: 0
+  passWhooshVolume: 1
+  passWhooshReverbAmount: 1
+  weaponVolume: 1
+  impactVolume: 1
+  explosionVolume: 1
+  interfaceVolume: 0.3
+  pistolDuckDb: 6
+  pistolDuckHold: 0.055
+  pistolDuckRelease: 0.16
+  referenceSpeed: 75
+  engineSpatialBlend: 1
+  engineReverbAmount: 1
+  engineRiseSeconds: 4
+  engineFallSeconds: 0.6
+  engineCrossfadeSeconds: 2.5
+  engineCrossfadeEndOffsetSeconds: 0.25
+  cruisePitchAtRest: 0.85
+  cruisePitchAtTopSpeed: 1.913
+  passByDistance: 20
+  minimumRelativeSpeed: 8
+  whooshDistance: 15
+  whooshInterval: 0.2
+  steeringWindPan: 0.5
+  steeringWindBoost: 1
+  windRushVolume: 0.65
+  jacketVolume: 0.309
+  jacketSteeringBoost: 1.25
+  jacketMotionReference: 180
+  windLowSpeedCutoff: 1400
+  windHighSpeedCutoff: 8500
+  voiceCount: 16
+  engineLaunch: {fileID: 8300000, guid: 9f940b6133624956a05e1496a57c984c, type: 3}
+  engineCruise: {fileID: 8300000, guid: 28e59986de3c4b28ac671da8f4f45951, type: 3}
+  windLoop: {fileID: 8300000, guid: 32c52c4b091f4b0594a2715505a63235, type: 3}
+  windRushLoop: {fileID: 8300000, guid: 059fd5c592424135afdc13d1a2347cb8, type: 3}
+  jacketFabricLoop: {fileID: 8300000, guid: 5af65353a88c444e83c1b85af861c222, type: 3}
+  passWhoosh: {fileID: 8300000, guid: 2068fa340bf84695be1fcfc52a44b342, type: 3}
+  shots:
+  - {fileID: 8300000, guid: 2f37e7c1a9d94b08b5afc3f1f3626a5c, type: 3}
+  passBys:
+  - {fileID: 8300000, guid: 150655c5c8df55618bfa91a1a0b82b0e, type: 3}
+  impacts:
+  - {fileID: 8300000, guid: 24a1be1af97e583e8148413582f5061c, type: 3}
+  - {fileID: 8300000, guid: 51492bdf3302506e907e53c8c5f64d2b, type: 3}
+  - {fileID: 8300000, guid: 7d24881e3d5c511ba6d70e15f07d477e, type: 3}
+  explosions:
+  - {fileID: 8300000, guid: a86bc31e634b572a94681cb2ccfd0245, type: 3}
+  - {fileID: 8300000, guid: 6600ad92d73f5d9ba9e007b2039449e8, type: 3}
+  pickup: {fileID: 8300000, guid: 2e1c453c9969586f9f99ddd3931c113f, type: 3}
+  uiClick: {fileID: 8300000, guid: a24c200b3c5b5e67992fc7af34162245, type: 3}
+  pause: {fileID: 8300000, guid: 920b9f6138e85de2a7adcd8ef3941e93, type: 3}
+  resume: {fileID: 8300000, guid: bf163100ae7654909bb1158ffb750bf2, type: 3}
+  gameOver: {fileID: 8300000, guid: 382c736b43d2524c91e41204b4174dd3, type: 3}

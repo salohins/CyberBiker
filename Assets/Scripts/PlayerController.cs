@@ -5,9 +5,11 @@ using UnityEngine.UI;
 using TMPro;
 using Gameplay;
 using UnityEngine.Animations.Rigging;
-using UnityEditor;
+using CyberBiker.Combat;
+using CyberBiker.Player;
+using CyberBiker.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable
 {
     [Tooltip("Force that pushes motorcycle the bigger the value the faster motorcycle will accelerate. Be careful if the value is too low motorcycle will not reach max speed")]
     [SerializeField] private float accelerationForce;
@@ -20,7 +22,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dodgeMaxSpeed;
     [Tooltip("Maximum angle for motorcycle lean animation (it's just visual thing and does not affect the gameplay)")]
     [SerializeField] private float leanRange;
-    [SerializeField] private float shotInterval = .2f;
+    [Header("Weapon Tuning")]
+    [Tooltip("Seconds between shots. 0.45 is about 2.2 shots/second. Can be tuned during Play mode.")]
+    [SerializeField, Min(0.01f)] private float shotInterval = .45f;
+    [Tooltip("Damage applied by each projectile. Overrides the bullet prefab's fallback damage.")]
+    [SerializeField, Min(0)] private float shootingDamage = 15f;
+    [Header("Rear car collisions")]
+    [Tooltip("Rear portion of the actual car collider that causes an immediate fall, including rear corners.")]
+    [SerializeField, Range(.05f,.4f)] private float rearCrashZone = .18f;
+    [SerializeField, Min(0)] private float minimumRearCrashSpeed = 2;
 
     [Header("Do not touch")]
 
@@ -29,23 +39,30 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public float xVelocity, zVelocity;
     [HideInInspector] public float xThrow;
-    
-    [SerializeField] CameraController camera;    
+
+    [SerializeField] CameraController camera;
     [SerializeField] GameObject ragDoll;
     [SerializeField] GameObject muzzleFlash;
     [SerializeField] private GameObject bullet;
 
     [SerializeField] private TMP_Text healthBarValue;
-    [SerializeField] private Material healthBarMaterial;            
+    [SerializeField] private Material healthBarMaterial;
     [SerializeField] private GameObject playerMesh;
     [SerializeField] private ParticleSystem collectibleParticle;
-    
+
     [SerializeField] private GameObject scope;
-               
-    private float yawRotation;
-    private float animationFrame;    
-    private float maxSpeed;    
-    private float health;
+
+    private float maxSpeed;
+    public Health Health { get; private set; }
+    public bool IsAlive => Health != null && Health.IsAlive;
+    public bool UsesAutomaticAim => autoAim!=null && autoAim.Enabled;
+    private HealthPresenter presenter;
+    private BikeMotor motor;
+    private BikeImpactResponse impactResponse;
+    private IPlayerInput input;
+    private Weapon weapon;
+    private BikePresentation presentation;
+    private BikeAutoAim autoAim;
 
     [HideInInspector] public bool grounded;
 
@@ -53,6 +70,7 @@ public class PlayerController : MonoBehaviour
     public int wallDirection { get; private set; }
 
     private Rigidbody rb;
+    private Collider[] solidColliders;
     private Animator animator;
     private TouchInputManager tim;
     private GameplayManager gm;
@@ -63,261 +81,152 @@ public class PlayerController : MonoBehaviour
     private GameObject hitObject;
     private GameObject _ragDoll;
 
-    private bool isShooting;
     public bool shoot = false;
 
     public void PlayCollectibleParticle() {
-        collectibleParticle.Play();
-    }    
-        
+        if (collectibleParticle != null) collectibleParticle.Play();
+    }
+
     void Start() {
-        health = 100f;
+        Health = new Health(100);
+        Health.Died += OnDied;
+        presenter = new HealthPresenter(Health, healthBarValue, healthBarMaterial);
         rb = GetComponent<Rigidbody>();
+        solidColliders = GetComponentsInChildren<Collider>(true);
         tc = GetComponent<TeleportController>();
         animator = GetComponent<Animator>();
         animationRigging = GetComponent<RigBuilder>();
         motorcycleMesh = transform.GetChild(0);
-        tim = FindFirstObjectByType<TouchInputManager>();
-        gm = FindFirstObjectByType<GameplayManager>();
-
-        healthBarMaterial.SetFloat("_Cutoff", 0);
+        tim = GetComponent<TouchInputManager>();
+        input = tim;
+        motor = new BikeMotor(rb, accelerationForce, dodgeAccelerationForce, dodgeMaxSpeed);
+        impactResponse = GetComponent<BikeImpactResponse>();
+        weapon = new ProjectileWeapon(bullet, shotInterval, shootingDamage);
+        weapon.Fired += OnWeaponFired;
+        presentation = new BikePresentation(transform, motorcycleMesh, animator, animationRigging, rotationSensitivity, leanRange);
+        gm = FindAnyObjectByType<GameplayManager>();
 
         maxSpeed = startMaxSpeed;
 
         SwitchRagDoll(false);
+        autoAim=GetComponent<BikeAutoAim>();
+        if(autoAim!=null) autoAim.Initialize(muzzleFlash!=null ? muzzleFlash.transform : null,bullet,animationRigging);
     }
-
 
     public void SwitchShoot() {
-        shoot = false;        
+        shoot = false;
     }
 
-    private void FixedUpdate() {              
+    private void FixedUpdate() {
         if (gm.gameState == GameState.Playing)
             processVelocity();
-        
+
         grounded = Physics.CheckSphere(transform.position - transform.up * 0.2f, 0.1f);
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
-
         wallDirection = 0;
+        float leftEdge=transform.position.x, rightEdge=transform.position.x;
+        // The upper body moves farther sideways when the bike banks. Keep the
+        // existing wall guard ahead of that body, rather than only the low wheel box.
+        foreach (var shape in solidColliders) {
+            if (shape == null || !shape.enabled || shape.isTrigger || !shape.gameObject.activeInHierarchy) continue;
+            leftEdge=Mathf.Min(leftEdge,shape.bounds.min.x);
+            rightEdge=Mathf.Max(rightEdge,shape.bounds.max.x);
+        }
         for (int i = 0; i < rayCheck.Length; i++) {
-            
-
-            if (Physics.Raycast(new Ray(rayCheck[i].position, Vector3.right), 1.5f, LayerMask.GetMask("WorldObject"))) {
+            Vector3 origin=rayCheck[i].position;
+            float rightDistance=Mathf.Max(1.5f,rightEdge-origin.x+.15f);
+            float leftDistance=Mathf.Max(1.5f,origin.x-leftEdge+.15f);
+            if (Physics.Raycast(new Ray(origin, Vector3.right), rightDistance, LayerMask.GetMask("WorldObject"))) {
                 wallDirection = 1;
-            } else if (Physics.Raycast(new Ray(rayCheck[i].position, Vector3.left), 1.5f, LayerMask.GetMask("WorldObject"))) {
+            } else if (Physics.Raycast(new Ray(origin, Vector3.left), leftDistance, LayerMask.GetMask("WorldObject"))) {
                 wallDirection = -1;
             }
         }
 
-        /*if (Physics.Raycast(new Ray(rayCheck[1].transform.position, Vector3.right), 1.5f, LayerMask.GetMask("WorldObject"))) {
-            wallDirection = 1;
-            
-        } else if (Physics.Raycast(new Ray(rayCheck[1].transform.position, Vector3.left), 1.5f, LayerMask.GetMask("WorldObject"))) {
-            wallDirection = -1;
-            
-        }
-        else {
-            wallDirection = 0;
-        }  */
-
         if (gm.gameState == GameState.Playing)
-            xThrow = tim.drag.x == 0 ? 0 : Mathf.Sign(tim.drag.x) == wallDirection ? 0 : tim.drag.x;
+            xThrow = input.Steering.x == 0 ? 0 : Mathf.Sign(input.Steering.x) == wallDirection ? 0 : input.Steering.x;
         else
             xThrow = 0;
 
-
-
-
-
-        //if (tim.aim) {
-        //    RaycastHit hit;
-
-        //    if (Physics.Raycast(new Ray(camera.transform.position, camera.transform.forward), out hit)) {                          
-
-        //       if (hit.transform.gameObject.GetComponent<Enemy>() != null) {
-
-        //}
-        //}
-        //}
-
-        
     }
 
-    
-
-    IEnumerator ShootRate() {
-        isShooting = true;
-                                
-        RaycastHit hit;
-
-        if (Physics.Raycast(new Ray(camera.transform.position, camera.transform.forward), out hit)) {
-            Vector3 targetPosition = hit.point;
-
-            Vector3 direction = targetPosition - muzzleFlash.transform.position;
-
-            Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
-                  
-            muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
-            Instantiate(bullet, muzzleFlash.transform.position, bodyTargetRotation);
-            animator.SetTrigger("Shoot");
-            
-        } else {
-            Vector3 targetPosition = camera.transform.position + camera.transform.forward * 100f;
-
-            Vector3 direction = targetPosition - muzzleFlash.transform.position;
-
-
-            Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
-
-            Instantiate(bullet, muzzleFlash.transform.position, camera.transform.rotation);
-        }        
-
-        yield return new WaitForSeconds(shotInterval);
-
-        isShooting = false;
+    private void FireWeapon() {
+        if (gm.gameState != GameState.Playing || !IsAlive) return;
+        Vector3 target = camera.transform.position + camera.transform.forward * 100f;
+        if(autoAim!=null && autoAim.Enabled && input.IsAiming && autoAim.Target!=null) target=autoAim.AimPoint;
+        else if (Physics.Raycast(camera.transform.position, camera.transform.forward, out var hit)) target = hit.point;
+        weapon.SetInterval(shotInterval);
+        if (weapon is ProjectileWeapon projectileWeapon) projectileWeapon.SetDamage(shootingDamage);
+        weapon.TryFire(new ShotRequest(muzzleFlash.transform.position, target - muzzleFlash.transform.position, gameObject), Time.time);
+    }
+    private void OnWeaponFired() {
+        muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
+        animator.SetTrigger("Shoot");
     }
 
-    private void Update() {    
-        //Rotation of the character when aiming
+    private void Update() {
+
         cameraTarget.transform.eulerAngles = new Vector3(0, camera.transform.eulerAngles.y + 10f, 0);
 
         scope.SetActive(animationRigging.layers[0].rig.weight > .2f && gm.gameState == GameState.Playing);
-        healthBarValue.text = health.ToString() + '%';
 
-        ProcessYaw(); //Rotation on Y axis
-        ProcessPitch(); //Rotation on X axis        
-        ProcessLeans();
-        ProcessAnimations();        
-                
-        if (health <= 0)
-            gm.SwitchGameState(GameState.GameOver);
+        if (!input.IsAiming) armed = false;
+        UpdatePresentation(Time.deltaTime);
 
         if (gm.gameState == GameState.GameOver)
             maxSpeed = 0;
 
-        if (tim.aim && !isShooting && animationRigging.layers[0].rig.weight > .8f) {
-
-
-
-            StartCoroutine(ShootRate());
-            
-
-            //muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
-            //animator.SetTrigger("Shoot");
-
-
-
-            //hit.transform.GetComponent<Enemy>().GetDamage(20);
-
-
-        }
-
+        autoAim?.Tick(input.IsAiming && gm.gameState==GameState.Playing && IsAlive,armed,Time.deltaTime);
 
     }
 
-    private void TakeGun() => armed = true;
+    private void LateUpdate() {
+        autoAim?.ApplyArmAim();
+        if(input==null || gm.gameState!=GameState.Playing || !input.IsAiming || !armed || animationRigging.layers[0].rig.weight<=.8f) return;
+        if(autoAim==null || !autoAim.Enabled || autoAim.CanFire) FireWeapon();
+    }
+
+    private void TakeGun(AnimationEvent animationEvent) {
+        // The authored grab clip calls TakeGun at both its start and its end.
+        // Only the completion event makes the weapon ready for aiming and fire.
+        if(animationEvent.time>.01f && input.IsAiming && gm.gameState==GameState.Playing) armed=true;
+    }
+
+    private void UpdatePresentation(float dt) {
+        bool reacting=impactResponse!=null && gm.gameState==GameState.Playing;
+        float visual=reacting ? impactResponse.PresentationSteering(xThrow,dt) : xThrow;
+        presentation.Tick(xThrow,input.IsAiming,armed,visual,reacting ? impactResponse.PresentationResponse : BikePresentation.DefaultPoseResponse,dt);
+    }
 
     private void processVelocity() {
-        rb.maxLinearVelocity = gm.gameState == GameState.Hit ? 0 : maxSpeed;
-
-        xVelocity = transform.InverseTransformDirection(rb.velocity).x;
-        zVelocity = transform.InverseTransformDirection(rb.velocity).z;
-               
-
-        //Limit max dodge speed
-
-        if (Mathf.Abs(rb.velocity.x) > dodgeMaxSpeed) { 
-                rb.velocity = new Vector3(Mathf.Sign(rb.velocity.x) * dodgeMaxSpeed, rb.velocity.y, rb.velocity.z);
-            }
-            else {
-                rb.AddForce((transform.right * (xThrow) * dodgeAccelerationForce), ForceMode.Acceleration);
-            }
-        
-
-        if (grounded) {
-            rb.AddForce(transform.forward * (accelerationForce), ForceMode.Acceleration);
-        }
-        else {
-            rb.AddForce(Vector3.forward * (accelerationForce / 2), ForceMode.Acceleration);
-        }
-
-        if (wallDirection != 0)
-            rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, rb.maxLinearVelocity);
+        motor.Tick(xThrow, grounded, wallDirection, maxSpeed,
+            impactResponse!=null ? impactResponse.MotorAccelerationMultiplier : 1,
+            impactResponse!=null ? impactResponse.SteeringAccelerationMultiplier(xThrow) : 1,
+            impactResponse!=null && impactResponse.IsRecovering);
+        xVelocity = motor.LocalVelocity.x;
+        zVelocity = motor.LocalVelocity.z;
     }
 
-    private void ProcessYaw() {
-        yawRotation = Mathf.Lerp(yawRotation, xThrow * rotationSensitivity, Time.deltaTime * 3f);
+    public void Shoot() { FireWeapon(); }
 
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, yawRotation, transform.eulerAngles.z);
+    private void GetDamage(int amount) { TakeDamage(new DamageInfo(amount)); }
+    public void TakeDamage(DamageInfo damage) {
+        if (gm == null || (gm.gameState != GameState.Playing && gm.gameState != GameState.Hit)) return;
+        if (Health != null && Health.TakeDamage(damage) && damage.Source != null && collectibleParticle != null)
+            Instantiate(collectibleParticle, damage.Source.transform.position, Quaternion.identity, transform);
     }
-
-    private void ProcessPitch() {
-        float currentRotationX = GetInspectorRotation(transform.eulerAngles.x);
-        float clampedRotationX = Mathf.Clamp(currentRotationX, -30, 10);
-
-
-        Vector3 targetRotation = transform.eulerAngles;
-
-        targetRotation.x = clampedRotationX;
-
-        transform.eulerAngles = targetRotation;
-    }
-
-    public void Shoot() {
-        muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
-        animator.SetTrigger("Shoot");
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(new Ray(camera.transform.position, camera.transform.forward), out hit)) {
-            if (hit.transform.gameObject.CompareTag("Enemy")) {                
-                hit.transform.GetComponent<Enemy>().GetDamage(20);
-            }
-        }        
-    }
-
-    private void ProcessAnimations() {
-        animationFrame = Mathf.Lerp(animationFrame, xThrow, Time.deltaTime * 3f);
-        animator.SetFloat("dragX", animationFrame);        
-        animator.SetBool("Aim", tim.aim);
-
-        if (tim.aim && armed) {
-            animationRigging.layers[0].rig.weight = Mathf.Lerp(animationRigging.layers[0].rig.weight, 1, Time.deltaTime * 3f);
-            animationRigging.layers[1].rig.weight = 1;
-            animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 1, Time.deltaTime));
-        }
-        else {
-            animationRigging.layers[0].rig.weight = 0;
-            animationRigging.layers[1].rig.weight = 0;
-            animator.SetLayerWeight(1, 0);
-            armed = false;
-            animator.SetFloat("dragY", 0);
-        }
-    }
-
-    private void ProcessLeans() {
-        Vector3 targetRotation = Vector3.zero;
-
-        targetRotation.z = leanRange * -xThrow;
-
-        motorcycleMesh.transform.localRotation = Quaternion.Slerp(
-            motorcycleMesh.transform.localRotation,
-            Quaternion.Euler(targetRotation),
-            Time.deltaTime * 3f
-        );
-    }
-
-    private void GetDamage(int amount) {
-        health -= amount;
-        healthBarMaterial.SetFloat("_Cutoff", healthBarMaterial.GetFloat("_Cutoff") + (amount * 0.39f / 100f));
+    private void OnDied() { motor.Stop(); gm.SwitchGameState(GameState.GameOver); }
+    private void OnDestroy() {
+        presenter?.Dispose();
+        if (Health != null) Health.Died -= OnDied;
+        if (weapon != null) weapon.Fired -= OnWeaponFired;
     }
 
     public void ResetRagDoll() {
         playerMesh.SetActive(true);
-        
+
         if (hitObject != null) {
             if (hitObject.transform.tag != "Wall") {
                 Destroy(hitObject);
@@ -327,73 +236,92 @@ public class PlayerController : MonoBehaviour
                 transform.position = new Vector3(hitObject.transform.parent.transform.position.x, hitObject.transform.parent.transform.position.y, hitObject.transform.parent.transform.position.z + 10f);
             }
         }
-        
+
         camera.SetTarget(cameraTarget.transform);
-        tc.startFade(false);        
+        impactResponse?.ResetResponse();
+        tc.startFade(false);
         SwitchRagDoll(false);
     }
-    
+
     private void SwitchRagDoll(bool on) {
         if (on) {
             _ragDoll = Instantiate(ragDoll, motorcycleMesh.position, motorcycleMesh.rotation);
             camera.SetTarget(_ragDoll.transform.GetChild(0).transform.GetChild(0));
 
-            foreach (Rigidbody ragRB in _ragDoll.GetComponentsInChildren<Rigidbody>()) {                
+            // The rider spawns overlapping the bike's upper-body colliders. Its
+            // launch must not transfer momentum back into its own motorcycle.
+            foreach(var riderShape in _ragDoll.GetComponentsInChildren<Collider>())
+                foreach(var bikeShape in solidColliders)
+                    if(bikeShape!=null) Physics.IgnoreCollision(riderShape,bikeShape,true);
+
+            foreach (Rigidbody ragRB in _ragDoll.GetComponentsInChildren<Rigidbody>()) {
                 ragRB.GetComponent<Rigidbody>().AddForce((Vector3.up / 1.5f + transform.forward) * 50f, ForceMode.VelocityChange);
             }
 
         } else {
             Destroy(_ragDoll);
-        }        
+        }
     }
-        
-    private float GetInspectorRotation(float angle) {
-        if (angle > 180) {
-            angle -= 360;
-        }
-        return angle;
-    }    
 
-    private void OnCollisionEnter(Collision collision) {        
-        if (collision.transform.tag == "Obstacle" && gm.gameState == GameState.Playing) {
+    private void OnCollisionEnter(Collision collision) {
+        HandleCarContact(collision,true);
 
-            Vector3 carBack = collision.transform.position - collision.transform.forward * (collision.collider.bounds.size.z/2);
-
-            Vector3 toHit = (carBack - transform.position).normalized;
-
-            if (transform.position.z + GetComponent<BoxCollider>().bounds.size.z/2 < carBack.z) {
-                gm.gameState = GameState.Hit;
-                tc.startFade(true);
-                hitObject = collision.gameObject;
-
-                SwitchRagDoll(true);
-
-
-                playerMesh.SetActive(false);
-                
-
-                GetDamage(collision.gameObject.GetComponent<Obstacle>().damage);
-            }            
-        }
-
-        if (collision.transform.tag == "Wall" && gm.gameState == GameState.Playing && wallDirection == 0) {
-            gm.gameState = GameState.Hit;
+        bool sideScrape = false;
+        if (collision.transform.CompareTag("Wall"))
+            for (int i=0;i<collision.contactCount;i++)
+                if (Mathf.Abs(collision.GetContact(i).normal.x)>.65f) { sideScrape=true;break; }
+        // A side scrape can reach the banked body before a low guard ray sees the
+        // barrier. Use the contact normal to distinguish it from a frontal crash.
+        if (collision.transform.tag == "Wall" && gm.gameState == GameState.Playing && wallDirection == 0 && !sideScrape) {
+            gm.SwitchGameState(GameState.Hit);
             tc.startFade(true);
             hitObject = collision.gameObject;
 
             SwitchRagDoll(true);
 
-
-            playerMesh.SetActive(false);                        
+            playerMesh.SetActive(false);
         }
     }
 
-    private void OnTriggerEnter(Collider other) {
-        if (other.transform.CompareTag("Enemy")) {
-            Instantiate(collectibleParticle, other.transform.position, Quaternion.identity, transform);
-            GetDamage(10);
+    private void OnCollisionStay(Collision collision) {HandleCarContact(collision,false);}
+
+    private void HandleCarContact(Collision collision,bool initialImpact) {
+        if(gm==null || gm.gameState!=GameState.Playing) return;
+        var car=collision.collider.GetComponentInParent<Car>();
+        var obstacle=collision.collider.GetComponentInParent<Obstacle>();
+        if(car==null && obstacle==null && !collision.transform.CompareTag("Obstacle")) return;
+        Transform carRoot=car!=null ? car.transform : obstacle!=null ? obstacle.transform : collision.transform;
+        if(initialImpact) impactResponse?.ReactToCollision(collision);
+        var box=collision.collider as BoxCollider;
+        if(box==null) box=carRoot.GetComponentInChildren<BoxCollider>();
+        Vector3 carForward=box!=null ? box.transform.forward : carRoot.forward;
+        if(Mathf.Abs(Vector3.Dot(collision.relativeVelocity,carForward))<minimumRearCrashSpeed) return;
+        bool rearHit=false;
+        for(int i=0;i<collision.contactCount;i++) {
+            var contact=collision.GetContact(i);
+            bool rearFace=Vector3.Dot(contact.normal,carForward)<-.35f;
+            bool rearCorner=false;
+            if(box!=null) {
+                // Size/centre remain valid even if Car already disabled its collider.
+                float localZ=box.transform.InverseTransformPoint(contact.point).z-box.center.z;
+                rearCorner=localZ<=-box.size.z*.5f+box.size.z*rearCrashZone;
+            }
+            if(rearFace || rearCorner) {rearHit=true;break;}
         }
+        if(!rearHit) return;
+        gm.SwitchGameState(GameState.Hit);
+        tc.startFade(true);hitObject=carRoot.gameObject;
+        // Stop driving into the car immediately, retaining this collision's recoil.
+        Vector3 kick=impactResponse!=null
+            ? impactResponse.ApplyRearCrashKick(collision.collider,-carForward,Mathf.Abs(Vector3.Dot(collision.relativeVelocity,carForward)))
+            : Vector3.zero;
+        rb.linearVelocity=new Vector3(kick.x,rb.linearVelocity.y,Mathf.Min(0,kick.z));
+        xThrow=0;
+        SwitchRagDoll(true);playerMesh.SetActive(false);
+        if(obstacle!=null) GetDamage(obstacle.damage);
     }
+
+    private void OnTriggerEnter(Collider other) { }
 
     private void OnParticleTrigger() {
         GetDamage(10);

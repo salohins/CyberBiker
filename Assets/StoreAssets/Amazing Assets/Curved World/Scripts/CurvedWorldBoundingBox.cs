@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -16,7 +16,7 @@ namespace AmazingAssets.CurvedWorld
         SkinnedMeshRenderer skinnedMeshRenderer;
         MeshFilter meshFilter;
 
-        static Dictionary<int, Bounds> boundsDictionary;
+        static Dictionary<EntityId, Bounds> boundsDictionary;
 
         public bool visualizeInEditor;
 
@@ -39,19 +39,19 @@ namespace AmazingAssets.CurvedWorld
         void Start()
         {
             if (boundsDictionary == null)
-                boundsDictionary = new Dictionary<int, Bounds>();
+                boundsDictionary = new Dictionary<EntityId, Bounds>();
 
             meshFilter = GetComponent<MeshFilter>();
             skinnedMeshRenderer = GetComponent<SkinnedMeshRenderer>();
 
             if (meshFilter != null && meshFilter.sharedMesh != null)
             {
-                if (boundsDictionary.ContainsKey(meshFilter.sharedMesh.GetInstanceID()))
-                    originalBounds = boundsDictionary[meshFilter.sharedMesh.GetInstanceID()];
+                if (boundsDictionary.ContainsKey(meshFilter.sharedMesh.GetEntityId()))
+                    originalBounds = boundsDictionary[meshFilter.sharedMesh.GetEntityId()];
                 else
                 {
                     originalBounds = meshFilter.sharedMesh.bounds;
-                    boundsDictionary.Add(meshFilter.sharedMesh.GetInstanceID(), originalBounds);
+                    boundsDictionary.Add(meshFilter.sharedMesh.GetEntityId(), originalBounds);
                 }
 
                 boundingBoxSize = originalBounds.size;
@@ -65,12 +65,12 @@ namespace AmazingAssets.CurvedWorld
             }
             else if (skinnedMeshRenderer != null && skinnedMeshRenderer.sharedMesh != null)
             {
-                if (boundsDictionary.ContainsKey(skinnedMeshRenderer.sharedMesh.GetInstanceID()))
-                    originalBounds = boundsDictionary[skinnedMeshRenderer.sharedMesh.GetInstanceID()];
+                if (boundsDictionary.ContainsKey(skinnedMeshRenderer.sharedMesh.GetEntityId()))
+                    originalBounds = boundsDictionary[skinnedMeshRenderer.sharedMesh.GetEntityId()];
                 else
                 {
                     originalBounds = skinnedMeshRenderer.sharedMesh.bounds;
-                    boundsDictionary.Add(skinnedMeshRenderer.sharedMesh.GetInstanceID(), originalBounds);
+                    boundsDictionary.Add(skinnedMeshRenderer.sharedMesh.GetEntityId(), originalBounds);
                 }
 
                 boundingBoxSize = originalBounds.size;
@@ -134,9 +134,9 @@ namespace AmazingAssets.CurvedWorld
 
                 originalBounds = skinnedMeshRenderer.sharedMesh.bounds;
 
-                if (boundsDictionary != null && boundsDictionary.ContainsKey(skinnedMeshRenderer.sharedMesh.GetInstanceID()))
+                if (boundsDictionary != null && boundsDictionary.ContainsKey(skinnedMeshRenderer.sharedMesh.GetEntityId()))
                 {
-                    boundsDictionary[skinnedMeshRenderer.sharedMesh.GetInstanceID()] = originalBounds;
+                    boundsDictionary[skinnedMeshRenderer.sharedMesh.GetEntityId()] = originalBounds;
                 }
             }
 
@@ -146,9 +146,9 @@ namespace AmazingAssets.CurvedWorld
 
                 originalBounds = meshFilter.sharedMesh.bounds;
 
-                if (boundsDictionary != null && boundsDictionary.ContainsKey(meshFilter.sharedMesh.GetInstanceID()))
+                if (boundsDictionary != null && boundsDictionary.ContainsKey(meshFilter.sharedMesh.GetEntityId()))
                 {
-                    boundsDictionary[meshFilter.sharedMesh.GetInstanceID()] = originalBounds;
+                    boundsDictionary[meshFilter.sharedMesh.GetEntityId()] = originalBounds;
                 }
             }
         }

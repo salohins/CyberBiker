@@ -7,9 +7,9 @@ public class TeleportController : MonoBehaviour
 {
     [SerializeField] private Material[] teleportMaterial;
     [Range(0, 1)]
-    public float fadeValue;    
+    public float fadeValue;
 
-    [SerializeField] private float timerValue;    
+    [SerializeField] private float timerValue;
 
     private float timerTemp;
 
@@ -17,19 +17,19 @@ public class TeleportController : MonoBehaviour
     private GameObject player;
 
     private GameplayManager gm;
-    
+
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");   
+        player = GameObject.FindGameObjectWithTag("Player");
         timerTemp = timerValue;
-        gm = FindFirstObjectByType<GameplayManager>();
+        gm = FindAnyObjectByType<GameplayManager>();
     }
-    
+
     void Update()
     {
         foreach (Material m in teleportMaterial) {
             m.SetFloat("_FadeRate", fadeValue);
-            m.SetFloat("_ObjectFadeHeight", player.transform.position.y - 99999f); 
+            m.SetFloat("_ObjectFadeHeight", player.transform.position.y - 99999f);
             m.SetFloat("_ObjectHeight", player.transform.position.y - 99999f);
         }
 
@@ -39,41 +39,42 @@ public class TeleportController : MonoBehaviour
 
         if (fadeStarted && timerValue <= 0) {
             StartCoroutine(Fade(true));
-        }        
+        }
     }
 
     public void startFade(bool fadeOut) {
         StopAllCoroutines();
         if (fadeOut) {
-            
+
             fadeValue = 0;
             fadeStarted = true;
         }
-        else {            
+        else {
             fadeValue = 1;
             StartCoroutine(Fade(fadeOut));
         }
-        
+
     }
 
     IEnumerator Fade(bool fadeOut) {
         float tempFadeValue = fadeValue;
         fadeStarted = false;
-        
+
         if (fadeOut) {
             while (fadeValue < 1.4f) {
-                fadeValue += Time.deltaTime;                
+                fadeValue += Time.deltaTime;
                 yield return null;
             }
-            gm.gameState = GameState.Playing;
+            if (gm.gameState == GameState.GameOver) yield break;
+            gm.SwitchGameState(GameState.Playing);
             player.GetComponent<PlayerController>().ResetRagDoll();
             timerValue = timerTemp;
 
-        } else {            
+        } else {
             while (fadeValue > .01) {
                 fadeValue -= Time.deltaTime * 0.5f;
                 yield return new WaitForEndOfFrame();
-            }            
-        }        
+            }
+        }
     }
 }

@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using AI;
+using CyberBiker.Combat;
 using System.Linq;
-using UnityEditor;
+
 using UnityEngine.Animations.Rigging;
 using UnityEngine.UIElements;
 
@@ -13,11 +14,21 @@ public enum EnemyState {
     Dead,
 }
 
-public class Enemy : MonoBehaviour {
-    
-    [SerializeField] private int health = 100;
-    [SerializeField] private float shootInterval = .5f;    
-        
+public class Enemy : MonoBehaviour, IDamageable {
+    private Health vitality;
+    private Weapon weapon;
+    private Gameplay.GameplayManager gameplay;
+    public bool IsAlive => vitality != null && vitality.IsAlive;
+
+    [Header("Health")]
+    [Tooltip("Starting health, applied when this enemy spawns.")]
+    [SerializeField, Min(1)] private int health = 100;
+    [Header("Weapon Tuning")]
+    [Tooltip("Seconds between alternating left/right shots. 0.5 = 2 shots/second. Keeps the existing two-arm firing sequence.")]
+    [SerializeField, Min(0.01f)] private float shootInterval = .5f;
+    [Tooltip("Damage per projectile. Can be tuned during Play mode.")]
+    [SerializeField, Min(0)] private float shootingDamage = 10f;
+
     [SerializeField] private Transform[] rayCheck;
 
     [SerializeField] private GameObject motoMesh;
@@ -71,21 +82,24 @@ public class Enemy : MonoBehaviour {
             _playerDistance = value;
         }
     }
-    
 
     void Start() {
+        vitality = new Health(Mathf.Max(1, health));
+        vitality.Died += Die;
+        gameplay = FindAnyObjectByType<Gameplay.GameplayManager>();
         player = GameObject.FindGameObjectWithTag("Player");
         _playerDistance = distanceController;
-        aiConntroller = FindFirstObjectByType<AIController>();
+        aiConntroller = FindAnyObjectByType<AIController>();
 
         animator = GetComponent<Animator>();
-        animationRigging = GetComponent<RigBuilder>();   
+        animationRigging = GetComponent<RigBuilder>();
         if (bulletParent == null) {
             bulletParent = GameObject.FindGameObjectWithTag("Finish");
         }
     }
-   
+
     private void Update() {
+        if (!IsAlive || (gameplay != null && gameplay.gameState != Gameplay.GameState.Playing)) return;
         // Handle the enemy's body rotation based on movement or look target
         var targetRotation = transform.eulerAngles;
         targetRotation.z = -targetRotation.y * 2f;
@@ -122,17 +136,16 @@ public class Enemy : MonoBehaviour {
             Debug.DrawLine(transform.position + Vector3.up * 2, targetPosition + Vector3.up * 2);
             Vector3 direction = targetPosition - transform.position;
 
-            
             Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
             bodyRotation.transform.rotation = Quaternion.RotateTowards(bodyRotation.transform.rotation, bodyTargetRotation, Time.deltaTime * 120f);
-            
+
             gunParticle2.transform.LookAt(player.transform.position + Vector3.up * 3f);
             gunParticle1.transform.LookAt(player.transform.position + Vector3.up * 3f);
         }
     }
 
     private void FixedUpdate() {
-        if (state == EnemyState.Dead)
+        if (!IsAlive || (gameplay != null && gameplay.gameState != Gameplay.GameState.Playing))
             return;
 
         // Move the enemy based on the player's position and other conditions
@@ -148,11 +161,11 @@ public class Enemy : MonoBehaviour {
         }
 
         if (state == EnemyState.Spawn) {
-            speed = Mathf.Lerp(speed, player.GetComponent<Rigidbody>().velocity.z - 30f, Time.deltaTime);
+            speed = Mathf.Lerp(speed, player.GetComponent<Rigidbody>().linearVelocity.z - 30f, Time.deltaTime);
         }
         else {
             if (player.GetComponent<PlayerController>().wallDirection != 0) {
-                speed = Mathf.Lerp(speed, player.GetComponent<Rigidbody>().velocity.z - 2f, Time.deltaTime);
+                speed = Mathf.Lerp(speed, player.GetComponent<Rigidbody>().linearVelocity.z - 2f, Time.deltaTime);
             }
             else {
                 ProcessSpeed();
@@ -219,12 +232,14 @@ public class Enemy : MonoBehaviour {
 
         Quaternion bodyTargetRotation = Quaternion.LookRotation(direction);
 
-
-        Instantiate(bullet, targetGun.transform.position, bodyTargetRotation, bulletParent.transform);
+        if (gameplay != null && gameplay.gameState != Gameplay.GameState.Playing) return;
+        if (weapon == null) weapon = new ProjectileWeapon(bullet, 0.01f, shootingDamage, bulletParent != null ? bulletParent.transform : null);
+        if (weapon is ProjectileWeapon projectileWeapon) projectileWeapon.SetDamage(shootingDamage);
+        weapon.TryFire(new ShotRequest(targetGun.position, direction, gameObject), Time.time);
     }
 
-    private void TakeGun() => armed = true;      
-    
+    private void TakeGun() => armed = true;
+
     private void ClearPath() {
         path = null;
         currentWaypointIndex = 1;
@@ -233,13 +248,13 @@ public class Enemy : MonoBehaviour {
 
     private void ProcessSpeed() {
         if (moveDirection == 1 && (Vector3.Distance(transform.position, player.transform.position) < _playerDistance)) {
-            speed = Mathf.Lerp(speed, player.GetComponent<Rigidbody>().velocity.z + 10f, Time.deltaTime * 5f);
+            speed = Mathf.Lerp(speed, player.GetComponent<Rigidbody>().linearVelocity.z + 10f, Time.deltaTime * 5f);
         }
         else if (moveDirection == -1 && (Vector3.Distance(transform.position, player.transform.position) > _playerDistance)) {
-            speed = Mathf.Lerp(speed, player.GetComponent<Rigidbody>().velocity.z - 10f, Time.deltaTime * 5f);
+            speed = Mathf.Lerp(speed, player.GetComponent<Rigidbody>().linearVelocity.z - 10f, Time.deltaTime * 5f);
         }
         else {
-            speed = Mathf.Lerp(speed, player.GetComponent<Rigidbody>().velocity.z, Time.deltaTime);
+            speed = Mathf.Lerp(speed, player.GetComponent<Rigidbody>().linearVelocity.z, Time.deltaTime);
         }
     }
 
@@ -267,45 +282,30 @@ public class Enemy : MonoBehaviour {
             // Logic for handling each particle when it triggers
             Debug.Log("A particle triggered the collider!");
         }
-    }    
-
-    private void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("Enemy")) {
-            bulletHit = other.gameObject;
-            GetDamage(10);
-            Instantiate(damageParticle, transform.position + Vector3.up * 2, Quaternion.identity, transform);
-        }
-        
     }
 
-    private void OnTriggerStay(Collider other) {
-        if (other.CompareTag("Enemy")) {
-            if (other.gameObject == bulletHit) {
-                Destroy(other.gameObject);
+    private void OnTriggerEnter(Collider other) { }
 
-            }
-            else {
-                GetDamage(10);
-                bulletHit = other.gameObject;
-            }
-        }
-    }
+    private void OnTriggerStay(Collider other) { }
 
     private void OnCollisionEnter(Collision collision) {
         GetDamage(50);
     }
 
-    public void GetDamage(int amount) {
-        health -= amount;
-        Debug.Log("Enemy Health: " + health);
-        if (health <= 0) {
-            Instantiate(explosion, transform.position, Quaternion.identity);
-            Destroy(gameObject);
-            //Destroy(gameObject);
-            
-            
-        }
+    public void GetDamage(int amount) { TakeDamage(new DamageInfo(amount)); }
+    public void TakeDamage(DamageInfo damage) {
+        if (gameplay != null && gameplay.gameState != Gameplay.GameState.Playing) return;
+        if (vitality != null && vitality.TakeDamage(damage) && damageParticle != null)
+            Instantiate(damageParticle, transform.position + Vector3.up * 2, Quaternion.identity);
     }
+    private void Die() {
+        CyberBiker.Audio.SoundEvents.Emit(CyberBiker.Audio.SoundCue.Explosion, transform.position);
+        state = EnemyState.Dead;
+        StopAllCoroutines();
+        if (explosion != null) Instantiate(explosion, transform.position, Quaternion.identity);
+        Destroy(gameObject);
+    }
+    private void OnDestroy() { if (vitality != null) vitality.Died -= Die; }
 
     private void OnParticleCollision(GameObject other) {
         Debug.Log(1);

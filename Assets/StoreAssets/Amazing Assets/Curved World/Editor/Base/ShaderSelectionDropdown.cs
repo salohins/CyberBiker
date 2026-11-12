@@ -128,7 +128,7 @@ namespace AmazingAssets.CurvedWorldEditor
 		{
 			string[] array = path.Split('/');
 			string text = array[0];
-			foreach (AdvancedDropdownItem child in parent.children)
+			foreach (AdvancedDropdownItem child in parent.childList)
 			{
 				if (child.name == text)
 				{

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GroundController : MonoBehaviour
-{    
-    private Transform rayCheck;    
+{
+    private Transform rayCheck;
     private Transform player;
 
     private void Start() {
@@ -24,10 +24,10 @@ public class GroundController : MonoBehaviour
         RaycastHit hit;
 
         if (Physics.Raycast(rayCheck.transform.position, -Vector3.up, out hit, Mathf.Infinity, mask)) {
-            targetPos.y = hit.point.y - GetComponent<BoxCollider>().bounds.size.y / 2;            
+            targetPos.y = hit.point.y - GetComponent<BoxCollider>().bounds.size.y / 2;
         } else {
             targetPos.y = player.transform.position.y - 1000f;
-        }        
+        }
 
         transform.position = targetPos;
     }

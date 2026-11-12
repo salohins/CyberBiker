@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -330,7 +330,7 @@ namespace AmazingAssets.CurvedWorldEditor
 
 
 
-            string shaderFilePath = AssetDatabase.GetAssetPath(shader.GetInstanceID());
+            string shaderFilePath = AssetDatabase.GetAssetPath(shader);
             if (string.IsNullOrEmpty(shaderFilePath))
                 return false;
 
@@ -1163,7 +1163,7 @@ namespace AmazingAssets.CurvedWorldEditor
             if (material == null)
                 return true;
 
-            return IsMaterialBuiltInResource(AssetDatabase.GetAssetPath(material.GetInstanceID()));
+            return IsMaterialBuiltInResource(AssetDatabase.GetAssetPath(material));
         }
 
         static public bool IsMaterialBuiltInResource(string materialPath)
@@ -1181,7 +1181,7 @@ namespace AmazingAssets.CurvedWorldEditor
                 return true;
 
 
-            return IsShaderBuiltInResource(AssetDatabase.GetAssetPath(shader.GetInstanceID()));
+            return IsShaderBuiltInResource(AssetDatabase.GetAssetPath(shader));
         }
 
         static public bool IsShaderBuiltInResource(string shaderPath)
@@ -1219,12 +1219,12 @@ namespace AmazingAssets.CurvedWorldEditor
 
         static public RENDER_PIPELINE GetCurrentRenderPipeline()
         {
-            if (UnityEngine.Rendering.GraphicsSettings.renderPipelineAsset == null)
+            if (UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline == null)
                 return RENDER_PIPELINE.Builtin;
             else
             {
-                if (UnityEngine.Rendering.GraphicsSettings.renderPipelineAsset.name.Contains("Universal") ||
-                    UnityEngine.Rendering.GraphicsSettings.renderPipelineAsset.name.Contains("URP"))
+                if (UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline.name.Contains("Universal") ||
+                    UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline.name.Contains("URP"))
                     return RENDER_PIPELINE.Universal;
                 else
                     return RENDER_PIPELINE.HighDefinition;
@@ -1450,7 +1450,7 @@ namespace AmazingAssets.CurvedWorldEditor
                 return;
 
 
-            string shaderPath = AssetDatabase.GetAssetPath(shader.GetInstanceID());
+            string shaderPath = AssetDatabase.GetAssetPath(shader);
             if (EditorUtilities.IsShaderBuiltInResource(shaderPath) == false)
             {
                 AssetDatabase.ImportAsset(shaderPath);
@@ -1752,7 +1752,7 @@ namespace AmazingAssets.CurvedWorldEditor
 
 
                     //Check multi_compile
-                    string shaderFilePath = AssetDatabase.GetAssetPath(shader.GetInstanceID());
+                    string shaderFilePath = AssetDatabase.GetAssetPath(shader);
 
                     string[] allLines = File.ReadAllLines(shaderFilePath);
                     for (int i = 0; i < allLines.Length; i++)

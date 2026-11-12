@@ -12,7 +12,7 @@ namespace AmazingAssets.CurvedWorld.Example
         void Start()
         {
             //Check if using Scriptable render pipeline
-            if(GraphicsSettings.renderPipelineAsset != null)
+            if(GraphicsSettings.defaultRenderPipeline != null)
                 RenderPipelineManager.beginCameraRendering += BeginCameraRendering;
         }
 

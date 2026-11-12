@@ -936,6 +936,8 @@ GameObject:
   - component: {fileID: 8190264215170383135}
   - component: {fileID: 881951478277979244}
   - component: {fileID: 7474207442335538172}
+  - component: {fileID: 6541001001}
+  - component: {fileID: 6541001002}
   m_Layer: 0
   m_Name: Motorcycle
   m_TagString: Untagged
@@ -3367,6 +3369,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
+  - component: {fileID: 1147942268991001}
+  - component: {fileID: 1147942268991002}
+  - component: {fileID: 1147942268991003}
+  - component: {fileID: 1147942268991004}
+  - component: {fileID: 1147942268991005}
   - component: {fileID: 3910659230279519786}
   - component: {fileID: 4385423339754112832}
   - component: {fileID: 9117039755578749502}
@@ -3489,6 +3496,10 @@ MonoBehaviour:
   dodgeAccelerationForce: 50
   dodgeMaxSpeed: 20
   leanRange: 40
+  shotInterval: 0.45
+  shootingDamage: 15
+  rearCrashZone: 0.18
+  minimumRearCrashSpeed: 2
   rayCheck: {fileID: 0}
   cameraTarget: {fileID: 5575047025353772080}
   xVelocity: 0
@@ -6114,3 +6125,172 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a7df044bf1aea154da7843ef1988470a, type: 3}
   m_PrefabInstance: {fileID: 8189554094192127195}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1147942268991001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5681304576912137381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb07b5926a0142df84b7fb09d2bd26f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheelRadius: 0.72
+  spinScale: 0.2
+  motionBlur: 0.4
+  maxTreadBandRate: 18
+--- !u!114 &1147942268991002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5681304576912137381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01a4e0bfcba74b2a8c2164b6dd824bfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleMaterial: {fileID: 2100000, guid: 1ca50b57926a41169240ca5f8a69c374, type: 2}
+  smokeMaterial: {fileID: 2100000, guid: 1000190d698d4ab7b83f606b6b3a2f85, type: 2}
+  smokeTemplate: {fileID: 725748390055121439, guid: 4bda94453d2ca7444a0fff05b2d425f5, type: 3}
+  referenceSpeed: 75
+  steeringEmission: 90
+  frontWheelAmount: 0.15
+  particleSize: 0.72
+  smokeLifetime: 0.34
+  smokeRise: 0.45
+  steeringSpraySpeed: 0.3
+  smokeOpacity: 0.8
+  startLeanAngle: 18
+  fullLeanAngle: 35
+  leanReleaseMargin: 3
+  skidSparkEmission: 45
+  skidSparkSize: 0.08
+  hardLeanSparkBoost: 2.5
+  skidSparkLifetime: 0.22
+  skidSparkStreakLength: 2.8
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &1147942268991003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5681304576912137381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 528b8e783df94b1ba3eb277c79db6311, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  sparkMaterial: {fileID: 2100000, guid: 4a24bab70826472ca85c58357e986fba, type: 2}
+  impactBurstCount: 8
+  scrapeEmission: 360
+  minimumImpactSpeed: 2
+  minimumScrapeSpeed: 0.5
+  fullIntensitySpeed: 65
+  contactTolerance: 0.1
+  sparkSize: 0.035
+  streakLength: 12
+  sparkLifetime: 0.3
+  brightness: 1.8
+  outwardSpray: 0.8
+  sparkColor: {r: 1, g: 0.58, b: 0.16, a: 1}
+  carImpactFeedback: 1
+  fullCameraImpactSpeed: 18
+  cameraImpactCooldown: 0.25
+--- !u!65 &6541001001
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949989024537812671}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.71608, y: 0.7, z: 1.8}
+  m_Center: {x: 0, y: 0.9, z: 0.1}
+--- !u!65 &6541001002
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949989024537812671}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.88438, y: 0.18, z: 0.24}
+  m_Center: {x: 0, y: 1.44, z: 1.0}
+--- !u!114 &1147942268991004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5681304576912137381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24b4fa1d3cd04488a728a06488e362ae, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  affectCars: 1
+  affectBarriers: 1
+  maximumKickSpeed: 5
+  minimumImpactSpeed: 0.75
+  fullImpactSpeed: 18
+  lightHitStrength: 0.25
+  impactCooldown: 0.35
+  motorRecoveryDuration: 0.4
+  steeringRecoveryDuration: 0.16
+  recoilLeanSpeed: 8
+  recoilLeanLimit: 0.35
+  leanAnimationSpeed: 6
+  recoilPoseBlendOut: 0.3
+--- !u!114 &1147942268991005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5681304576912137381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4af6c9aab1544eead2e20a9f535c08d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  autoAimEnabled: 1
+  targetRange: 120
+  targetHalfAngle: 70
+  targetPitchLimit: 45
+  searchInterval: 0.15
+  trackingSpeed: 12
+  torsoTurnShare: 0.65
+  torsoPitchShare: 0.5
+  pistolExposureYaw: 18
+  pistolExposureSmoothTime: 0.2
+  firingAlignment: 5
+  muzzleForwardAxis: {x: 1, y: 0, z: 0}

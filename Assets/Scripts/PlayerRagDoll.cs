@@ -16,6 +16,5 @@ public class PlayerRagDoll : MonoBehaviour
     void Update()
     {
 
-        
     }
 }

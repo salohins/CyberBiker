@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MuzzleFlash : MonoBehaviour
 {
+    public int SpawnCount { get; private set; }
     private float frameTimer = 3;
     [SerializeField] private GameObject muzzleFlash;
     private bool active;
@@ -13,7 +14,7 @@ public class MuzzleFlash : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -22,7 +23,6 @@ public class MuzzleFlash : MonoBehaviour
         if (active) {
             frameTimer -= 1;
         }
-        
 
         if (frameTimer <= 0) {
             Destroy(_muzzleFlash);
@@ -34,6 +34,7 @@ public class MuzzleFlash : MonoBehaviour
     }
 
     public void Spawn() {
+        SpawnCount++;
         _muzzleFlash = Instantiate(muzzleFlash, transform);
         _muzzleFlash.transform.localEulerAngles = new Vector3(Random.Range(0, 360), 0, 0);
         active = true;
