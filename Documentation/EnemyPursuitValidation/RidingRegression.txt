@@ -1,0 +1,4 @@
+PASS balanced preferred lanes: 1,2,1,1.
+PASS smooth road-bound lane changes=35; emitted smoke=344, sparks=246, peak lean=34.0 degrees.
+PASS staggered lane hold; pause freezes motion/emission; actual enemy uses original traffic dodge points to pass a car without falling behind or a manual lane-change rescue.
+PASS enemy FX clear on disable; existing player steering smoke/sparks still work.

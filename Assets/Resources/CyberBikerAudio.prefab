@@ -54,6 +54,11 @@ MonoBehaviour:
   impactVolume: 1
   explosionVolume: 1
   interfaceVolume: 0.3
+  finisherReadyVolume: 0.8
+  finisherWarningVolume: 0.85
+  finisherDuckDb: 5
+  finisherReady: {fileID: 8300000, guid: e6bc37cfc4e54c46bd9eae969dd8c797, type: 3}
+  finisherWarning: {fileID: 8300000, guid: aa9a09effd4444a4874eb2fb5e26a365, type: 3}
   pistolDuckDb: 6
   pistolDuckHold: 0.055
   pistolDuckRelease: 0.16
@@ -101,3 +106,12 @@ MonoBehaviour:
   pause: {fileID: 8300000, guid: 920b9f6138e85de2a7adcd8ef3941e93, type: 3}
   resume: {fileID: 8300000, guid: bf163100ae7654909bb1158ffb750bf2, type: 3}
   gameOver: {fileID: 8300000, guid: 382c736b43d2524c91e41204b4174dd3, type: 3}
+  enemyArrivalEngine: {fileID: 8300000, guid: fe45047ea6bc58289734f9252327afca, type: 3}
+  enemyOvertakeWhoosh: {fileID: 8300000, guid: 2068fa340bf84695be1fcfc52a44b342, type: 3}
+  enemyArrivalEngineVolume: .7
+  enemyOvertakeWhooshVolume: 1
+  enemyArrivalAudibleRange: 100
+  enemyOvertakeWhooshDistance: 12
+  enemyArrivalDoppler: .35
+  enemyArrivalReverbAmount: .3
+  enemyArrivalEngineRelease: 1

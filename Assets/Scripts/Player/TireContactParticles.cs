@@ -15,6 +15,12 @@ namespace CyberBiker.Player {
         [SerializeField, Range(0,3)] private float smokeRise = 0.45f;
         [SerializeField, Min(0)] private float steeringSpraySpeed = 0.3f;
         [SerializeField, Range(0,1)] private float smokeOpacity = 0.8f;
+        [Header("Smoke airflow")]
+        [Tooltip("Inherited speed lost gradually as each cloud is caught by the air. Zero keeps the original motion.")]
+        [SerializeField, Range(0,.9f)] private float smokeWindSlowdown;
+        [SerializeField, Range(0,1)] private float smokeWindSpread;
+        [Tooltip("Seconds to taper smoke emission after a hard turn ends. Sparks still stop at the lean threshold.")]
+        [SerializeField, Range(0,.4f)] private float smokeReleaseTime;
         [Header("Lean activation")]
         [Tooltip("Actual motorcycle lean, in degrees, needed to start smoke and skid sparks.")]
         [SerializeField, Range(0,60)] private float startLeanAngle = 18;
@@ -30,6 +36,11 @@ namespace CyberBiker.Player {
         [SerializeField, Range(0.1f,0.4f)] private float skidSparkLifetime = 0.22f;
         [SerializeField, Range(1,5)] private float skidSparkStreakLength = 2.8f;
         [SerializeField] private LayerMask groundLayers = ~0;
+        [Header("Wheel contact anchors")]
+        [SerializeField] private Vector3 rearWheelContact = new Vector3(0,.02f,-.5296f);
+        [SerializeField] private Vector3 frontWheelContact = new Vector3(0,.02f,1.4493f);
+        [Tooltip("Enemy effects stop emitting beyond this distance from the player.")]
+        [SerializeField, Min(10)] private float enemyEffectRange = 90;
         private readonly RaycastHit[] hits = new RaycastHit[16];
         private readonly System.Random random = new System.Random(71459);
         private readonly ParticleSystem[] wheels = new ParticleSystem[2];
@@ -39,10 +50,13 @@ namespace CyberBiker.Player {
         private readonly float[] sparkBudgets = new float[2];
         private readonly float[] budgets = new float[2];
         private PlayerController player;
+        private Enemy enemy;
+        private Transform playerPosition;
         private Rigidbody body;
         private Transform motorcycle;
         private GameplayManager manager;
         private bool leanActive;
+        private float smokeAmount;
         public float CurrentEmissionRate { get; private set; }
         public float CurrentSparkEmissionRate { get; private set; }
         public int EmittedCount { get; private set; }
@@ -52,7 +66,8 @@ namespace CyberBiker.Player {
         private static int Count(ParticleSystem[] systems) => (systems[0] != null ? systems[0].particleCount : 0) + (systems[1] != null ? systems[1].particleCount : 0);
 
         private void Awake() {
-            player=GetComponent<PlayerController>(); body=GetComponent<Rigidbody>();
+            player=GetComponent<PlayerController>();enemy=GetComponent<Enemy>();body=GetComponent<Rigidbody>();
+            if(enemy!=null){var rider=GameObject.FindGameObjectWithTag("Player");if(rider!=null)playerPosition=rider.transform;}
             foreach(var filter in GetComponentsInChildren<MeshFilter>(true))
                 if(filter.name=="Motorcycle") { motorcycle=filter.transform; break; }
             if(motorcycle==null || particleMaterial==null || smokeMaterial==null) { enabled=false; return; }
@@ -84,9 +99,12 @@ namespace CyberBiker.Player {
             var color=system.colorOverLifetime;color.enabled=true;
             var gradient=new Gradient();gradient.SetKeys(new[]{new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1)},
                 new[]{new GradientAlphaKey(spark ? 1 : .9f,0),new GradientAlphaKey(1,.08f),new GradientAlphaKey(.95f,.65f),new GradientAlphaKey(0,1)});
+            bool airy=!spark && (smokeWindSlowdown>0 || smokeWindSpread>0);
+            if(airy)gradient.SetKeys(new[]{new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1)},
+                new[]{new GradientAlphaKey(.7f,0),new GradientAlphaKey(1,.08f),new GradientAlphaKey(.58f,.35f),new GradientAlphaKey(.18f,.65f),new GradientAlphaKey(0,.96f),new GradientAlphaKey(0,1)});
             color.color=gradient;
             var size=system.sizeOverLifetime;size.enabled=true;
-            size.size=new ParticleSystem.MinMaxCurve(1,AnimationCurve.EaseInOut(0,spark ? 1f : .4f,1,spark ? .35f : 1.45f));
+            size.size=new ParticleSystem.MinMaxCurve(1,AnimationCurve.EaseInOut(0,spark ? 1f : .4f,1,spark ? .35f : airy ? 1.75f : 1.45f));
             var renderer=go.GetComponent<ParticleSystemRenderer>();if(spark) renderer.sharedMaterial=particleMaterial;
             else {
                 renderer.sharedMaterial=smokeMaterial;
@@ -104,6 +122,15 @@ namespace CyberBiker.Player {
                 spin.z=new ParticleSystem.MinMaxCurve(-1.7f,1.7f);
                 noise.enabled=true;noise.quality=ParticleSystemNoiseQuality.Low;noise.strength=.08f;
                 noise.frequency=1.8f;noise.scrollSpeed=.6f;noise.damping=true;
+                if(airy){
+                    // Slow inherited motion with age: the bike pulls away from
+                    // the clouds while native noise rolls and spreads them.
+                    velocity.enabled=true;velocity.space=ParticleSystemSimulationSpace.World;
+                    velocity.x=velocity.y=velocity.z=0;velocity.orbitalX=velocity.orbitalY=velocity.orbitalZ=0;
+                    velocity.orbitalOffsetX=velocity.orbitalOffsetY=velocity.orbitalOffsetZ=0;velocity.radial=0;
+                    velocity.speedModifier=new ParticleSystem.MinMaxCurve(1,AnimationCurve.EaseInOut(0,1,1,1-smokeWindSlowdown));
+                    noise.strength=new ParticleSystem.MinMaxCurve(Mathf.Max(.08f,smokeWindSpread),AnimationCurve.EaseInOut(0,.05f,1,1));
+                }
             }
             // Explicit narrow spark billboards retain their streak shape when the
             // chase camera looks directly along their velocity, unlike stretched particles.
@@ -124,14 +151,17 @@ namespace CyberBiker.Player {
             }
             PauseSystems(wheels,false);PauseSystems(sparks,false);
             CurrentEmissionRate=0;CurrentSparkEmissionRate=0;GroundedWheelCount=0;
-            if(player==null || !player.IsAlive || (manager!=null && manager.gameState!=GameState.Playing)) { ResetEmission();return; }
+            bool alive=player!=null ? player.IsAlive : enemy!=null && enemy.IsAlive && enemy.ArrivalVisibility>=.99f;
+            if(!alive || (manager!=null && manager.gameState!=GameState.Playing) || (enemy!=null && playerPosition!=null && Vector3.Distance(transform.position,playerPosition.position)>enemyEffectRange)) { ResetEmission();return; }
             // Follow the visual bike's actual bank, rather than a sensitive steering input.
-            float lean=Mathf.Abs(Mathf.DeltaAngle(0,motorcycle.localEulerAngles.z));
+            float lean=enemy!=null ? enemy.DrivingLeanDegrees : Mathf.Abs(Mathf.DeltaAngle(0,motorcycle.localEulerAngles.z));
             if(lean>=startLeanAngle) leanActive=true;
             else if(lean<=Mathf.Max(0,startLeanAngle-leanReleaseMargin)) leanActive=false;
             float leanAmount=leanActive ? Mathf.Lerp(.3f,1,Mathf.SmoothStep(0,1,
                 Mathf.InverseLerp(startLeanAngle,Mathf.Max(startLeanAngle+.1f,fullLeanAngle),lean))) : 0;
-            float speed=Vector3.ProjectOnPlane(body.linearVelocity,Vector3.up).magnitude;
+            smokeAmount=smokeReleaseTime<=0 || leanAmount>=smokeAmount ? leanAmount : Mathf.MoveTowards(smokeAmount,leanAmount,dt/smokeReleaseTime);
+            Vector3 velocity=enemy!=null ? enemy.DrivingVelocity : body.linearVelocity;
+            float speed=Vector3.ProjectOnPlane(velocity,Vector3.up).magnitude;
             float pressure=Mathf.Pow(Mathf.Clamp01(speed/Mathf.Max(1,referenceSpeed)),1.2f);
             if(speed<3) { ResetEmission();return; }
             for(int i=0;i<2;i++) {
@@ -142,12 +172,12 @@ namespace CyberBiker.Player {
                     if(!hits[h].transform.IsChildOf(transform) && hits[h].normal.y>.4f && hits[h].distance<nearest) {ground=h;nearest=hits[h].distance;}
                 if(ground<0) { budgets[i]=sparkBudgets[i]=0;hadContact[i]=false;continue; }
                 GroundedWheelCount++;
-                if(!leanActive) { budgets[i]=sparkBudgets[i]=0;hadContact[i]=false;continue; }
-                float rate=pressure*leanAmount*steeringEmission*(i==0 ? 1 : frontWheelAmount);
+                if(!leanActive && smokeAmount<=0) { budgets[i]=sparkBudgets[i]=0;hadContact[i]=false;continue; }
+                float rate=pressure*smokeAmount*steeringEmission*(i==0 ? 1 : frontWheelAmount);
                 CurrentEmissionRate+=rate;budgets[i]+=rate*Mathf.Min(dt,.05f);
                 int emit=Mathf.Min(32,Mathf.FloorToInt(budgets[i]));budgets[i]-=emit;
                 Vector3 normal=hits[ground].normal;
-                float lateral=Vector3.Dot(body.linearVelocity,transform.right);
+                float lateral=Vector3.Dot(velocity,transform.right);
                 // Dust lags behind the actual sideways slip; do not force all
                 // particles to a chosen side just because a steering key is held.
                 Vector3 slip=-transform.right*Mathf.Clamp(lateral/8,-1,1)*steeringSpraySpeed;
@@ -159,7 +189,7 @@ namespace CyberBiker.Player {
                 for(int j=0;j<emit;j++) {
                     float shade=Between(.66f,.8f);
                     float fraction=(j+.5f)/Mathf.Max(1,emit);
-                    Vector3 cloudVelocity=Vector3.ProjectOnPlane(body.linearVelocity,normal)*Between(.94f,.96f)
+                    Vector3 cloudVelocity=Vector3.ProjectOnPlane(velocity,normal)*Between(.94f,.96f)
                         +slip+normal*smokeRise*Between(.7f,1.2f)+transform.right*Between(-.12f,.12f);
                     // Earlier births have already travelled with the bike during this
                     // frame. Compensate that motion so the trail stays attached even at low FPS.
@@ -185,7 +215,7 @@ namespace CyberBiker.Player {
                     float sparkWidth=skidSparkSize*Between(.85f,1.15f)*Mathf.Lerp(1,1.25f,hardLean);
                     var particle=new ParticleSystem.EmitParams {
                         position=hits[ground].point+normal*.06f,
-                        velocity=Vector3.ProjectOnPlane(body.linearVelocity,normal)*Between(.82f,.88f)+slip
+                        velocity=Vector3.ProjectOnPlane(velocity,normal)*Between(.82f,.88f)+slip
                             +normal*Between(1.2f,2.2f)+transform.right*Between(-sparkSpread,sparkSpread),
                         startLifetime=skidSparkLifetime*Between(.85f,1.15f),
                         startSize3D=new Vector3(sparkWidth,sparkWidth*skidSparkStreakLength*1.5f,sparkWidth),
@@ -196,9 +226,9 @@ namespace CyberBiker.Player {
                 }
             }
         }
-        private Vector3 WheelContactPoint(int wheel) => motorcycle.TransformPoint(new Vector3(0,.02f,wheel==0 ? -.5296f : 1.4493f));
+        private Vector3 WheelContactPoint(int wheel) => motorcycle.TransformPoint(wheel==0 ? rearWheelContact : frontWheelContact);
         private void ResetEmission() {
-            leanActive=false;hadContact[0]=hadContact[1]=false;
+            leanActive=false;smokeAmount=0;hadContact[0]=hadContact[1]=false;
             budgets[0]=budgets[1]=sparkBudgets[0]=sparkBudgets[1]=0;
         }
         private static void PauseSystems(ParticleSystem[] systems,bool pause) {

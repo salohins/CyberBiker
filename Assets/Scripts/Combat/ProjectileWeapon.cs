@@ -1,4 +1,5 @@
 using UnityEngine;
+using CyberBiker.Pooling;
 
 namespace CyberBiker.Combat {
     public sealed class ProjectileWeapon : Weapon {
@@ -16,7 +17,7 @@ namespace CyberBiker.Combat {
 
         protected override bool Fire(ShotRequest request) {
             if (projectile == null) return false;
-            var instance = Object.Instantiate(projectile, request.Origin,
+            var instance = PrefabPool.Rent(projectile, request.Origin,
                 Quaternion.LookRotation(request.Direction), parent);
             var bullet = instance.GetComponent<Bullet>();
             if (bullet != null) bullet.Initialize(request.Owner, damage);

@@ -1,0 +1,7 @@
+PASS rear approach: planner-radius contact volume stays outside the real car at 10Hz, including intermediate positions.
+PASS fast side cut: planner-radius contact volume stays outside the real car at 10Hz, including intermediate positions.
+PASS diagonal cut: planner-radius contact volume stays outside the real car at 10Hz, including intermediate positions.
+PASS moving traffic: planner-radius contact volume stays outside the real car at 10Hz, including intermediate positions.
+PASS stalled traffic: planner-radius contact volume stays outside the real car at 10Hz, including intermediate positions.
+PASS rotated car: planner-radius contact volume stays outside the real car at 10Hz, including intermediate positions.
+PASS adjacent clear lane unchanged; disabled/dead-car collider ignored. No predictive braking layer; the original route controls travel.

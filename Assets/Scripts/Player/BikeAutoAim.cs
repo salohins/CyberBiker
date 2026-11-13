@@ -72,7 +72,9 @@ namespace CyberBiker.Player {
         }
 
         public void Tick(bool aiming,bool weaponReady,float dt) {
+            bool wasActive=active;
             active=Enabled && aiming;ready=weaponReady;CanFire=false;
+            if(active && !wasActive)nextSearch=0;
             if(!active || !ready) {hasTorsoPose=false;hasRenderPose=false;exposureYaw=exposureVelocity=0;}
             if(!active) {
                 ClearTarget();
@@ -152,18 +154,21 @@ namespace CyberBiker.Player {
         private void AcquireTarget() {
             nextSearch=Time.time+Mathf.Max(.02f,searchInterval);
             Enemy best=null;float bestScore=float.PositiveInfinity;
-            foreach(var enemy in FindObjectsByType<Enemy>(FindObjectsSortMode.None)) {
+            var enemies=Enemy.Instances;
+            for(int enemyIndex=0;enemyIndex<enemies.Count;enemyIndex++) {
+                var enemy=enemies[enemyIndex];
                 if(!IsEligible(enemy,out var point)) continue;
                 Vector3 offset=point-muzzle.position;
                 float score=offset.sqrMagnitude*(1+Vector3.Angle(Vector3.forward,offset)/90);
                 if(score<bestScore) {best=enemy;bestScore=score;}
             }
-            Target=best;targetPoint=null;hadTargetSample=false;targetVelocity=Vector3.zero;
-            if(Target!=null) {
+            var previousTarget=Target;Target=best;hadTargetSample=false;targetVelocity=Vector3.zero;
+            if(Target!=previousTarget)targetPoint=null;
+            if(Target!=null && targetPoint==null) {
                 foreach(var bone in Target.GetComponentsInChildren<Transform>())
                     if(bone.name=="DEF-spine.003") {targetPoint=bone;break;}
-                previousTargetPosition=Target.transform.position;
             }
+            if(Target!=null)previousTargetPosition=Target.transform.position;
         }
         private Vector3 GetTargetPoint(Enemy enemy) {
             if(enemy==Target && targetPoint!=null) return targetPoint.position;
@@ -174,7 +179,7 @@ namespace CyberBiker.Player {
         }
         private bool IsEligible(Enemy enemy,out Vector3 point) {
             point=Vector3.zero;
-            if(enemy==null || !enemy.gameObject.activeInHierarchy || !enemy.IsAlive) return false;
+            if(enemy==null || !enemy.gameObject.activeInHierarchy || !enemy.IsAlive || enemy.IsEncounterQueued || enemy.IsArriving) return false;
             point=GetTargetPoint(enemy);Vector3 offset=point-muzzle.position;
             if(offset.sqrMagnitude>targetRange*targetRange || offset.z<=0) return false;
             float yaw=Mathf.Abs(Mathf.Atan2(offset.x,offset.z)*Mathf.Rad2Deg);

@@ -1,0 +1,5 @@
+Case 0: minimum player gap=19.69m; final gap=35.00m; distance past car=317.20m; actual forward speed=110.0.
+Case 1: minimum player gap=19.69m; final gap=35.00m; distance past car=315.00m; actual forward speed=110.0.
+Normal traffic: samples=5040, behind player=0.0%, worst forward gap=0.00m.
+Launch traffic: samples=5400, behind player=0.0%, worst forward gap=0.00m.
+PASS original dodge-point routes retain pursuit in normal and actual Launch mode with live generated traffic.

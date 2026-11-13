@@ -1,0 +1,1 @@
+Visible red trail contribution in gameplay camera: 5356 pixels above a 25/255 red difference.

@@ -1,0 +1,1 @@
+PASS: left/right raw clips render without runtime pose modification; old 60+ degree torso twists reproduced only by the diagnostic toggle; sheathe beginning/middle/end render; production twist removed.

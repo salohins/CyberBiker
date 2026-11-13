@@ -48,3 +48,20 @@ MonoBehaviour:
   oneCarRow: 1
   twoCarRow: 1
   threeCarRow: 1
+  enemiesPerWave: 3
+  maxEnemiesOnRoad: 3
+  enemyInitialDelay: 2
+  enemySpawnInterval: .5
+  enemyWaveCooldown: 6
+  enemyHandoffDelay: .2
+  enemySpawnDistance: 180
+  enemyQueueSpacing: 18
+  enemyRearArrivalPercent: 60
+  enemyRearSpawnDistance: 45
+  enemyArrivalClosingSpeed: 40
+  enemyArrivalFadeTime: .8
+  enemyLaneChangeInterval: 2.8
+  enemyLateralSpeed: 9
+  enemyLaneWeave: .45
+  enemyDriftAngle: 11
+  enemyRidingLean: 34

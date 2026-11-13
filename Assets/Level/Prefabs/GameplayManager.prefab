@@ -44,6 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd03f714c55dab45ab39b3143c4c867, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyDistanceFromPlayer: 20
+  pistolDamagePerShot: 15
+  secondsBetweenPistolShots: 0.45
   gameState: 1
   difficulty: 0
   player: {fileID: 0}

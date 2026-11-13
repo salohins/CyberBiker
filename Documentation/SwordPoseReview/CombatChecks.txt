@@ -1,0 +1,12 @@
+PASS close direct dash: no distant alignment, left one-shot cut, no enemy lateral snap, forward death kick, immediate impact and slow motion.
+First contact player=(-0.56, 100.00, 109.44) body=(-0.56, 100.00, 109.44) velocity=(0.00, 0.00, 148.50) dash direction=(-0.26, 0.00, 0.96) saved=(0.00, 0.00, 148.50) start=(0.00, 100.00, 79.74)
+Chain progress phase=Striking player=(-0.56, 100.00, 110.63) body=(-0.56, 100.00, 110.63) velocity=(0.00, 0.00, 148.50) yaw=0 target=none
+Chain progress phase=Pursuing player=(-0.56, 100.00, 185.39) body=(-0.56, 100.00, 185.39) velocity=(0.00, 0.00, 148.50) yaw=0 target=Sword test enemy
+Chain progress phase=Striking player=(0.00, 100.00, 267.14) body=(0.00, 100.00, 267.14) velocity=(0.00, 0.00, 148.50) yaw=0 target=Sword test enemy
+PASS per-pickup sword cycle: mounted riding on Launch, draw before each dash, sheath after each slice, mounted riding between enemies with uninterrupted boost and forward momentum.
+PASS hit side view: signed side travel held through explosion, original follow position restored after recovery.
+PASS explosion ride-through: extended slow hold, eased time-scale recovery, wider/lifted camera, three spatial explosion sound layers per kill, final blast preserved at natural launch expiry.
+PASS contact treatment: native camera shader rendered, recorded swish/metal/low impact on both cuts, engine/wind dip and pause-safe recovery, clean normal view restored.
+PASS obstruction, pause/resume, trail cleanup, pistol recovery, original Animator/Avatar/RigBuilder retained.
+First shot from Aim pressed during launch: 0.451 real seconds.
+PASS Aim during draw, pursuit and strike: fast real-time handoff under 0.45s, complete sheathing before Aim/fire, mounted sword retained, queued release/toggle respected.

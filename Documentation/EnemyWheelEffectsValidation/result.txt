@@ -1,0 +1,7 @@
+PASS straight: no skid emission.
+PASS 5 degree lean: no continuous skid smoke or sparks.
+PASS 15 degree lean: no continuous skid smoke or sparks.
+PASS visible sparks from riding camera: 1318 affected pixels.
+Hard: lean=30; smoke rate=153.4; spark rate=165.2; live particles=134.
+PASS wind release: tracked cloud falls 4.57m farther behind the bike; alpha 200 -> 101; existing particle survives emission stop.
+PASS tapered release, progressive airflow/fade, settled particle cleanup and unchanged player profile.

@@ -3,10 +3,11 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using AI;
+using CyberBiker.Pooling;
 
 public sealed class TrafficSpawner : MonoBehaviour {
     private GameObject[] cars;
-    private GameObject enemy, activeEnemy, player;
+    private GameObject player;
     private AIController aiController;
     private DifficultyManager difficultyManager;
     private int carBufferSize;
@@ -17,26 +18,35 @@ public sealed class TrafficSpawner : MonoBehaviour {
     private readonly List<List<DodgePoint>> rowsOfCars = new List<List<DodgePoint>>();
     public void Initialize(GameObject[] cars, GameObject enemy, GameObject player, AIController aiController,
         DifficultyManager difficultyManager, float startDistance, int bufferSize) {
-        this.cars = cars; this.enemy = enemy; this.player = player;
+        this.cars = cars; this.player = player;
         this.aiController = aiController; this.difficultyManager = difficultyManager;
         carBufferSize = Mathf.Max(1, bufferSize);
-        var existing = FindAnyObjectByType<Enemy>();
-        activeEnemy = existing != null ? existing.gameObject : null;
         carSpawnPosition = player.transform.position + Vector3.forward * startDistance + Vector3.up;
         initialized = cars != null && cars.Length > 0 && aiController != null && difficultyManager != null;
+        if(enemy!=null) {
+            var encounters=GetComponent<EnemyEncounterDirector>() ?? gameObject.AddComponent<EnemyEncounterDirector>();
+            encounters.Initialize(enemy,player,GetComponent<WorldGenerator>(),difficultyManager,this);
+        }
     }
     private void Update() {
         if (!initialized) return;
         _playerPosition = player.transform.position;
-        aiController.dodgePoints.RemoveAll(point => point.offsetObject == null || point.GetPosition().z < _playerPosition.z);
+        for(int i=aiController.dodgePoints.Count-1;i>=0;i--) {
+            var point=aiController.dodgePoints[i];
+            if(!point.IsValid || point.GetPosition().z<_playerPosition.z)aiController.dodgePoints.RemoveAt(i);
+        }
         for (int i = activeCars.Count - 1; i >= 0; i--) {
             var car = activeCars[i];
             if (car == null) { activeCars.RemoveAt(i); continue; }
             if (car.transform.position.z < _playerPosition.z - 20f) {
-                Destroy(car); activeCars.RemoveAt(i);
+                PrefabPool.Release(car); activeCars.RemoveAt(i);
             }
         }
-        rowsOfCars.RemoveAll(row => row.Count == 0 || row.Max(point => point.GetPosition().z) < _playerPosition.z);
+        for(int i=rowsOfCars.Count-1;i>=0;i--) {
+            var row=rowsOfCars[i];float furthest=float.NegativeInfinity;
+            for(int p=0;p<row.Count;p++)if(row[p].IsValid)furthest=Mathf.Max(furthest,row[p].GetPosition().z);
+            if(furthest<_playerPosition.z)rowsOfCars.RemoveAt(i);
+        }
         if (hasSpawned && rowsOfCars.Count == 0) {
             // If every buffered wave was passed, the original starting point may already be unloaded.
             float spacing = difficultyManager.currentDifficulty != null ? difficultyManager.currentDifficulty.carOffsetModifier : 50;
@@ -71,8 +81,10 @@ public sealed class TrafficSpawner : MonoBehaviour {
             }
         }
         else {
-            if (!Physics.Raycast(new Ray(PrevPassPoints.First().GetPosition(), Vector3.down), out hit, Mathf.Infinity, LayerMask.GetMask("Water"))) {
-                Debug.DrawLine(PrevPassPoints.First().GetPosition(), _playerPosition, Color.red);
+            DodgePoint firstValid=null;foreach(var point in PrevPassPoints)if(point.IsValid){firstValid=point;break;}
+            if(firstValid==null)return PrevPassPoints;
+            if (!Physics.Raycast(new Ray(firstValid.GetPosition(), Vector3.down), out hit, Mathf.Infinity, LayerMask.GetMask("Water"))) {
+                Debug.DrawLine(firstValid.GetPosition(), _playerPosition, Color.red);
                 return PrevPassPoints;
             }
         }
@@ -107,6 +119,7 @@ public sealed class TrafficSpawner : MonoBehaviour {
             List<Transform> previousSelectedLines = new List<Transform>();
 
             foreach (var point in PrevPassPoints) {
+                if(!point.IsValid)continue;
                 foreach (var line in carLines) {
                     if (point.offsetObject.transform.position.x == line.position.x) {
                         previousSelectedLines.Add(line);
@@ -131,9 +144,10 @@ public sealed class TrafficSpawner : MonoBehaviour {
             spawnOffset = Mathf.Max(hit.transform.position.z, carSpawnPosition.z) + CalculateOffsetFromAngle(lineOffset, DegreesToRadians(90 - aiController.dodgeAngleLimit));
         }
         else {
-            spawnOffset = PrevPassPoints.Last().GetPosition().z;
+            spawnOffset=0;for(int i=PrevPassPoints.Count-1;i>=0;i--)if(PrevPassPoints[i].IsValid){spawnOffset=PrevPassPoints[i].GetPosition().z;break;}
 
             foreach (DodgePoint point in PrevPassPoints) {
+                if(!point.IsValid)continue;
                 if (Mathf.Sign(point.offset.z) > 0)
                     continue; // Skip points that are ahead of the current tile
 
@@ -164,7 +178,7 @@ public sealed class TrafficSpawner : MonoBehaviour {
         }
         foreach (Transform line in selectedLines) {
             Vector3 spawnPosition = positions[line];
-            GameObject car = Instantiate(cars[UnityEngine.Random.Range(0, cars.Length)], spawnPosition, Quaternion.identity);
+            GameObject car = PrefabPool.Rent(cars[UnityEngine.Random.Range(0, cars.Length)], spawnPosition, Quaternion.identity);
             car.transform.position += transform.forward * car.GetComponent<MeshRenderer>().bounds.size.z / 2;
 
             car.GetComponent<Car>().whichWall = 1;
@@ -173,12 +187,6 @@ public sealed class TrafficSpawner : MonoBehaviour {
             activeCars.Add(car);
 
             spawnedObstacles.Add(line, car.GetComponent<Obstacle>());
-        }
-
-        if (enemy != null && activeEnemy == null && freeLines.Length > 0) {
-            Vector3 spawnPosition = freeLines[UnityEngine.Random.Range(0, freeLines.Length)].transform.position;
-            spawnPosition.z = spawnOffset + difficulty.carOffsetModifier;
-            activeEnemy = Instantiate(enemy, spawnPosition, Quaternion.identity);
         }
 
         List<DodgePoint> passPoints = new List<DodgePoint>();

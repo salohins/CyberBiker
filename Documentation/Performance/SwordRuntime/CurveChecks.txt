@@ -1,0 +1,1 @@
+PASS: seven original Generic preview clips preserved; seven raw-transform runtime copies match 56 source poses / 5824 bone samples, including unordered sampling and endpoints. Durations and sample rates preserved.

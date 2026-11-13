@@ -1,0 +1,42 @@
+FAIL runtime AnimationClip.SampleAnimation versus Editor: 168 frames, 106 transforms, mismatches=7316, max position=0.01221456, angle=177.6378, scale=2.280779E-05
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine position=0.0004054554 rotation=4.759136 scale=0
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/Gun_Main position=0.01221456 rotation=95.5551 scale=8.42937E-08
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001 position=1.936664E-09 rotation=2.40309 scale=1.685874E-07
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L position=2.039969E-09 rotation=18.1282 scale=3.424026E-07
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R position=2.64012E-09 rotation=18.12816 scale=3.576279E-07
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002 position=1.15321E-06 rotation=6.459237 scale=8.42937E-08
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001 position=1.719921E-06 rotation=5.351235 scale=1.788139E-07
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001 position=1.718523E-06 rotation=5.351235 scale=2.731428E-07
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003 position=4.675872E-09 rotation=8.8148 scale=8.42937E-08
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-pelvis.L/DEF-thigh.L/DEF-thigh.L.001/DEF-shin.L position=1.720854E-06 rotation=20.14319 scale=2.064765E-07
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-pelvis.R/DEF-thigh.R/DEF-thigh.R.001/DEF-shin.R position=1.718989E-06 rotation=20.14315 scale=3.674277E-07
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.L position=0.0002762662 rotation=5.20903 scale=2.731428E-07
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-shoulder.R position=0.0002762625 rotation=5.20903 scale=2.230202E-07
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/DEF-spine.004 position=2.454172E-09 rotation=8.814712 scale=2.598106E-07
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01 position=0.0003416986 rotation=8.174019 scale=1.530401E-05
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.L position=0.0002178789 rotation=10.71498 scale=2.268151E-05
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_01_01.R position=0.0002138539 rotation=6.615443 scale=2.229795E-05
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.L position=6.249502E-05 rotation=10.33216 scale=1.948087E-05
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_02_01.R position=0.0002410262 rotation=18.49206 scale=1.139743E-05
+Player_Sword_Grab time=0 bone=Motorcycle/unityRig/DEF-spine/DEF-spine.001/DEF-spine.002/DEF-spine.003/jacket_03_01.L position=0.0001286397 rotation=10.3093 scale=7.594156E-06
+Player_Sword_Grab: mismatches=506
+Player_Sword_Back: mismatches=511
+Player_Sword_Idle: mismatches=532
+Player_Sword_Idle_Left: mismatches=532
+Player_Sword_Idle_Right: mismatches=532
+Player_Sword_Attack_Left: mismatches=516
+Player_Sword_Attack_Right: mismatches=529
+Player_Sword_Grab_RawGeneric: mismatches=506
+Player_Sword_Back_RawGeneric: mismatches=511
+Player_Sword_Idle_RawGeneric: mismatches=532
+Player_Sword_Idle_Left_RawGeneric: mismatches=532
+Player_Sword_Idle_Right_RawGeneric: mismatches=532
+Player_Sword_Attack_Left_RawGeneric: mismatches=516
+Player_Sword_Attack_Right_RawGeneric: mismatches=529
+Player_Sword_Grab_RawLegacy: mismatches=0
+Player_Sword_Back_RawLegacy: mismatches=0
+Player_Sword_Idle_RawLegacy: mismatches=0
+Player_Sword_Idle_Left_RawLegacy: mismatches=0
+Player_Sword_Idle_Right_RawLegacy: mismatches=0
+Player_Sword_Attack_Left_RawLegacy: mismatches=0
+Player_Sword_Attack_Right_RawLegacy: mismatches=0

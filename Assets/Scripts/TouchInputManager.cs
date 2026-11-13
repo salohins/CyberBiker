@@ -9,10 +9,19 @@ public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
 {
     [Range(0, 19)]
     [SerializeField] private float touchSensitivity = 10f;
+    public float TouchSteeringSensitivity { get => touchSensitivity; set => touchSensitivity = Mathf.Clamp(value, 0, 19); }
+    [Header("PC controls")]
+    [Tooltip("Press once to aim, press again to stop aiming.")]
+    [SerializeField] private KeyCode aimKey = KeyCode.F;
     public Vector2 Steering => drag;
     public Vector2 AimDelta => delta;
     public bool IsAiming => aim;
-    public bool aim { get; private set; }
+    private bool aimRequested;
+    private CyberBiker.Player.BikeSwordCombat swordCombat;
+    public bool aim {
+        get => aimRequested && (swordCombat == null || !swordCombat.IsActive);
+        private set => aimRequested = value;
+    }
     public Vector2 delta { get; private set; }
 
 
@@ -33,6 +42,7 @@ public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
 
 
         gm = FindAnyObjectByType<GameplayManager>();
+        swordCombat = GetComponent<CyberBiker.Player.BikeSwordCombat>();
     }
 
     void Update() {
@@ -60,6 +70,8 @@ public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
             float horizontal = Input.GetAxisRaw("Horizontal");
             if (horizontal != 0) drag = new Vector2(horizontal, 0);
             delta = new Vector2(Input.GetAxis("Mouse X") * 5f, Input.GetAxis("Mouse Y") * 5f);
+
+            if (Input.GetKeyDown(aimKey)) SwitchAim(false);
 
             if (Input.GetMouseButtonDown(1)) {
                 SetAim(true);
@@ -103,16 +115,18 @@ public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
 
     // Existing scene buttons use this callback as a toggle, including a false argument.
     public void SwitchAim(bool unused) {
-        SetAim(!aim);
+        SetAim(!aimRequested);
         if (gm != null && gm.gameState == GameState.Playing)
             CyberBiker.Audio.SoundEvents.Emit(CyberBiker.Audio.SoundCue.UiClick, transform.position);
     }
 
     public void SetAim(bool on) {
+        if(swordCombat==null)swordCombat=GetComponent<CyberBiker.Player.BikeSwordCombat>();
+        if(on)swordCombat?.CancelForAim();
         aim = on && gm != null && gm.gameState == GameState.Playing;
 
         if (gm != null && gm.gameState == GameState.Playing)
-            if (Input.touchCount > 0 && aim && aimButton != null) {
+            if (Input.touchCount > 0 && aimRequested && aimButton != null) {
                 aimTouch = Input.touches[0];
 
                 foreach (Touch touch in Input.touches) {

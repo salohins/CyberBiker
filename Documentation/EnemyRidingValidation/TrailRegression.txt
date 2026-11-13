@@ -1,0 +1,1 @@
+PASS: feathered trail shader rendered; rider capsule removes the crossing section while preserving the far trail; existing enemy anchors use one shared material; normal trail is narrow and length-limited; committed dash clears history and emission immediately; cancellation restores a fresh trail; subsequent actual finisher hides it through death. Native captures saved.

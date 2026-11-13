@@ -1,0 +1,3 @@
+No-path fallback: max lateral displacement=0.842m; heading=0.000 degrees.
+PASS captured off-track case: recovered from X=-62.553m toward the road and resumed distance control; final X=-9.251m.
+PASS recovery catch-up preserves70m attack activation; enemy resumes fighting after closing the gap.

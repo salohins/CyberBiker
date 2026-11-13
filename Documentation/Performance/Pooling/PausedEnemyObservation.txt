@@ -1,0 +1,3 @@
+Paused live Unity inspection,13 November2026. Game remained paused; no actor values were changed.
+Enemy: enemy1(Clone). Position X=-62.553,Y=0,Z approximately6998.45; heading Y=-1.089 degrees. State Spawn; speed98.54576; fired shots0. FollowTarget approximately(-62.811,0,7012.0), aligned with its own heading.
+Confirmed cause in isolated reproduction: no-route fallback follows the enemy-relative forward probe, retaining lateral heading indefinitely. Baseline drift29.782m in2s. Corrected fallback drift0.842m, heading0; escaped snapshot recovered to X=-9.251m in3s and resumed distance control. It retained Spawn until closing to the original70m attack range, then entered Attack.

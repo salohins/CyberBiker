@@ -1,0 +1,2 @@
+Original planner accepted=5; collision guard rejected=0.
+

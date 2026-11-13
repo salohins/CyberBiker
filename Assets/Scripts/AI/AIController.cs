@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using CyberBiker.Pooling;
 
 namespace AI {
     // Represents a point that an AI can dodge to, tracking its position relative to an offset object
@@ -11,18 +12,20 @@ namespace AI {
         public GameObject offsetObject { get; private set; }  // The object that the offset is calculated from
 
         private Vector3 originalPosition;
+        private PooledInstance lease;
+        private uint generation;
+        public bool IsValid => offsetObject!=null && (lease==null || (lease.IsRented && lease.Generation==generation));
 
         // Constructor to create a DodgePoint with its position and related object
         public DodgePoint(Vector3 position, GameObject offsetObject) {
-            offset = offsetObject != null ? offsetObject.transform.position - position : Vector3.zero;
-            this.offsetObject = offsetObject;
-            originalPosition = position;
             Children = new List<DodgePoint>();
+            Reset(position,offsetObject);
         }
+        public void Reset(Vector3 position,GameObject owner){if(owner!=offsetObject)lease=owner!=null ? owner.GetComponent<PooledInstance>() : null;offsetObject=owner;offset=owner!=null ? owner.transform.position-position : Vector3.zero;originalPosition=position;generation=lease!=null ? lease.Generation : 0;Children.Clear();}
 
         // Returns the current position of the DodgePoint
         public Vector3 GetPosition() {
-            return offsetObject == null ? Vector3.zero : offsetObject.CompareTag("Enemy") ? originalPosition : offsetObject.transform.position - offset;
+            return !IsValid ? Vector3.zero : offsetObject.CompareTag("Enemy") ? originalPosition : offsetObject.transform.position - offset;
         }
 
         // Returns the local position of the DodgePoint as a 2D vector
@@ -35,12 +38,16 @@ namespace AI {
     public static class Scanner {
         private const string WaterLayer = "Water";
         private const string WorldObjectLayer = "WorldObject";
+        private static int waterMask,worldMask;
+        private static bool masksReady;
+        private static void CacheMasks(){if(masksReady)return;waterMask=LayerMask.GetMask(WaterLayer);worldMask=LayerMask.GetMask(WorldObjectLayer);masksReady=true;}
 
         // Returns the car lines associated with the tile at the specified position
         public static Transform[] GetLines(Vector3 position) {
+            CacheMasks();
             RaycastHit hit;
 
-            if (Physics.Raycast(new Ray(position, Vector3.down), out hit, Mathf.Infinity, LayerMask.GetMask(WaterLayer))) {
+            if (Physics.Raycast(new Ray(position, Vector3.down), out hit, Mathf.Infinity, waterMask)) {
                 Tile tileComponent = hit.transform.gameObject.GetComponent<Tile>();
                 return tileComponent?.carLines;
             }
@@ -53,7 +60,7 @@ namespace AI {
 
         // Returns any colliders that overlap with the given position, within the specified pass length
         public static Collider[] GetOverlay(Vector3 position, float passLength) {
-            return Physics.OverlapBox(position, new Vector3(1, 10f, passLength / 2), Quaternion.identity, LayerMask.GetMask(WorldObjectLayer));
+            CacheMasks();return Physics.OverlapBox(position, new Vector3(1, 10f, passLength / 2), Quaternion.identity, worldMask);
         }
     }
 
@@ -65,11 +72,14 @@ namespace AI {
 
         [System.NonSerialized] public List<DodgePoint> dodgePoints;  // A list of all dodge points currently tracked by the AI
         private List<GameObject> activeCars;  // A list of all active cars in the scene
+        private int worldMask;
+        public float NavigationRadius => collisionRadius;
 
         // Initialize the dodge points and active cars lists
         private void Awake() {
             dodgePoints = new List<DodgePoint>();
             activeCars = new List<GameObject>();
+            worldMask=LayerMask.GetMask("WorldObject");
         }
 
         // Draws gizmos in the editor to visualize dodge points and their connections
@@ -112,28 +122,49 @@ namespace AI {
 
         // Finds the next dodge point along a path from a given root node
         public DodgePoint GetPath(DodgePoint rootNode) {
-            if (dodgePoints.Count == 0) return null;
-
-            dodgePoints.Insert(0, rootNode);
-
-            ConnectPoints();
-
-            DodgePoint targetNode = null;
-
-            if (dodgePoints[0].Children.Count != 0) {
-
-                targetNode = dodgePoints[0].Children[Random.Range(0, dodgePoints[0].Children.Count)];
+            if(dodgePoints.Count==0)return null;
+            var candidates=CollectReachable(rootNode);
+            return candidates.Count>0 ? candidates[Random.Range(0,candidates.Count)] : null;
+        }
+        // A rider-local road point fills empty stretches between traffic rows.
+        // Existing car points retain priority as soon as a detour is nearby.
+        // The original public query and its random selection remain unchanged.
+        public DodgePoint GetPath(DodgePoint rootNode,DodgePoint roadPoint) {
+            var candidates=CollectReachable(rootNode);
+            if(roadPoint!=null && roadPoint.IsValid && CanReach(rootNode.GetPosition(),roadPoint.GetPosition())) {
+                bool trafficNear=false;float end=roadPoint.GetPosition().z+10;
+                foreach(var candidate in candidates)if(candidate.GetPosition().z<=end){trafficNear=true;break;}
+                // Car spacing guarantees connections between car-generated
+                // points, not arbitrary lane positions in between them. Keep
+                // at least one legal onward connection before inserting one.
+                bool onward=false;
+                foreach(var candidate in candidates)if(CanReach(roadPoint.GetPosition(),candidate.GetPosition())){onward=true;break;}
+                bool trafficAhead=false;
+                if(candidates.Count==0)foreach(var point in dodgePoints)if(point.IsValid && point.GetPosition().z>rootNode.GetPosition().z){trafficAhead=true;break;}
+                if(!trafficNear && (onward || (candidates.Count==0 && !trafficAhead)))return roadPoint;
             }
-
-            if (targetNode != null) {
-                dodgePoints.Remove(rootNode);
-                return targetNode;
+            return candidates.Count>0 ? candidates[Random.Range(0,candidates.Count)] : null;
+        }
+        public bool CanEnterTraffic(Vector3 origin) {
+            bool trafficAhead=false;
+            foreach(var point in dodgePoints) {
+                if(!point.IsValid)continue;var position=point.GetPosition();if(position.z<=origin.z)continue;
+                trafficAhead=true;if(CanReach(origin,position))return true;
             }
-            else {
-                dodgePoints.Remove(rootNode);
-                Debug.Log("Target node not found.");
-                return null;
+            return !trafficAhead;
+        }
+        private bool CanReach(Vector3 origin,Vector3 position) => position.z>origin.z &&
+            Mathf.Abs(Vector3.Angle(position-origin,Vector3.forward))<dodgeAngleLimit &&
+            !Physics.CheckCapsule(origin,position,collisionRadius,worldMask);
+        private List<DodgePoint> CollectReachable(DodgePoint rootNode) {
+            var origin=rootNode.GetPosition();var candidates=rootNode.Children;candidates.Clear();
+            // Preserve candidate order, angle tests, capsule radius and random
+            // selection. Cache each moving point once; do not shift the global list.
+            for(int i=0;i<dodgePoints.Count;i++){
+                var point=dodgePoints[i];if(!point.IsValid)continue;var position=point.GetPosition();
+                if(CanReach(origin,position))candidates.Add(point);
             }
+            return candidates;
         }
 
         // Finds the node with the maximum Z position starting from a given node

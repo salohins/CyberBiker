@@ -1,0 +1,2 @@
+Original planner accepted=5; collision guard rejected=5.
+Original radius-1 capsule accepted (0.00, 1000.00, 0.00) -> (6.00, 1000.00, 30.00) at 11.30993deg; car=(-1.00, 1000.00, 20.00); rectangular guard blocks at (2.08, 1000.00, 10.39) by 0.1772366m.

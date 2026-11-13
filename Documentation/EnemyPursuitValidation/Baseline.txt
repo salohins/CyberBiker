@@ -1,0 +1,2 @@
+Case 0: minimum player gap=-46.53m; final gap=21.27m; distance past car=303.47m; actual forward speed=140.0.
+Case 1: minimum player gap=-46.53m; final gap=21.26m; distance past car=303.47m; actual forward speed=140.0.

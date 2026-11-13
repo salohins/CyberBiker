@@ -5,6 +5,7 @@ using UnityEngine.Serialization;
 namespace CyberBiker.Player {
     [RequireComponent(typeof(Rigidbody))]
     public sealed class BikeImpactResponse : MonoBehaviour {
+        private BikeSwordCombat finisher;
         [SerializeField] private bool affectCars = true;
         [SerializeField] private bool affectBarriers = true;
         [Tooltip("Maximum extra speed away from a car, in world units per second.")]
@@ -100,11 +101,13 @@ namespace CyberBiker.Player {
         }
 
         private void Awake() {
+            finisher=GetComponent<BikeSwordCombat>();
             body=GetComponent<Rigidbody>();
             manager=FindAnyObjectByType<GameplayManager>();
         }
         private void OnCollisionEnter(Collision collision) { ReactToCollision(collision); }
         public void ReactToCollision(Collision collision) {
+            if(finisher!=null && finisher.IgnoresTraffic(collision.collider))return;
             if (!isActiveAndEnabled || body.isKinematic || Time.timeScale<=0 || maximumKickSpeed<=0 || Time.time<nextImpactTime) return;
             if (manager!=null && manager.gameState!=GameState.Playing && manager.gameState!=GameState.Hit) return;
             float speed=0;

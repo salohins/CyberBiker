@@ -38,7 +38,7 @@ namespace CyberBiker.Audio {
         }
     }
 
-    public sealed class GameAudio : MonoBehaviour {
+    public sealed partial class GameAudio : MonoBehaviour {
         private readonly System.Random variation = new System.Random(8429);
         public static GameAudio Active { get; private set; }
         [Header("Mix - editable during Play mode")]
@@ -54,6 +54,13 @@ namespace CyberBiker.Audio {
         [SerializeField, Range(0, 1)] private float impactVolume = 0.5f;
         [SerializeField, Range(0, 1)] private float explosionVolume = 0.6f;
         [SerializeField, Range(0, 1)] private float interfaceVolume = 0.3f;
+        [Header("Finisher notifications")]
+        [SerializeField, Range(0,1)] private float finisherReadyVolume = .8f;
+        [SerializeField, Range(0,1)] private float finisherWarningVolume = .85f;
+        [Tooltip("Brief engine/wind reduction for finisher alerts, in dB. Zero disables it.")]
+        [SerializeField, Range(0,12)] private float finisherDuckDb = 5;
+        [SerializeField] private AudioClip finisherReady;
+        [SerializeField] private AudioClip finisherWarning;
         [Header("Player pistol mix priority")]
         [Tooltip("Brief engine/wind reduction when the player fires, in dB. Zero disables it.")]
         [SerializeField, Range(0,12)] private float pistolDuckDb = 6;
@@ -111,10 +118,22 @@ namespace CyberBiker.Audio {
         [SerializeField] private AudioClip resume;
         [SerializeField] private AudioClip gameOver;
         private AudioSource engineSource, launchSource, windSource, windRushSource, jacketSource;
+        private AudioSource launchPowerSource;
+        private AudioReverbFilter launchPowerReverb;
+        private float launchPowerAmount,launchPowerVolume,launchEngineLiftDb,launchWindLiftDb;
+        public AudioSource LaunchPowerAudio => launchPowerSource;
+        public int LaunchBurstSoundCount { get; private set; }
         private float engineBaseLevel,launchBaseLevel,windBaseLevel,rushBaseLevel;
         private float pistolDuckElapsed,pistolDuckGain=1;
         private bool pistolDuckActive;
+        private float swordDuckAge=100,swordDuckDb,swordDuckHold,swordDuckRelease=.32f,swordDuckGain=1;
+        public float SwordDuckingGain => swordDuckGain;
+        public int SwordSoundCount { get; private set; }
+        public int SwordExplosionSoundCount { get; private set; }
         public float PistolDuckingGain => pistolDuckGain;
+        private float finisherDuckAge=100,finisherDuckGain=1;
+        public int FinisherReadyCueCount { get; private set; }
+        public int FinisherWarningCueCount { get; private set; }
         private Transform jacketAnchor;
         private Quaternion previousJacketRotation;
         private float jacketFlutter;
@@ -151,7 +170,8 @@ namespace CyberBiker.Audio {
         public float EngineLevel => Mathf.Max(engineSource != null ? engineSource.volume : 0, launchSource != null ? launchSource.volume : 0);
         public int ConfiguredClipCount => (engineLaunch != null ? 1 : 0) + (engineCruise != null ? 1 : 0) + (windLoop != null ? 1 : 0) + (windRushLoop != null ? 1 : 0) + (jacketFabricLoop != null ? 1 : 0) + (passWhoosh != null ? 1 : 0) +
             shots.Length + passBys.Length + impacts.Length + explosions.Length +
-            (pickup != null ? 1 : 0) + (uiClick != null ? 1 : 0) + (pause != null ? 1 : 0) + (resume != null ? 1 : 0) + (gameOver != null ? 1 : 0);
+            (pickup != null ? 1 : 0) + (uiClick != null ? 1 : 0) + (pause != null ? 1 : 0) + (resume != null ? 1 : 0) + (gameOver != null ? 1 : 0) +
+            (finisherReady != null ? 1 : 0) + (finisherWarning != null ? 1 : 0);
 
         public static void EnsurePresent() {
             if (Active != null) return;
@@ -169,6 +189,9 @@ namespace CyberBiker.Audio {
             engineSource.maxDistance = launchSource.maxDistance = 100;
             engineReverb = CreateEngineReverb(engineSource);
             launchReverb = CreateEngineReverb(launchSource);
+            launchPowerSource=CreateSource("Launch high RPM layer",true);
+            launchPowerSource.spatialBlend=1;launchPowerSource.minDistance=12;launchPowerSource.maxDistance=100;
+            launchPowerSource.priority=130;launchPowerReverb=CreateEngineReverb(launchPowerSource);
             if (engineCruise != null) engineSource.Play();
             windSource = CreateSource("Speed wind", true);
             // Wind is listener-relative stereo, not a point source on the bike.
@@ -190,6 +213,7 @@ namespace CyberBiker.Audio {
             voices = new AudioSource[count]; voiceGains = new float[count];
             voiceAnchors = new Transform[count]; suspended = new bool[count];
             whooshReverbs = new AudioReverbFilter[count]; whooshVoices = new bool[count];
+            enemyArrivalWhooshVoices=new bool[count];
             for (int i = 0; i < count; i++) voices[i] = CreateSource("Effect " + i, false);
         }
         private AudioSource CreateSource(string label, bool loop) {
@@ -228,7 +252,7 @@ namespace CyberBiker.Audio {
         private void ConfigureWhooshReverb(int index) {
             var filter = whooshReverbs[index];
             if (filter == null) return;
-            float amount = Mathf.Clamp01(passWhooshReverbAmount);
+            float amount = Mathf.Clamp01(enemyArrivalWhooshVoices!=null && enemyArrivalWhooshVoices[index] ? enemyArrivalReverbAmount : passWhooshReverbAmount);
             filter.enabled = whooshVoices[index] && !paused && amount > 0.001f;
             if (!filter.enabled) return;
             float level = 2000 * Mathf.Log10(Mathf.Max(amount, 0.00001f));
@@ -257,10 +281,11 @@ namespace CyberBiker.Audio {
             engineSource.spatialBlend = launchSource.spatialBlend = engineSpatialBlend;
             ConfigureEngineReverb(engineReverb);
             ConfigureEngineReverb(launchReverb);
+            ConfigureEngineReverb(launchPowerReverb);
             float normalized = Mathf.Clamp01(speed / Mathf.Max(1, referenceSpeed));
             bool running = manager != null && manager.gameState != GameState.GameOver;
             float dt = Time.unscaledDeltaTime;
-            if(!paused) UpdatePistolDucking(dt);
+            if(!paused) {UpdatePistolDucking(dt);UpdateSwordDucking(dt);UpdateFinisherDucking(dt);}
             bool start = engineMix.Update(speed, referenceSpeed, paused ? 0 : dt,
                 player != null && manager != null && manager.gameState == GameState.Playing, running,
                 engineLaunch != null ? engineLaunch.length : 0, engineCrossfadeSeconds, engineCrossfadeEndOffsetSeconds,
@@ -298,6 +323,7 @@ namespace CyberBiker.Audio {
                 if (whooshVoices[i]) ConfigureWhooshReverb(i);
             }
             if (!paused && running && Time.time >= nextScan) { ScanTraffic(); nextScan = Time.time + 0.05f; }
+            UpdateEnemyArrivalAudio(dt);
         }
         private void UpdatePistolDucking(float dt) {
             if(!pistolDuckActive) {pistolDuckGain=1;return;}
@@ -309,10 +335,76 @@ namespace CyberBiker.Audio {
             if(recovery>=1)pistolDuckActive=false;
         }
         private void ApplyRidingLevels() {
-            launchSource.volume=launchBaseLevel*pistolDuckGain;
-            engineSource.volume=engineBaseLevel*pistolDuckGain;
-            windSource.volume=windBaseLevel*pistolDuckGain;
-            windRushSource.volume=rushBaseLevel*pistolDuckGain;
+            float gain=Mathf.Min(pistolDuckGain,Mathf.Min(swordDuckGain,finisherDuckGain));
+            float engineLift=Mathf.Pow(10,launchEngineLiftDb*launchPowerAmount/20);
+            float windLift=Mathf.Pow(10,launchWindLiftDb*launchPowerAmount/20);
+            launchSource.volume=Mathf.Min(1,launchBaseLevel*engineLift*gain);
+            engineSource.volume=Mathf.Min(1,engineBaseLevel*engineLift*gain);
+            windSource.volume=Mathf.Min(1,windBaseLevel*windLift*gain);
+            windRushSource.volume=Mathf.Min(1,rushBaseLevel*windLift*gain);
+            if(launchPowerSource!=null)launchPowerSource.volume=masterVolume*engineVolume*launchPowerAmount*launchPowerVolume*gain;
+        }
+        public void SetLaunchMix(AudioClip clip,float amount,float volume,float pitch,float engineLiftDb,float windLiftDb) {
+            launchPowerAmount=Mathf.Clamp01(amount);launchPowerVolume=Mathf.Clamp01(volume);
+            launchEngineLiftDb=Mathf.Clamp(engineLiftDb,0,6);launchWindLiftDb=Mathf.Clamp(windLiftDb,0,6);
+            if(launchPowerSource==null)return;
+            if(launchPowerSource.clip!=clip){launchPowerSource.Stop();launchPowerSource.clip=clip;}
+            if(player!=null)launchPowerSource.transform.position=player.transform.position;
+            launchPowerSource.pitch=Mathf.Clamp(pitch,.5f,2);
+            if(launchPowerAmount>.001f && clip!=null && !paused && !launchPowerSource.isPlaying)launchPowerSource.Play();
+            else if(launchPowerAmount<=.001f)launchPowerSource.Stop();
+            ApplyRidingLevels();
+        }
+        public void PlayLaunchBurst(AudioClip clip,Transform anchor,float gain,float pitch) {
+            if(clip==null || anchor==null || paused || masterVolume<=0 || engineVolume<=0 || gain<=0)return;
+            int index=Play(clip,anchor.position,gain*engineVolume,pitch,false,anchor,priority:36);
+            if(index<0)return;
+            voices[index].spatialBlend=.85f;voices[index].minDistance=12;voices[index].maxDistance=100;
+            LaunchBurstSoundCount++;
+        }
+        public void DuckForSwordImpact(float decibels,float hold,float release) {
+            if(paused)return;
+            swordDuckAge=0;swordDuckDb=decibels;swordDuckHold=hold;swordDuckRelease=Mathf.Max(.03f,release);
+            UpdateSwordDucking(0);ApplyRidingLevels();
+        }
+        private void UpdateSwordDucking(float dt) {
+            swordDuckAge+=Mathf.Max(0,dt);
+            float recovery=Mathf.Clamp01((swordDuckAge-swordDuckHold)/swordDuckRelease);
+            swordDuckGain=Mathf.Lerp(Mathf.Pow(10,-Mathf.Max(0,swordDuckDb)/20),1,Mathf.SmoothStep(0,1,recovery));
+        }
+        public void PlaySwordSound(AudioClip clip,Vector3 position,Transform rider,float gain,float pitch) {
+            if(clip==null || paused || masterVolume<=0 || weaponVolume<=0)return;
+            // Keep the recorded decay with the rider at runner speeds. The pooled
+            // voice still respects master/weapon volumes and pause/resume.
+            int index=Play(clip,position,gain*weaponVolume,pitch,false,rider,priority:40);
+            if(index<0)return;
+            voices[index].spatialBlend=.45f;voices[index].minDistance=12;voices[index].maxDistance=100;
+            SwordSoundCount++;
+        }
+        public void PlaySwordExplosion(AudioClip clip,Transform blast,float gain,float pitch) {
+            if(clip==null || blast==null || paused || masterVolume<=0 || explosionVolume<=0)return;
+            int index=Play(clip,blast.position,gain*explosionVolume,pitch,false,blast,priority:32);
+            if(index<0)return;
+            voices[index].spatialBlend=.7f;voices[index].minDistance=18;voices[index].maxDistance=140;
+            SwordExplosionSoundCount++;
+        }
+        private void UpdateFinisherDucking(float dt) {
+            finisherDuckAge+=Mathf.Max(0,dt);
+            float recovery=Mathf.SmoothStep(0,1,Mathf.Clamp01((finisherDuckAge-.12f)/.3f));
+            finisherDuckGain=Mathf.Lerp(Mathf.Pow(10,-Mathf.Max(0,finisherDuckDb)/20),1,recovery);
+        }
+        private void PlayFinisherNotification(bool warning) {
+            float gain=warning ? finisherWarningVolume : finisherReadyVolume;
+            if(paused || gain<=0 || masterVolume<=0)return;
+            // Listener-relative tactical cues stay clear even when the enemy is far ahead.
+            if(Play(warning ? finisherWarning : finisherReady,Vector3.zero,gain,1,true,priority:24)<0)return;
+            if(warning)FinisherWarningCueCount++;else FinisherReadyCueCount++;
+            finisherDuckAge=0;UpdateFinisherDucking(0);ApplyRidingLevels();
+        }
+        public void ForgetCar(Car car){
+            relativePositions.Remove(car);
+            // Match a destroyed anchor: let the recorded tail finish in place.
+            for(int i=0;i<voiceAnchors.Length;i++)if(voiceAnchors[i]!=null && voiceAnchors[i].IsChildOf(car.transform)){voices[i].transform.position=voiceAnchors[i].position;voiceAnchors[i]=null;}
         }
         private void ScanTraffic() {
             if (player == null) return;
@@ -322,8 +414,10 @@ namespace CyberBiker.Audio {
             float closestLateral = float.MaxValue;
             float closestSpeed = 0;
             float closestSide = 1;
-            var cars = FindObjectsByType<Car>(FindObjectsSortMode.None);
-            foreach (var car in cars) {
+            var cars = Car.Instances;
+            for (int carIndex=0;carIndex<cars.Count;carIndex++) {
+                var car=cars[carIndex];
+                if(car==null || !car.gameObject.activeInHierarchy)continue;
                 if (!car.IsAlive) continue;
                 Vector3 relative = car.transform.position - player.transform.position;
                 if (relativePositions.TryGetValue(car, out Vector3 previous)) {
@@ -403,6 +497,7 @@ namespace CyberBiker.Audio {
             previousHealth = current;
         }
         private void OnStateChanged(GameState previous, GameState current) {
+            SetEnemyArrivalPaused(current!=GameState.Playing);
             if (current == GameState.Pause) { SetPaused(true); Play(pause, Vector3.zero, interfaceVolume, 1, true, menu: true); }
             else {
                 if (paused) { SetPaused(false); Play(resume, Vector3.zero, interfaceVolume, 1, true, menu: true); }
@@ -414,6 +509,8 @@ namespace CyberBiker.Audio {
             paused = value;
             ConfigureEngineReverb(engineReverb);
             ConfigureEngineReverb(launchReverb);
+            ConfigureEngineReverb(launchPowerReverb);
+            if(launchPowerSource!=null){if(value)launchPowerSource.Pause();else launchPowerSource.UnPause();}
             if (value) { relativePositions.Clear(); lastTrafficScan = -1; }
             if (value) { engineSource.Pause(); launchSource.Pause(); windSource.Pause(); windRushSource.Pause(); }
             else { engineSource.UnPause(); launchSource.UnPause(); windSource.UnPause(); windRushSource.UnPause(); }
@@ -439,6 +536,8 @@ namespace CyberBiker.Audio {
                 case SoundCue.Explosion: Play(Pick(explosions), sound.Position, explosionVolume, Range(0.94f, 1.03f), false); break;
                 case SoundCue.Pickup: Play(pickup, sound.Position, interfaceVolume, 1, true); break;
                 case SoundCue.UiClick: Play(uiClick, Vector3.zero, interfaceVolume, 1, true, menu: true); break;
+                case SoundCue.EnemyFinisherReady: PlayFinisherNotification(false); break;
+                case SoundCue.EnemyFinisherWarning: PlayFinisherNotification(true); break;
                 default:
                     if (Time.time < nextImpact) return;
                     nextImpact = Time.time + 0.08f;
@@ -448,8 +547,8 @@ namespace CyberBiker.Audio {
         }
         private float Range(float minimum, float maximum) => minimum + (float)variation.NextDouble() * (maximum - minimum);
         private AudioClip Pick(AudioClip[] clips) => clips != null && clips.Length > 0 ? clips[variation.Next(clips.Length)] : null;
-        private void Play(AudioClip clip, Vector3 position, float gain, float pitch, bool local, Transform anchor = null, bool menu = false, bool whoosh = false, int priority = 80) {
-            if (clip == null || voices == null || (paused && !menu)) return;
+        private int Play(AudioClip clip, Vector3 position, float gain, float pitch, bool local, Transform anchor = null, bool menu = false, bool whoosh = false, int priority = 80) {
+            if (clip == null || voices == null || (paused && !menu)) return -1;
             int index = nextVoice;
             for (int i = 0; i < voices.Length; i++) {
                 int candidate = (nextVoice + i) % voices.Length;
@@ -464,6 +563,7 @@ namespace CyberBiker.Audio {
             source.minDistance = whoosh ? 12 : 5;
             source.maxDistance = whoosh ? 160 : 65;
             whooshVoices[index] = whoosh;
+            if(enemyArrivalWhooshVoices!=null)enemyArrivalWhooshVoices[index]=false;
             if (whoosh && whooshReverbs[index] == null) {
                 var filter = source.gameObject.AddComponent<AudioReverbFilter>();
                 filter.reverbPreset = AudioReverbPreset.User;
@@ -476,6 +576,7 @@ namespace CyberBiker.Audio {
             source.ignoreListenerPause = menu; source.pitch = pitch; source.clip = clip;
             voiceAnchors[index] = anchor; voiceGains[index] = gain;
             source.volume = masterVolume * gain; source.Play(); PlayedCueCount++;
+            return index;
         }
         private void OnDestroy() {
             // This source is parented to the animated jacket, outside the audio rig.

@@ -1,0 +1,3 @@
+PASS left rear pass: stereo energy L=837.211 R=318.971, near/far RMS ratio=4.32.
+PASS right rear pass: stereo energy L=300.464 R=930.299, near/far RMS ratio=4.54.
+PASS native stereo output captured from real left/right overtakes; recorded R6 engine and whoosh follow enemy position in 3D; one whoosh per crossing, no pause replay, mono clips and restrained Doppler, closer source is louder, paused sample position retained, master volume respected, pooled voice reused, front arrivals silent and disabled actors release audio.

@@ -157,6 +157,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -179,9 +184,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &851188061214353648
 GameObject:
@@ -197,6 +204,7 @@ GameObject:
   - component: {fileID: 2844349766950834288}
   - component: {fileID: 3062219292351241386}
   - component: {fileID: 3904277617711645483}
+  - component: {fileID: 4645124659675959685}
   m_Layer: 0
   m_Name: enemy
   m_TagString: Untagged
@@ -278,11 +286,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0947b3a39565164f969e1d6a7371e08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speedTrailLifetime: 0.3
+  speedTrailMaxLength: 18
+  speedTrailWidth: 0.42
+  speedTrailBrightness: 1.75
+  health: 100
+  finisherHealthFraction: 0.3
+  finisherWindow: 5
+  finisherWarningLeadTime: 1.25
+  finisherRecoveryHealth: 0.6
+  finisherSpeedMultiplier: 1
+  finisherHighlightShader: {fileID: 4800000, guid: 35fb18423e024c579ad0686f08a1ff3d, type: 3}
+  finisherReadyColor: {r: 0.035, g: 0.18, b: 0.85, a: 1}
+  finisherCloseColor: {r: 0.8, g: 0.42, b: 0.04, a: 1}
+  finisherFlashStartRate: 2
+  finisherFlashEndRate: 10
+  finisherGlowIntensity: 0.9
+  finisherGlowRadiance: 1.1
+  shootInterval: 0.5
+  shootingDamage: 10
   rayCheck:
   - {fileID: 7457332522808936560}
   - {fileID: 2831461102238035791}
-  distanceController: 20
   motoMesh: {fileID: 415066512210665372}
+  bodyRotation: {fileID: 0}
+  leftBulletSpawn: {fileID: 0}
+  rightBulletSpawn: {fileID: 0}
+  bullet: {fileID: 0}
+  bulletParent: {fileID: 0}
+  gunParticle1: {fileID: 0}
+  gunParticle2: {fileID: 0}
+  damageParticle: {fileID: 0}
+  explosion: {fileID: 0}
 --- !u!114 &3062219292351241386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -414,6 +449,46 @@ MonoBehaviour:
   - m_Rig: {fileID: 6732209841547717880}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &4645124659675959685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851188061214353648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01a4e0bfcba74b2a8c2164b6dd824bfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleMaterial: {fileID: 2100000, guid: de6d7f57490a4baf8e7bdde7a910fa71, type: 2}
+  smokeMaterial: {fileID: 2100000, guid: 1000190d698d4ab7b83f606b6b3a2f85, type: 2}
+  smokeTemplate: {fileID: 725748390055121439, guid: 4bda94453d2ca7444a0fff05b2d425f5, type: 3}
+  referenceSpeed: 75
+  steeringEmission: 130
+  frontWheelAmount: 0.18
+  particleSize: 1.15
+  smokeLifetime: 0.65
+  smokeRise: 0.65
+  steeringSpraySpeed: 0.3
+  smokeOpacity: 0.9
+  smokeWindSlowdown: 0.55
+  smokeWindSpread: 0.32
+  smokeReleaseTime: 0.16
+  startLeanAngle: 20
+  fullLeanAngle: 30
+  leanReleaseMargin: 3
+  skidSparkEmission: 70
+  skidSparkSize: 0.105
+  hardLeanSparkBoost: 2
+  skidSparkLifetime: 0.22
+  skidSparkStreakLength: 4
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  rearWheelContact: {x: 0, y: 0.026613984, z: -0.50878125}
+  frontWheelContact: {x: 0, y: 0.026613984, z: 1.4282714}
+  enemyEffectRange: 90
 --- !u!1 &860654686701658052
 GameObject:
   m_ObjectHideFlags: 0
@@ -2582,6 +2657,11 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 3
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2607,9 +2687,11 @@ SkinnedMeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
@@ -3458,7 +3540,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!96 &294846888893330613
 TrailRenderer:
-  serializedVersion: 3
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3474,6 +3556,11 @@ TrailRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3495,9 +3582,11 @@ TrailRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Time: 0.3
   m_PreviewTimeScale: 1
   m_Parameters:
@@ -3565,7 +3654,6 @@ TrailRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_MinVertexDistance: 0.1
-  m_MaskInteraction: 0
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
@@ -3667,6 +3755,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
 --- !u!212 &4636420980528780148
 SpriteRenderer:
+  serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3682,6 +3771,11 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3703,9 +3797,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: acd4cc1427cc93d43856632642892b6b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -3715,8 +3811,8 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+  m_BlendShapeWeights: []
 --- !u!1 &8026551758602166084
 GameObject:
   m_ObjectHideFlags: 0

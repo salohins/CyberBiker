@@ -1,0 +1,20 @@
+Native Unity 6000.6.0f1: finisher audio + existing finisher loop, passed.
+Log: Logs/sword_import/finisher-audio-checks.log
+
+PASS configured Launch distance: approached 15m from 44.4m; measured 15.032m.
+PASS live distance control: new 25m setting reached at 24.979m; healthy sword targeting and damage remain blocked.
+Visual preview ready-cyan: production bloom intensity 15.75, threshold 0.80.
+Visual preview ready-cyan-chase: production bloom intensity 15.75, threshold 0.80.
+PASS real pistol stagger, nonlethal overkill, no hit-based window refresh, pause-safe countdown and visible blue highlight.
+Visual preview ready-orange: production bloom intensity 15.75, threshold 0.80.
+Visual preview ready-orange-chase: production bloom intensity 15.75, threshold 0.80.
+PASS finisher audio: bound entry chime once, no retrigger on extra hits, one warning at 1.25s, listener-relative priority voice and paused countdown/voice.
+PASS timed color alternation: actual material changes blue/orange at distance; switch interval accelerates from 0.450s to 0.111s near expiry.
+Visual preview ready-close-blue: production bloom intensity 15.75, threshold 0.80.
+PASS expiry: enemy recovers, loses highlight, resumes firing and becomes immune to the sword until staggered again; close-range blue phase also verified.
+PASS ready target: becomes catchable, sword kill/explosion succeed, and expiry during preparation cancels safely.
+
+Audio assertions also passed: entry rearms for a new window, early sword kill suppresses later warning, and expiry during preparation emits no stale alert.
+
+Normal gameplay regression from configured-distance build (presentation-only changes since):
+PASS: scene initialization, movement, damage, score/history, pause/countdown, real Aim button toggle, steering while aiming, automatic fire/muzzle effects, traffic buffer/refill over 1200m, full-health collectible without healing, Inspector health/destruction toggles, live rate/damage tuning, swept projectile damage, death and recovery guard, downloaded audio bindings, speed mix, simultaneous nearest pass detection, spatial whoosh reverb, directional camera roll and Aim stability, pause/resume and shake decay, independent audio randomness.

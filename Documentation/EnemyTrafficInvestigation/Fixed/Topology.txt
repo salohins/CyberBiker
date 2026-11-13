@@ -1,0 +1,1 @@
+Original next car point reachable=True; selected private road point=False; car-point continuation reachable from road point=False; required onward angle=21.80141 degrees vs allowed 15.

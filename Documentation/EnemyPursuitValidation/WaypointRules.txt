@@ -1,0 +1,4 @@
+PASS 60 original path decisions match unchanged forward/angle/capsule/random rules.
+PASS five separate empty-road lane points selected ahead of the same distant car point; no shared-list growth.
+PASS nearby original car detour has priority over lane preference.
+PASS blocked road point rejected; selected once the obstruction clears.

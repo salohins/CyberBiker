@@ -8,16 +8,18 @@ namespace CyberBiker.Player {
         private readonly Animator animator;
         private readonly RigBuilder animationRigging;
         private readonly float rotationSensitivity, leanRange;
-        private float yawRotation, animationFrame, steering, visualSteering, poseResponse, dt;
+        private float yawRotation, animationFrame, steering, visualSteering, poseResponse, dt, aimDt;
+        public float AimRigBlendTime { get; set; } = .08f;
         private bool aiming, armed;
         public BikePresentation(Transform bike, Transform mesh, Animator animator, RigBuilder rig, float sensitivity, float lean) {
             transform = bike; motorcycleMesh = mesh; this.animator = animator;
             animationRigging = rig; rotationSensitivity = sensitivity; leanRange = lean;
         }
-        public void Tick(float steering, bool aiming, bool armed, float? movementSteering=null, float response=DefaultPoseResponse, float? deltaTime=null) {
+        public void Tick(float steering, bool aiming, bool armed, float? movementSteering=null, float response=DefaultPoseResponse, float? deltaTime=null,float? aimDeltaTime=null) {
             this.steering = steering; this.aiming = aiming; this.armed = armed;
             visualSteering=Mathf.Clamp(movementSteering ?? steering,-1,1);
             poseResponse=Mathf.Clamp(response,1,20);dt=Mathf.Max(0,deltaTime ?? Time.deltaTime);
+            aimDt=Mathf.Max(0,aimDeltaTime ?? dt);
             // Use the original deltaTime * 3 interpolation during ordinary steering.
             // For pure Z-axis roll this also matches the original motorcycle Slerp.
             // Sharing the signal keeps the bike and rider together during a kick.
@@ -45,7 +47,7 @@ namespace CyberBiker.Player {
         animator.SetBool("Aim", aiming);
 
         if (aiming && armed) {
-            animationRigging.layers[0].rig.weight = Mathf.Lerp(animationRigging.layers[0].rig.weight, 1, dt * 3f);
+            animationRigging.layers[0].rig.weight = Mathf.MoveTowards(animationRigging.layers[0].rig.weight, 1, aimDt / Mathf.Max(.03f,AimRigBlendTime));
             animationRigging.layers[1].rig.weight = 1;
             animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 1, dt));
         }

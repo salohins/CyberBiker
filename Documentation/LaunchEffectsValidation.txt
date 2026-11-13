@@ -1,0 +1,21 @@
+Unity6000.6.0f1 native LaunchEffectsChecks: PASS,exit0.
+Latest log: Logs/sword_import/launch-ignition-camera-checks.log
+
+PASS entry: five-layer ignition mini explosion attached to the exhaust, one ignition and continuous nitro flames, rear-wheel wind and separate short jacket airflow anchored under the animated hem, +7-degree FOV and blue screen edge.
+PASS pause/resume, continuous nitro and single ignition per activation, mounted sword, independent Aim cancellation and full fade/loop cleanup.
+PASS natural expiry, second activation and hit-state cleanup; physics boost and target gating unchanged.
+
+Ignition revision: owned NitroIgnition.prefab with5 particle layers (flash,shock ring,Cartoon FX fire puffs,sparks,pressure smoke). Shared exhaust-bank centre and local simulation keep the burst with the moving bike. Effect scale1. Lifecycle expires after0.75 gameplay seconds, freezes on pause, clears on interruption. Existing ignition sound remains once per activation; steady nitro follows.
+
+Native checks measured5 layers and at least30 emitted particles, verified attachment to Motorcycle, no repeat during sustained Launch, effect cleanup while nitro remains lit, and second activation rearming. Existing wind/jacket/audio/FOV/pause/expiry/hit checks passed. Reviewed direct ignition-frame and close-up renders with production post-processing, plus sustained sequence.
+
+Only owned ignition assets and Launch component block merged back. Existing wind,flame,audio and camera tuning compared and preserved. Live runtime/shader/setup bytes and component references match native-tested copy.
+Startup preview: Documentation/AnimationPreviews/launch-ignition-instant-close.png.
+
+Nitro ignition camera revision: short backward kick/upward pitch with damped local shake, one trigger per ignition. Separate Inspector controls; real-time duration frozen by pause.
+PASS ignition camera: immediate trigger, backward kick/upward pitch, moving damped shake and zero residual offset after settling.
+PASS entry: five-layer ignition mini explosion attached to the exhaust, one ignition and continuous nitro flames, rear-wheel wind and separate short jacket airflow anchored under the animated hem, +7-degree FOV and blue screen edge.
+PASS pause/resume, continuous nitro and single ignition per activation, mounted sword, independent Aim cancellation and full fade/loop cleanup.
+PASS natural expiry, second activation and hit-state cleanup; physics boost and target gating unchanged.
+
+Verified live runtime/check script bytes and owned Launch prefab component settings match the isolated native-tested copy. Existing scene, materials and unrelated camera tuning were preserved.

@@ -1,0 +1,8 @@
+PASS runtime AnimationClip.SampleAnimation versus Editor: 56 frames, 106 transforms, mismatches=0, max position=0, angle=0, scale=0
+Player_Sword_Grab: mismatches=0
+Player_Sword_Back: mismatches=0
+Player_Sword_Idle: mismatches=0
+Player_Sword_Idle_Left: mismatches=0
+Player_Sword_Idle_Right: mismatches=0
+Player_Sword_Attack_Left: mismatches=0
+Player_Sword_Attack_Right: mismatches=0

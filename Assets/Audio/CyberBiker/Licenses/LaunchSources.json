@@ -1,0 +1,21 @@
+{
+  "engine": {
+    "file": "LaunchEnginePower.wav",
+    "author": "bodhistone",
+    "source": "https://freesound.org/people/bodhistone/sounds/855305/",
+    "license": "CC0-1.0",
+    "derived_from": "R6_Drive_High.wav",
+    "changes": "Mono existing recorded high-RPM Yamaha R6 bank; 180Hz HP, 7kHz LP, +2dB at600Hz, 650ms equal-power wrap crossfade, peak0.84. No synthesis."
+  },
+  "backfire": {
+    "file": "LaunchExhaustCrack.wav",
+    "title": "Motorbike Driveby and Backfire",
+    "author": "Yoyodaman234",
+    "source": "https://freesound.org/people/Yoyodaman234/sounds/667592/",
+    "download": "https://cdn.freesound.org/previews/667/667592_2792951-hq.mp3",
+    "license": "CC0-1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "recording": "Real motorcycle accelerating and backfiring, BP4025 microphone and ZOOM F6 recorder in Brisbane.",
+    "changes": "74.815-75.635s excerpt containing the isolated strong exhaust transient at74.85s and its engine tail. Mono44.1kHzPCM,75HzHP/11kHzLP,8ms start/180ms end fade,peak0.9. No synthetic or foley layers."
+  }
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "file": "SwordSwish_01.wav",
+    "sha256": "a92db630bfda0f600141412e1f05e78455461b78786f243bdb66a132ca536244",
+    "license": "CC0-1.0",
+    "source": "https://opengameart.org/content/swishes-sound-pack"
+  },
+  {
+    "file": "SwordSwish_02.wav",
+    "sha256": "93d0b323a0779f0fb15b8d64776f1df176c29cedc50b878865841e6cc4ce214c",
+    "license": "CC0-1.0",
+    "source": "https://opengameart.org/content/swishes-sound-pack"
+  },
+  {
+    "file": "SwordImpactLow.ogg",
+    "sha256": "b33a8f14068aec24ec69ba85e5e87fdc41228975f6a1a3e44a6e7d6fc3d9f8d8",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/impact-sounds"
+  },
+  {
+    "file": "SwordExplosion_Blast.ogg",
+    "sha256": "8c7197bb3a1c504690319c3abe0e62a5423ee246dd70caab57963d0b7aa8144f",
+    "license": "CC0-1.0",
+    "source": "https://kenney.nl/assets/sci-fi-sounds",
+    "original": "explosionCrunch_003.ogg",
+    "edits": "none"
+  }
+]

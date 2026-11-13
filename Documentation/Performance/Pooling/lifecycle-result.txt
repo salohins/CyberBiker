@@ -1,0 +1,9 @@
+PASS projectiles: reuse, correct damage once, new-owner velocity/damage/collision ignores, harmless double return and clean tracer trails.
+PASS cars: health/movement/collider/renderer reset, hidden old explosion, lease-safe waypoints and cleared sound crossing/anchor history.
+PASS tiles: original child transforms/activation, collectible reset and fresh/reused road render comparison (changed bytes=0).
+PASS overlap physics: identical pass points for empty, single-blocker and saturated multi-blocker queries.
+PASS capacity:100 concurrent shots allowed, bounded inactive cache.
+PASS projectile lifetime: reused shot survives old lease expiry, pauses correctly and returns after its own lifetime.
+PASS muzzle flash: original three-frame lifetime, reused geometry and no active-demand cap.
+PASS scene-owned cache cleanup; original scene's pool remains available.
+PASS continuous streaming:24 chunks with compatible, gap-free joins; full traffic buffer after advancing; reuse delta=44.

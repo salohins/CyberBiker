@@ -11,9 +11,10 @@ using CyberBiker.UI;
 
 public class PlayerController : MonoBehaviour, IDamageable
 {
+    [Header("Motorcycle Movement")]
     [Tooltip("Force that pushes motorcycle the bigger the value the faster motorcycle will accelerate. Be careful if the value is too low motorcycle will not reach max speed")]
     [SerializeField] private float accelerationForce;
-    [Tooltip("Motorcycle speed at the start")]
+    [Tooltip("Normal riding speed limit in world units per second.")]
     [SerializeField] private float startMaxSpeed;
     [Tooltip("Motorcycle rotation sensitivity on Y axis")]
     [SerializeField] private float rotationSensitivity;
@@ -22,11 +23,12 @@ public class PlayerController : MonoBehaviour, IDamageable
     [SerializeField] private float dodgeMaxSpeed;
     [Tooltip("Maximum angle for motorcycle lean animation (it's just visual thing and does not affect the gameplay)")]
     [SerializeField] private float leanRange;
-    [Header("Weapon Tuning")]
-    [Tooltip("Seconds between shots. 0.45 is about 2.2 shots/second. Can be tuned during Play mode.")]
-    [SerializeField, Min(0.01f)] private float shotInterval = .45f;
-    [Tooltip("Damage applied by each projectile. Overrides the bullet prefab's fallback damage.")]
-    [SerializeField, Min(0)] private float shootingDamage = 15f;
+    [Header("Pistol aim response")]
+    [SerializeField, Range(1,6)] private float pistolDrawSpeed = 3.5f;
+    [Tooltip("Real seconds to blend into the pistol draw when Aim begins.")]
+    [SerializeField, Range(.02f,.2f)] private float pistolDrawBlendTime = .045f;
+    [Tooltip("Real seconds to bring the aiming arm rig in once the pistol is drawn.")]
+    [SerializeField, Range(.03f,.3f)] private float aimRigBlendTime = .08f;
     [Header("Rear car collisions")]
     [Tooltip("Rear portion of the actual car collider that causes an immediate fall, including rear corners.")]
     [SerializeField, Range(.05f,.4f)] private float rearCrashZone = .18f;
@@ -56,6 +58,21 @@ public class PlayerController : MonoBehaviour, IDamageable
     public Health Health { get; private set; }
     public bool IsAlive => Health != null && Health.IsAlive;
     public bool UsesAutomaticAim => autoAim!=null && autoAim.Enabled;
+    public float NormalSpeedLimit => maxSpeed;
+    public float ConfiguredMaxSpeed => startMaxSpeed;
+    public float ForwardAcceleration => accelerationForce;
+    public float SteeringAcceleration => dodgeAccelerationForce;
+    public float SteeringSpeedLimit => dodgeMaxSpeed;
+    public void ConfigureTestingMovement(float speedLimit, float acceleration, float steeringAcceleration, float steeringLimit) {
+        startMaxSpeed = Mathf.Max(1, speedLimit);
+        accelerationForce = Mathf.Max(0, acceleration);
+        dodgeAccelerationForce = Mathf.Max(0, steeringAcceleration);
+        dodgeMaxSpeed = Mathf.Max(0, steeringLimit);
+        maxSpeed = startMaxSpeed;
+        motor?.Configure(accelerationForce, dodgeAccelerationForce, dodgeMaxSpeed);
+    }
+    private BikeSwordCombat swordCombat;
+    private bool Aiming => input.IsAiming && (swordCombat==null || !swordCombat.IsActive);
     private HealthPresenter presenter;
     private BikeMotor motor;
     private BikeImpactResponse impactResponse;
@@ -67,6 +84,9 @@ public class PlayerController : MonoBehaviour, IDamageable
     [HideInInspector] public bool grounded;
 
     private bool armed;
+    private bool wasAiming;
+    private static readonly int PistolDrawState = Animator.StringToHash("Base Layer.Player_IdleGunGrab_001");
+    private static readonly int PistolDrawSpeed = Animator.StringToHash("PistolDrawSpeed");
     public int wallDirection { get; private set; }
 
     private Rigidbody rb;
@@ -101,15 +121,17 @@ public class PlayerController : MonoBehaviour, IDamageable
         input = tim;
         motor = new BikeMotor(rb, accelerationForce, dodgeAccelerationForce, dodgeMaxSpeed);
         impactResponse = GetComponent<BikeImpactResponse>();
-        weapon = new ProjectileWeapon(bullet, shotInterval, shootingDamage);
+        gm = FindAnyObjectByType<GameplayManager>();
+        weapon = new ProjectileWeapon(bullet, gm.PlayerPistolShotInterval, gm.PlayerPistolDamage);
         weapon.Fired += OnWeaponFired;
         presentation = new BikePresentation(transform, motorcycleMesh, animator, animationRigging, rotationSensitivity, leanRange);
-        gm = FindAnyObjectByType<GameplayManager>();
 
         maxSpeed = startMaxSpeed;
 
         SwitchRagDoll(false);
         autoAim=GetComponent<BikeAutoAim>();
+        swordCombat=GetComponent<BikeSwordCombat>();
+        TestingSettings.Initialize(this, gm, swordCombat);
         if(autoAim!=null) autoAim.Initialize(muzzleFlash!=null ? muzzleFlash.transform : null,bullet,animationRigging);
     }
 
@@ -153,12 +175,13 @@ public class PlayerController : MonoBehaviour, IDamageable
     }
 
     private void FireWeapon() {
-        if (gm.gameState != GameState.Playing || !IsAlive) return;
+        if (gm.gameState != GameState.Playing || !IsAlive || (swordCombat!=null && swordCombat.IsActive)) return;
+        weapon.SetInterval(gm.PlayerPistolShotInterval);
+        if(!weapon.CanFireAt(Time.time))return;
         Vector3 target = camera.transform.position + camera.transform.forward * 100f;
         if(autoAim!=null && autoAim.Enabled && input.IsAiming && autoAim.Target!=null) target=autoAim.AimPoint;
         else if (Physics.Raycast(camera.transform.position, camera.transform.forward, out var hit)) target = hit.point;
-        weapon.SetInterval(shotInterval);
-        if (weapon is ProjectileWeapon projectileWeapon) projectileWeapon.SetDamage(shootingDamage);
+        if (weapon is ProjectileWeapon projectileWeapon) projectileWeapon.SetDamage(gm.PlayerPistolDamage);
         weapon.TryFire(new ShotRequest(muzzleFlash.transform.position, target - muzzleFlash.transform.position, gameObject), Time.time);
     }
     private void OnWeaponFired() {
@@ -172,19 +195,25 @@ public class PlayerController : MonoBehaviour, IDamageable
 
         scope.SetActive(animationRigging.layers[0].rig.weight > .2f && gm.gameState == GameState.Playing);
 
-        if (!input.IsAiming) armed = false;
+        bool aimNow=Aiming && gm.gameState==GameState.Playing && IsAlive;
+        if(!aimNow)armed=false;
+        // Speed only the draw state, in real time. Bike lean, jacket animation
+        // and recoil retain their own timing, including during a finisher.
+        animator.SetFloat(PistolDrawSpeed,pistolDrawSpeed/Mathf.Max(.1f,Time.timeScale));
+        if(aimNow && !wasAiming)animator.CrossFadeInFixedTime(PistolDrawState,pistolDrawBlendTime*Mathf.Max(.1f,Time.timeScale),0,0);
+        wasAiming=aimNow;
         UpdatePresentation(Time.deltaTime);
 
         if (gm.gameState == GameState.GameOver)
             maxSpeed = 0;
 
-        autoAim?.Tick(input.IsAiming && gm.gameState==GameState.Playing && IsAlive,armed,Time.deltaTime);
+        autoAim?.Tick(Aiming && gm.gameState==GameState.Playing && IsAlive,armed,Time.deltaTime);
 
     }
 
     private void LateUpdate() {
         autoAim?.ApplyArmAim();
-        if(input==null || gm.gameState!=GameState.Playing || !input.IsAiming || !armed || animationRigging.layers[0].rig.weight<=.8f) return;
+        if(input==null || gm.gameState!=GameState.Playing || !Aiming || !armed || animationRigging.layers[0].rig.weight<=.8f) return;
         if(autoAim==null || !autoAim.Enabled || autoAim.CanFire) FireWeapon();
     }
 
@@ -197,11 +226,16 @@ public class PlayerController : MonoBehaviour, IDamageable
     private void UpdatePresentation(float dt) {
         bool reacting=impactResponse!=null && gm.gameState==GameState.Playing;
         float visual=reacting ? impactResponse.PresentationSteering(xThrow,dt) : xThrow;
-        presentation.Tick(xThrow,input.IsAiming,armed,visual,reacting ? impactResponse.PresentationResponse : BikePresentation.DefaultPoseResponse,dt);
+        presentation.AimRigBlendTime=aimRigBlendTime;
+        presentation.Tick(xThrow,Aiming,armed,visual,reacting ? impactResponse.PresentationResponse : BikePresentation.DefaultPoseResponse,dt,gm.gameState==GameState.Playing ? Time.unscaledDeltaTime : 0);
     }
 
     private void processVelocity() {
-        motor.Tick(xThrow, grounded, wallDirection, maxSpeed,
+        if(swordCombat!=null && swordCombat.StepPickupDash()) {
+            motor.TickSteering(xThrow,impactResponse!=null ? impactResponse.SteeringAccelerationMultiplier(xThrow) : 1);
+            xVelocity=rb.linearVelocity.x;zVelocity=rb.linearVelocity.z;return;
+        }
+        motor.Tick(xThrow, grounded, wallDirection, swordCombat!=null ? swordCombat.SpeedLimit(maxSpeed) : maxSpeed,
             impactResponse!=null ? impactResponse.MotorAccelerationMultiplier : 1,
             impactResponse!=null ? impactResponse.SteeringAccelerationMultiplier(xThrow) : 1,
             impactResponse!=null && impactResponse.IsRecovering);
@@ -287,6 +321,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void HandleCarContact(Collision collision,bool initialImpact) {
         if(gm==null || gm.gameState!=GameState.Playing) return;
+        if(swordCombat!=null && swordCombat.IgnoresTraffic(collision.collider))return;
         var car=collision.collider.GetComponentInParent<Car>();
         var obstacle=collision.collider.GetComponentInParent<Obstacle>();
         if(car==null && obstacle==null && !collision.transform.CompareTag("Obstacle")) return;

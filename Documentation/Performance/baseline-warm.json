@@ -1,0 +1,62 @@
+{
+    "label": "baseline-warm",
+    "environment": "Unity 6000.6.0f1 Windows Editor, D3D11, explicit 960x540 offscreen render per sampled frame, uncapped; controlled fixture",
+    "riderRayHits": 648,
+    "riderTriangles": 1336,
+    "registryLifecycleVerified": false,
+    "code": [
+        {
+            "name": "Traffic audio scan",
+            "calls": 200,
+            "msPerCall": 0.0200945,
+            "bytesPerCall": -1.0
+        },
+        {
+            "name": "Pistol target acquisition",
+            "calls": 200,
+            "msPerCall": 0.023916500000000004,
+            "bytesPerCall": -1.0
+        },
+        {
+            "name": "Pistol attempt during cooldown",
+            "calls": 1000,
+            "msPerCall": 0.0011431,
+            "bytesPerCall": -1.0
+        },
+        {
+            "name": "Six exact rider visibility rays (warm mesh)",
+            "calls": 100,
+            "msPerCall": 0.0401,
+            "bytesPerCall": -1.0
+        }
+    ],
+    "modes": [
+        {
+            "mode": "Riding",
+            "frames": 90,
+            "fps": 322.5540546836697,
+            "frameMedianMs": 3.00170062109828,
+            "frameP95Ms": 3.961103968322277,
+            "mainThreadMedianMs": 3.0171,
+            "gcBytesPerFrame": 2622.5
+        },
+        {
+            "mode": "Aiming",
+            "frames": 90,
+            "fps": 50.505447293076685,
+            "frameMedianMs": 19.89530213177204,
+            "frameP95Ms": 22.95769564807415,
+            "mainThreadMedianMs": 19.9039,
+            "gcBytesPerFrame": 13762.344444444445
+        },
+        {
+            "mode": "Launch",
+            "frames": 90,
+            "fps": 102.0439054107422,
+            "frameMedianMs": 9.742503054440022,
+            "frameP95Ms": 11.975297704339027,
+            "mainThreadMedianMs": 9.7838,
+            "gcBytesPerFrame": 3099.3888888888887
+        }
+    ]
+}

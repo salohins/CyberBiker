@@ -1,0 +1,1 @@
+PASS: master switch and independent animation speed persist in a prefab copy; original prefab unchanged; older drafts migrate without resetting their tuning.

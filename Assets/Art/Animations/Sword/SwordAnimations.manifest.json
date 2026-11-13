@@ -1,0 +1,122 @@
+{
+  "source": "GunAnimations3.blend",
+  "source_sha256": "bf2e7f62b4f0dd176d20903219e4d0ad5e3f5ff13ff30666f76dc63dfceee597",
+  "fps": 60.0,
+  "rig": "unityRig",
+  "boneCount": 104,
+  "exportedMeshCount": 0,
+  "clips": [
+    {
+      "name": "Player_Sword_Grab",
+      "firstFrame": 1,
+      "lastFrame": 35,
+      "length": 0.5666666666666667,
+      "loop": false,
+      "endpointPositionError": 1.37485463826216,
+      "endpointAngleError": 282.9170905170334,
+      "inactiveGunConstraintMuted": [
+        "Child Of.001"
+      ],
+      "bakePositionError": 3.1476829299519754e-06,
+      "bakeAngleError": 0,
+      "file": "FBX/Player_Sword_Grab.fbx",
+      "fileBytes": 878380
+    },
+    {
+      "name": "Player_Sword_Back",
+      "firstFrame": 1,
+      "lastFrame": 35,
+      "length": 0.5666666666666667,
+      "loop": false,
+      "endpointPositionError": 1.113192522963717,
+      "endpointAngleError": 286.34617332945993,
+      "inactiveGunConstraintMuted": [
+        "Child Of.001"
+      ],
+      "bakePositionError": 3.4940681131224822e-06,
+      "bakeAngleError": 0,
+      "file": "FBX/Player_Sword_Back.fbx",
+      "fileBytes": 876796
+    },
+    {
+      "name": "Player_Sword_Idle",
+      "firstFrame": 1,
+      "lastFrame": 15,
+      "length": 0.23333333333333334,
+      "loop": true,
+      "endpointPositionError": 0.0,
+      "endpointAngleError": 0.0,
+      "inactiveGunConstraintMuted": [
+        "Child Of.001"
+      ],
+      "bakePositionError": 3.013610191454546e-06,
+      "bakeAngleError": 0,
+      "file": "FBX/Player_Sword_Idle.fbx",
+      "fileBytes": 764508
+    },
+    {
+      "name": "Player_Sword_Idle_Left",
+      "firstFrame": 1,
+      "lastFrame": 15,
+      "length": 0.23333333333333334,
+      "loop": true,
+      "endpointPositionError": 0.0,
+      "endpointAngleError": 0.0,
+      "inactiveGunConstraintMuted": [
+        "Child Of.001"
+      ],
+      "bakePositionError": 3.243835967306656e-06,
+      "bakeAngleError": 0,
+      "file": "FBX/Player_Sword_Idle_Left.fbx",
+      "fileBytes": 764508
+    },
+    {
+      "name": "Player_Sword_Idle_Right",
+      "firstFrame": 1,
+      "lastFrame": 15,
+      "length": 0.23333333333333334,
+      "loop": true,
+      "endpointPositionError": 0.0,
+      "endpointAngleError": 0.0,
+      "inactiveGunConstraintMuted": [
+        "Child Of.001"
+      ],
+      "bakePositionError": 3.4016959588635238e-06,
+      "bakeAngleError": 0,
+      "file": "FBX/Player_Sword_Idle_Right.fbx",
+      "fileBytes": 764508
+    },
+    {
+      "name": "Player_Sword_Attack_Left",
+      "firstFrame": 1,
+      "lastFrame": 35,
+      "length": 0.5666666666666667,
+      "loop": false,
+      "endpointPositionError": 0.0,
+      "endpointAngleError": 0.0,
+      "inactiveGunConstraintMuted": [
+        "Child Of.001"
+      ],
+      "bakePositionError": 3.817868265184601e-06,
+      "bakeAngleError": 0,
+      "file": "FBX/Player_Sword_Attack_Left.fbx",
+      "fileBytes": 893468
+    },
+    {
+      "name": "Player_Sword_Attack_Right",
+      "firstFrame": 1,
+      "lastFrame": 35,
+      "length": 0.5666666666666667,
+      "loop": false,
+      "endpointPositionError": 0.0,
+      "endpointAngleError": 0.0,
+      "inactiveGunConstraintMuted": [
+        "Child Of.001"
+      ],
+      "bakePositionError": 3.246401874100261e-06,
+      "bakeAngleError": 0,
+      "file": "FBX/Player_Sword_Attack_Right.fbx",
+      "fileBytes": 890924
+    }
+  ]
+}

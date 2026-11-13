@@ -38,6 +38,7 @@ namespace CyberBiker.Player {
         private readonly ScrapeContact[] activeContacts = new ScrapeContact[8];
         private readonly System.Random random = new System.Random(82517);
         private Rigidbody body;
+        private BikeSwordCombat finisher;
         private BoxCollider bikeCollider;
         private GameplayManager manager;
         private ParticleSystem particles;
@@ -51,6 +52,7 @@ namespace CyberBiker.Player {
         public int ParticleCount => particles != null ? particles.particleCount : 0;
 
         private void Awake() {
+            finisher=GetComponent<BikeSwordCombat>();
             body = GetComponent<Rigidbody>();
             bikeCollider = GetComponent<BoxCollider>();
             manager = FindAnyObjectByType<GameplayManager>();
@@ -63,7 +65,8 @@ namespace CyberBiker.Player {
             return manager.gameState == GameState.Playing || manager.gameState == GameState.Hit;
         }
 
-        private static bool IsSurface(Collider other, Vector3 normal) {
+        private bool IsSurface(Collider other, Vector3 normal) {
+            if(finisher!=null && finisher.IgnoresTraffic(other))return false;
             return ImpactSurfaces.IsImpactSurface(other,normal);
         }
 
@@ -148,6 +151,7 @@ namespace CyberBiker.Player {
             var vehicle=contact.Vehicle;
             if (surface == null || !surface.gameObject.activeInHierarchy || vehicle == null || !vehicle.enabled || !vehicle.gameObject.activeInHierarchy) return false;
             normal=surface.transform.TransformDirection(contact.LocalNormal).normalized;
+            if(!IsSurface(surface,normal))return false;
             Vector3 center=vehicle.bounds.center;
             if (surface is BoxCollider box) {
                 // Cars disable their physics collider after a hit. Its box geometry

@@ -1,0 +1,17 @@
+time=10.70395 player=(0.00, 0.00, 1171.95) speed=(0.00, 0.00, 110.00)
+enemy=enemy 1(Clone) pos=(8.92, 0.00, 1209.14) velocity=(0.00, 0.00, 20.00) requested=140 yaw=(0.00, 0.00, 0.00) arriving=False behindArrival=False queued=True
+path=null follow=(8.92, 0.00, 1244.14)
+angleLimit=15 radius=1
+CAR Car_09(Clone) pos=(9.27, 0.00, 1219.24) bounds=Center: (9.27, 2.36, 1219.12), Extents: (2.66, 2.46, 5.90) step=(0.00, 0.00, 0.40)
+CAR Taxi(Clone) pos=(3.21, 0.00, 1219.47) bounds=Center: (3.21, 2.17, 1219.45), Extents: (2.47, 2.21, 5.06) step=(0.00, 0.00, 0.40)
+CAR Car_09(Clone) pos=(-3.16, 0.00, 1275.49) bounds=Center: (-3.16, 2.36, 1275.37), Extents: (2.66, 2.46, 5.90) step=(0.00, 0.00, 0.40)
+CAR Car_06(Clone) pos=(-9.22, 0.00, 1276.92) bounds=Center: (-9.22, 1.87, 1277.01), Extents: (2.49, 1.95, 6.18) step=(0.00, 0.00, 0.40)
+CAR Car_01(Clone) pos=(9.27, 0.00, 1270.26) bounds=Center: (9.27, 2.00, 1270.57), Extents: (2.62, 2.09, 4.85) step=(0.00, 0.00, 0.40)
+POINT (-2.85, 1.20, 1214.09) owner=Taxi(Clone) angle=67.27716
+POINT (-2.85, 1.20, 1224.84) owner=Taxi(Clone) angle=36.98193
+POINT (2.90, 1.31, 1269.20) owner=Car_09(Clone) angle=5.853505
+POINT (2.90, 1.31, 1281.78) owner=Car_09(Clone) angle=4.844563
+POINT (-2.85, 1.26, 1345.31) owner=Car_07(Clone) angle=4.966607
+POINT (-2.85, 1.26, 1358.68) owner=Car_07(Clone) angle=4.524502
+POINT (9.27, 1.26, 1345.31) owner=Car_07(Clone) angle=0.5507192
+POINT (9.27, 1.26, 1358.68) owner=Car_07(Clone) angle=0.501241

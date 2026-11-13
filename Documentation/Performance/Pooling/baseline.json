@@ -1,0 +1,38 @@
+{
+    "label": "baseline",
+    "timings": [
+        {
+            "name": "Projectile create/initialize/retire",
+            "cycles": 100,
+            "millisecondsPerCycle": 0.048979
+        },
+        {
+            "name": "Traffic car create/initialize/retire",
+            "cycles": 50,
+            "millisecondsPerCycle": 0.19646800000000003
+        },
+        {
+            "name": "Road tile create/retire",
+            "cycles": 8,
+            "millisecondsPerCycle": 0.1024125
+        },
+        {
+            "name": "Muzzle flash create/retire",
+            "cycles": 100,
+            "millisecondsPerCycle": 0.037601
+        },
+        {
+            "name": "AI path query with reusable/fresh root",
+            "cycles": 500,
+            "millisecondsPerCycle": 0.0152338
+        }
+    ],
+    "checks": [
+        "PASS 60 path decisions match the original angle/capsule/selection rules, including blocked routes and 0/45/90-degree limits",
+        "PASS Path queries preserve the shared navigation list"
+    ],
+    "tileScripts": [
+        "Tile",
+        "Line"
+    ]
+}

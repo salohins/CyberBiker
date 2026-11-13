@@ -1,0 +1,1 @@
+No sustained stall in this 65-second saved-scene run; capture rate=15; riders observed=5; arriving riders observed=4; Launch tested=True.

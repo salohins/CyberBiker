@@ -1,0 +1,38 @@
+Edit a difficulty prefab under Assets/Level/Prefabs/Difficulties, then expand Enemy encounters in its Inspector. GameplayManager > Difficulty Manager > Difficulty Sections still selects their sequence and splits Game Duration equally between them.
+
+| Setting | Controls |
+| --- | --- |
+| Enemies Per Wave | Total riders to defeat before the wave ends. Zero stops new arrivals. |
+| Max Enemies On Road | Maximum live riders, including the fighter and waiting queue. A larger wave refills available slots as riders die. |
+| Enemy Initial Delay | Gameplay seconds before the first spawn if no authored enemy is already present. |
+| Enemy Spawn Interval | Gameplay seconds between introducing members of the current wave. Zero adds one per frame until the cap. |
+| Enemy Wave Cooldown | Gameplay seconds of rest after the entire wave is defeated. Zero allows consecutive waves. |
+| Enemy Handoff Delay | Gameplay seconds after a kill before the first queued rider takes over. Zero promotes immediately. |
+| Front Arrival Distance | Minimum forward introduction distance. Front riders appear gradually at a distance and close toward their slot. |
+| Enemy Rear Arrival Percent | Percentage arriving from behind. 0 means front only; 100 means rear only. |
+| Enemy Rear Spawn Distance | Minimum distance behind the player. Rear spawns must be outside the gameplay camera in a separate passing lane, on generated road. |
+| Enemy Arrival Closing Speed | Maximum speed difference from the player during approach. Riders ease down toward their assigned slot. |
+| Enemy Arrival Fade Time | Brief fade at the start of arrival; original materials are restored afterward. |
+| Enemy Queue Spacing | Extra distance between waiting slots beyond GameplayManager's Enemy Distance From Player. |
+
+The presets now use one through five riders per wave: Difficulty has one, Difficulty 1 has two, Difficulty 2 has three, Difficulty 3 has four, and Difficulty 4 has five. Their live population caps match their wave sizes. The currently saved Level scene selects Difficulty 4, so its default is five riders, a 0.5-second spawn interval, a 0.2-second handoff and four seconds of rest between complete waves. Existing traffic row weights and spacing are preserved.
+
+For a five-rider chain with three riders visible at a time, set Enemies Per Wave to 5 and Max Enemies On Road to 3. The queue refills as you defeat riders. Set Handoff Delay to 0 for immediate promotion of a settled rider. For continuous solo encounters, use wave size 1, cap 1 and Wave Cooldown 0. A new solo opponent still travels into position; queue several riders to avoid waiting for that travel after every kill.
+
+Only one settled rider actively fights. The others keep their normal obstacle-avoidance navigation and hold progressively farther following slots. They do not shoot, receive combat damage, enter finisher mode or become player auto-aim targets while arriving or queued. The first ready rider can take over even if an earlier arrival is still approaching. On promotion, the same actor smoothly approaches the global fighting distance and uses its original combat animations, weapons and stagger/finisher logic. Enemies are not teleported into fighting positions.
+
+All presets default to 60% rear arrivals, a rear distance of 45 units, front distance of 180 units, a closing-speed difference of 40 units/second and a 0.8-second fade. Rear riders spawn beyond the camera and pass to one side before entering their slot. Temporary player-only collision ignores prevent the scripted overtake from shoving the player and are restored after separation. One passed road section stays in the terrain pool's active use until the next shift so rear arrivals have road across section boundaries. Front and rear positions must be on generated road in a clear lane; otherwise spawning retries rather than appearing in empty space.
+
+Wave timing is independent of traffic-row generation. All timers use gameplay time: pause and crash states freeze them, and finisher slow motion stretches real time. Already-present scene enemies count toward the first wave. Wave size is chosen when a wave starts; later difficulty sections control subsequent waves. Setting wave size to zero cancels pending new arrivals while existing riders finish. Lowering the live population cap prevents new spawns until the count falls below it; it does not remove riders already on the road.
+
+EnemyEncounterChecks.Run exercises a real generated road and traffic, a five-enemy wave with a three-rider cap, queue navigation/spacing, single-attacker and targeting rules, stagger-to-sword defeats, smooth promotion, refill, exact totals, inter-wave cooldown, pause, a different next difficulty, peaceful sections and consecutive solo waves. Captures and reports are in Documentation/EnemyEncounterValidation. No new Android build was made.
+
+EnemyArrivalChecks.Run additionally checks off-camera rear spawning, lateral clearance while passing, no player kick or position warp, far-front fade and approach, restoration of original materials, pause and combat gating, retained rear road, and normal stagger/finisher combat after arrival. Captures and reports are in Documentation/EnemyArrivalValidation.
+
+Rear arrivals now have a moving 3D engine and one-shot passing-air rush. Tune Resources/CyberBikerAudio > Enemy arrivals: Engine Volume, Overtake Whoosh Volume, Audible Range, Whoosh Distance, Doppler, Reverb Amount and Engine Release. Clips can also be replaced there. The engine uses the existing long mono Yamaha R6 recording; the air rush uses the existing recorded whoosh. Both stay attached in sound space to the moving rider. A softer/duller distant approach grows into a clear pass with restrained Doppler, then fades after settling. The whoosh fires once as the rider crosses near the player and keeps moving with it during the tail. Front arrivals do not trigger these rear-pass sounds. Pause freezes playback without restarting the clip or repeating the whoosh; master volume applies to both. Pooled engine sources are released on settlement, death or disable.
+
+EnemyArrivalAudioChecks.Run renders actual Unity stereo output from left and right overtakes, verifies side balance and increasing level at close range, moving source positions and whoosh tails, one cue per crossing, pause sample-position preservation, master volume, source reuse and cleanup. Isolated stereo previews and reports are in Documentation/EnemyArrivalAudioValidation. Native output capture uses Unity's [AudioRenderer](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/AudioRenderer.html).
+
+Enemy riding style controls lane-preference timing, within-lane weave, visual drift yaw and bank per difficulty. Riders prefer less occupied lanes. Their private nearby road waypoint fills empty stretches, using the same angle/capsule tests as the original car-generated dodge points. Nearby car detours keep priority, and lane preference changes do not interrupt an active route. The original navigation root/velocity and global following-distance controller drive movement; the competing lane motor and predictive braking layer were removed. Compact player-style wheel smoke/sparks remain on both enemy prefabs. See EnemyRiding.md for routing details and native validation.
+
+Spawn lanes must have a legal connection into the existing car-generated dodge-point network, using the original angle and capsule rules. Private road waypoints must preserve a legal onward connection too. The final contact safeguard now shares AIController's collision radius, replacing the conflicting rectangular envelope. The original traffic row spacing formula is unchanged. See EnemyTrafficInvestigation.md for reproduced failures and validation.

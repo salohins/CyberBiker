@@ -1,0 +1,2 @@
+Assets/enemy.prefab: rear=(0.0000, 0.0266, -0.5088), front=(0.0000, 0.0266, 1.4283); player Cartoon FX materials/template reused; enemy gameplay fields preserved.
+Assets/enemy 1.prefab: rear=(0.0000, 0.0266, -0.5088), front=(0.0000, 0.0266, 1.4283); player Cartoon FX materials/template reused; enemy gameplay fields preserved.

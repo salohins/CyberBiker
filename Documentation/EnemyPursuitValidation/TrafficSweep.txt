@@ -1,0 +1,7 @@
+PASS rear approach: swept footprint stays outside the real car at 10Hz, including intermediate positions.
+PASS fast side cut: swept footprint stays outside the real car at 10Hz, including intermediate positions.
+PASS diagonal cut: swept footprint stays outside the real car at 10Hz, including intermediate positions.
+PASS moving traffic: swept footprint stays outside the real car at 10Hz, including intermediate positions.
+PASS stalled traffic: swept footprint stays outside the real car at 10Hz, including intermediate positions.
+PASS rotated car: swept footprint stays outside the real car at 10Hz, including intermediate positions.
+PASS adjacent clear lane unchanged; disabled/dead-car collider ignored. No predictive braking layer; the original route controls travel.

@@ -1,0 +1,10 @@
+Unity6000.6.0f1 native GameplaySmokeCheck: PASS,exit0.
+Latest log: Logs/sword_import/global-pistol-settings-checks.log
+
+GameplayManager > Player Pistol: Pistol Damage Per Shot15; Seconds Between Pistol Shots0.45. Global enemy distance remains20. Removed duplicate player fields; enemy weapons retain their own tuning. Player initialization and each firing attempt read the live manager values.
+
+Native checks changed manager damage to7 and interval to0.01 during Play, verified an actual7-damage projectile and muzzle effect after0.02s, blocked a same-frame second shot, restored0.45s cooldown and verified rejection at0.1s/acceptance after0.46s.
+
+PASS: scene initialization, movement, damage, score/history, pause/countdown, real Aim button toggle, steering while aiming, automatic fire/muzzle effects, traffic buffer/refill over 1200m, full-health collectible without healing, Inspector health/destruction toggles, live rate/damage tuning, swept projectile damage, death and recovery guard, downloaded audio bindings, speed mix, simultaneous nearest pass detection, spatial whoosh reverb, directional camera roll and Aim stability, pause/resume and shake decay, independent audio randomness.
+
+Shipped runtime and check scripts match the isolated tested copy. Manager and player prefab settings match verified defaults.

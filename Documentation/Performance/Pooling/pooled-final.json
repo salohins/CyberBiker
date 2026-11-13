@@ -1,0 +1,39 @@
+{
+    "label": "pooled-final",
+    "timings": [
+        {
+            "name": "Projectile create/initialize/retire",
+            "cycles": 100,
+            "millisecondsPerCycle": 0.028757
+        },
+        {
+            "name": "Traffic car create/initialize/retire",
+            "cycles": 50,
+            "millisecondsPerCycle": 0.036612
+        },
+        {
+            "name": "Road tile create/retire",
+            "cycles": 8,
+            "millisecondsPerCycle": 0.028
+        },
+        {
+            "name": "Muzzle flash create/retire",
+            "cycles": 100,
+            "millisecondsPerCycle": 0.014480000000000002
+        },
+        {
+            "name": "AI path query with reusable/fresh root",
+            "cycles": 500,
+            "millisecondsPerCycle": 0.0064226
+        }
+    ],
+    "checks": [
+        "PASS 60 path decisions match the original angle/capsule/selection rules, including blocked routes and 0/45/90-degree limits",
+        "PASS Path queries preserve the shared navigation list"
+    ],
+    "tileScripts": [
+        "Tile",
+        "CyberBiker.Pooling.PooledInstance",
+        "Line"
+    ]
+}

@@ -1,42 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
+using CyberBiker.Pooling;
 using UnityEngine;
 
-public class MuzzleFlash : MonoBehaviour
-{
-    public int SpawnCount { get; private set; }
-    private float frameTimer = 3;
+public class MuzzleFlash : MonoBehaviour {
+    public int SpawnCount {get;private set;}
     [SerializeField] private GameObject muzzleFlash;
-    private bool active;
-
-    private GameObject _muzzleFlash;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
+    private readonly List<(GameObject instance,int expires)> flashes=new List<(GameObject,int)>(8);
+    private void Update(){
+        for(int i=flashes.Count-1;i>=0;i--)if(Time.frameCount>=flashes[i].expires){PrefabPool.Release(flashes[i].instance);flashes.RemoveAt(i);}
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (active) {
-            frameTimer -= 1;
-        }
-
-        if (frameTimer <= 0) {
-            Destroy(_muzzleFlash);
-            frameTimer = 3;
-            active = false;
-        }
-
-        //Debug.Log(frameTimer);
-    }
-
-    public void Spawn() {
+    public void Spawn(){
         SpawnCount++;
-        _muzzleFlash = Instantiate(muzzleFlash, transform);
-        _muzzleFlash.transform.localEulerAngles = new Vector3(Random.Range(0, 360), 0, 0);
-        active = true;
+        var flash=PrefabPool.Rent(muzzleFlash,transform.TransformPoint(muzzleFlash.transform.localPosition),transform.rotation*muzzleFlash.transform.localRotation,transform);
+        flash.transform.localEulerAngles=new Vector3(Random.Range(0,360),0,0);
+        flashes.Add((flash,Time.frameCount+3));
     }
+    private void OnDisable(){foreach(var flash in flashes)PrefabPool.Release(flash.instance);flashes.Clear();}
 }

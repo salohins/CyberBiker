@@ -1,4 +1,5 @@
 using UnityEngine;
+using CyberBiker.Pooling;
 
 public abstract class Pickup : MonoBehaviour {
     private bool consumed;
@@ -8,9 +9,11 @@ public abstract class Pickup : MonoBehaviour {
         if (player == null || !player.IsAlive || !Apply(player)) return;
         consumed = true;
         OnCollected(player);
-        Destroy(gameObject);
+        // A pooled tile retains its collected children for the next tile lease.
+        if(GetComponentInParent<PooledInstance>()!=null)gameObject.SetActive(false);else Destroy(gameObject);
     }
     protected abstract bool Apply(PlayerController player);
+    public void ResetForReuse(){consumed=false;}
     protected virtual void OnCollected(PlayerController player) {
         player.PlayCollectibleParticle();
         CyberBiker.Audio.SoundEvents.Emit(CyberBiker.Audio.SoundCue.Pickup, player.transform.position);

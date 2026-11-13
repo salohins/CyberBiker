@@ -1,0 +1,2 @@
+No-path fallback: max lateral displacement=29.782m; heading=12.623 degrees.
+REPRODUCED: enemy leaves road while following its own forward probe without a route.

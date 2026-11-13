@@ -21,9 +21,10 @@ namespace CyberBiker.Combat {
         protected Weapon(float interval) { SetInterval(interval); }
 
         public void SetInterval(float interval) { this.interval = Mathf.Max(0.01f, interval); }
+        public bool CanFireAt(float time) => time >= lastShotTime + interval;
 
         public bool TryFire(ShotRequest request, float time) {
-            if (time < lastShotTime + interval || request.Direction.sqrMagnitude < 0.0001f) return false;
+            if (!CanFireAt(time) || request.Direction.sqrMagnitude < 0.0001f) return false;
             if (!Fire(request)) return false;
             lastShotTime = time;
             Fired?.Invoke();

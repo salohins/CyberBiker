@@ -1,0 +1,14 @@
+PASS global distance: two enemies approach the shared 15m setting during normal riding, overriding their legacy per-enemy values.
+PASS configured Launch distance: approached 15m from 14.6m; measured 14.999m.
+PASS live global distance control: both enemies reach 25m after one edit; healthy sword targeting and damage remain blocked.
+Visual preview ready-cyan: production bloom intensity 15.75, threshold 0.80.
+Visual preview ready-cyan-chase: production bloom intensity 15.75, threshold 0.80.
+PASS real pistol stagger, nonlethal overkill, no hit-based window refresh, pause-safe countdown and visible blue highlight.
+Visual preview ready-orange: production bloom intensity 15.75, threshold 0.80.
+Visual preview ready-orange-chase: production bloom intensity 15.75, threshold 0.80.
+PASS finisher audio: bound entry chime once, no retrigger on extra hits, one warning at 1.25s, listener-relative priority voice and paused countdown/voice.
+PASS timed color alternation: actual material changes blue/orange at distance; switch interval accelerates from 0.451s to 0.106s near expiry.
+Visual preview ready-close-blue: production bloom intensity 15.75, threshold 0.80.
+PASS expiry: enemy recovers, loses highlight, resumes firing and becomes immune to the sword until staggered again; close-range blue phase also verified.
+PASS newly spawned enemy uses the edited global 25m distance without per-enemy setup.
+PASS ready target: becomes catchable, sword kill/explosion succeed, and expiry during preparation cancels safely.

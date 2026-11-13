@@ -120,6 +120,8 @@ public class CameraController : MonoBehaviour {
     private float rotationOffset;
 
     private PlayerController playerController;
+    private SwordFinisherEffects swordFinisher;
+    private BikeLaunchEffects launchEffects;
 
     private void OnEnable() {
         if(Application.isPlaying) EnsureAimHelpers();
@@ -130,6 +132,8 @@ public class CameraController : MonoBehaviour {
         if(playerController==null)return;
         if(view==null)view=GetComponent<Camera>();
         playerAim=playerController.GetComponent<BikeAutoAim>();
+        swordFinisher=playerController.GetComponent<SwordFinisherEffects>();
+        launchEffects=playerController.GetComponent<BikeLaunchEffects>();
         if(aimFramer==null)aimFramer=new AimCameraFraming(playerController);
         if(riderView==null)riderView=new RiderAimVisibility(playerController,riderFadeShader!=null ? riderFadeShader : Shader.Find("CyberBiker/Rider View Fade"));
     }
@@ -219,6 +223,8 @@ public class CameraController : MonoBehaviour {
         ApplyPassShake();
         UpdateCarImpact(Time.deltaTime);
         ApplyCarImpactPose();
+        launchEffects?.ApplyCamera(view);
+        swordFinisher?.ApplyCamera(view);
         riderView?.Update(view,riderVisibility,tim.aim && gm.gameState==GameState.Playing,Time.deltaTime);
 
         //aimTarget.transform.position = transform.position + transform.forward * 30f;

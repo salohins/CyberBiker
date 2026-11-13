@@ -12,12 +12,16 @@ public class Obstacle : MonoBehaviour {
 
     private BoxCollider bc;
     private AIController aiController;
+    private int worldMask;
+    // Two results distinguish an empty/self-only overlap from every blocked case.
+    private readonly Collider[] overlap=new Collider[2];
 
     public int line;
 
     private void Awake() {
         bc = GetComponent<BoxCollider>();
         aiController = FindAnyObjectByType<AIController>();
+        worldMask=LayerMask.GetMask("WorldObject");
     }
 
     private void Update() {
@@ -56,7 +60,6 @@ public class Obstacle : MonoBehaviour {
     }
 
     public List<DodgePoint> GetDodgePoints(float passLength) {
-        BoxCollider bc = GetComponent<BoxCollider>(); ;
         List<DodgePoint> points = new List<DodgePoint>();
 
         Transform[] lines = Scanner.GetLines(transform.position + bc.center);
@@ -80,9 +83,9 @@ public class Obstacle : MonoBehaviour {
                 rayPos.x = lines[line + j].position.x;
                 rayPos += Vector3.forward * (bc.bounds.size.z / 2) * i; // Vertical Offset
 
-                Collider[] c = Physics.OverlapBox(rayPos, new Vector3(1, 10f, 1), transform.rotation, LayerMask.GetMask("WorldObject"));
+                int count=Physics.OverlapBoxNonAlloc(rayPos,new Vector3(1,10f,1),overlap,transform.rotation,worldMask);
 
-                if (c.Length == 0 || (c.Length == 1 && c[0].gameObject == gameObject)) {
+                if (count == 0 || (count == 1 && overlap[0].gameObject == gameObject)) {
                     if (j == 0)
                         rayPos -= Vector3.forward * passLength * i;
 

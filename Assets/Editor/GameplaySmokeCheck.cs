@@ -12,6 +12,13 @@ using UnityEngine.UI;
 
 [InitializeOnLoad]
 public static class GameplaySmokeCheck {
+    private sealed class FixtureInput : CyberBiker.Player.IPlayerInput {
+        private readonly TouchInputManager owner;
+        public FixtureInput(TouchInputManager input){owner=input;}
+        public Vector2 Steering=>new Vector2(owner.leftPressed ? -1 : owner.rightPressed ? 1 : 0,0);
+        public Vector2 AimDelta=>Vector2.zero;
+        public bool IsAiming=>owner.IsAiming;
+    }
     private const string Pending = "CyberBiker.SmokeCheck";
     private static double started;
     private static int stage;
@@ -24,6 +31,8 @@ public static class GameplaySmokeCheck {
     private static Button aimButton;
     private static MuzzleFlash muzzle;
     private static int muzzleBefore;
+    private static double aimPressedClock,firstPistolShotSeconds=-1;
+    private static bool fixtureInputBound,tireResponseSeen;
     private static GameObject pickupProbe;
     private static ProjectileWeapon tuningWeapon;
     private static int audioBeforeShot;
@@ -43,6 +52,13 @@ public static class GameplaySmokeCheck {
         if (SessionState.GetBool(Pending, false)) EditorApplication.delayCall += Attach;
     }
     public static void Run() {
+        var inputSettings=new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);
+        var axes=inputSettings.FindProperty("m_Axes");
+        for(int i=0;i<axes.arraySize;i++) {
+            var axis=axes.GetArrayElementAtIndex(i);
+            if(axis.FindPropertyRelative("m_Name").stringValue!="Submit")continue;
+            Require(axis.FindPropertyRelative("positiveButton").stringValue!="space" && axis.FindPropertyRelative("altPositiveButton").stringValue!="space","Space must not activate selected UI buttons");
+        }
         EditorSceneManager.OpenScene("Assets/Level/Scenes/Level.unity");
         SessionState.SetBool(Pending, true);
         EditorApplication.isPlaying = true;
@@ -62,10 +78,17 @@ public static class GameplaySmokeCheck {
             var elapsed = EditorApplication.timeSinceStartup - started;
             var player = UnityEngine.Object.FindFirstObjectByType<PlayerController>();
             var manager = UnityEngine.Object.FindFirstObjectByType<GameplayManager>();
+            if(!fixtureInputBound && player!=null && player.Health!=null && Time.timeSinceLevelLoad>.2f) {
+                var touch=player.GetComponent<TouchInputManager>();touch.enabled=false;touch.SetAim(false);
+                typeof(PlayerController).GetField("input",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(player,new FixtureInput(touch));
+                fixtureInputBound=true;
+            }
             if (elapsed < 2) return;
             Require(player != null && manager != null && (stage >= 5 || player.IsAlive), "Player and session must initialize");
             if (stage == 0) {
                 Require(manager.gameState == GameState.Playing, "Level must start playing");
+                Require(new SerializedObject(player.GetComponent<TouchInputManager>()).FindProperty("aimKey").intValue==(int)KeyCode.F,"PC aim must be bound to F");
+                Require(new SerializedObject(player.GetComponent<CyberBiker.Player.BikeSwordCombat>()).FindProperty("launchKey").intValue==(int)KeyCode.Space,"PC launch must be bound to Space");
                 // This suite exercises the existing free-aim fallback and weapon
                 // tuning. AutoAimChecks covers enemy locking with this enabled.
                 var targeting=player.GetComponent<CyberBiker.Player.BikeAutoAim>();
@@ -83,9 +106,9 @@ public static class GameplaySmokeCheck {
                     "Upright riding must not emit tire smoke or sparks");
                 straightTireRate=tireParticles.CurrentEmissionRate;
                 CheckTireParticleContact(player,tireParticles);
-                var originalPlayerSettings = new SerializedObject(player);
-                Require(originalPlayerSettings.FindProperty("shootingDamage").floatValue == 15, "The scene player pistol must deal 15 damage per shot");
-                Require(Mathf.Approximately(originalPlayerSettings.FindProperty("shotInterval").floatValue, 0.45f), "The scene player pistol must wait 0.45 seconds between shots");
+                var originalPistolSettings = new SerializedObject(manager);
+                Require(originalPistolSettings.FindProperty("pistolDamagePerShot").floatValue == 15, "The global player pistol must deal 15 damage per shot");
+                Require(Mathf.Approximately(originalPistolSettings.FindProperty("secondsBetweenPistolShots").floatValue, 0.45f), "The global player pistol must wait 0.45 seconds between shots");
                 Require(GameAudio.Active != null && GameAudio.Active.ConfiguredClipCount >= 16, "Audio rig must load all downloaded clips");
                 var audioPreset = new SerializedObject(GameAudio.Active);
                 var engineAudio = GameAudio.Active.transform.Find("Bike engine cruise").GetComponent<AudioSource>();
@@ -162,6 +185,7 @@ public static class GameplaySmokeCheck {
                 Require(input.IsAiming, "The scene Aim button must enable aiming despite its legacy false argument");
                 CheckCarImpactCamera(Camera.main.GetComponent<CameraController>(),input);
                 CheckAimCameraTuning(Camera.main.GetComponent<CameraController>(),player,input);
+                aimPressedClock=EditorApplication.timeSinceStartup;
                 input.setLeftPressed(true);
                 steeringStarted = elapsed;
 
@@ -185,11 +209,15 @@ public static class GameplaySmokeCheck {
                 CheckWhooshSelection(player);
                 whooshSelectionChecked = true;
             }
+            if(stage==1 && !steeringChecked) {
+                var tire=player.GetComponent<CyberBiker.Player.TireContactParticles>();
+                tireResponseSeen|=tire.CurrentEmissionRate>straightTireRate*1.5f && tire.ParticleCount>0;
+            }
             if (stage == 1 && !steeringChecked && elapsed > steeringStarted + 0.65) {
                 Require(player.transform.position.x < startX, "Input adapter must steer the motor");
                 var tireParticles=player.GetComponent<CyberBiker.Player.TireContactParticles>();
-                Require(tireParticles.CurrentEmissionRate>straightTireRate*1.5f && tireParticles.ParticleCount>0,
-                    "Steering must strengthen the grounded tire spray");
+                Require(tireResponseSeen,
+                    "Steering must strengthen the grounded tire spray; rate="+tireParticles.CurrentEmissionRate+" baseline="+straightTireRate+" particles="+tireParticles.ParticleCount+" grounded="+tireParticles.GroundedWheelCount+" lean="+player.transform.GetChild(0).localEulerAngles.z+" steering="+player.xThrow+" state="+manager.gameState);
                 Require(tireParticles.EmittedSparkCount>0,"A hard turn must emit skid-spark particles");
                 CaptureTireParticles();
                 Require(GameAudio.Active.transform.Find("Speed wind").GetComponent<AudioSource>().panStereo < -0.01f,
@@ -202,14 +230,22 @@ public static class GameplaySmokeCheck {
                 player.GetComponent<TouchInputManager>().setLeftPressed(false);
                 steeringChecked = true;
             }
+            if(stage==1 && firstPistolShotSeconds<0 && muzzle.SpawnCount>muzzleBefore) {
+                firstPistolShotSeconds=EditorApplication.timeSinceStartup-aimPressedClock;
+                Require(firstPistolShotSeconds<.6,"Ordinary Aim must draw, align the arm rig and fire promptly: "+firstPistolShotSeconds.ToString("F3")+" real seconds");
+                File.WriteAllText("Logs/pistol-first-shot-latency.txt",firstPistolShotSeconds.ToString("F3")+" real seconds from ordinary Aim to first muzzle effect.");
+            }
             if (stage == 1 && steeringChecked && elapsed > 6) {
+                var traffic = UnityEngine.Object.FindFirstObjectByType<TrafficSpawner>();
+                Require(traffic!=null,"Traffic spawner must remain present");
+                if(traffic.BufferedWaveCount!=traffic.TargetWaveCount){Require(elapsed<8,$"Traffic did not refill: {traffic.BufferedWaveCount}/{traffic.TargetWaveCount}");return;}
                 Require(GameAudio.Active.PlayedCueCount > audioBeforeShot, "Gameplay shots and pickups must produce audio cues");
                 Require(GameAudio.Active.PassByCount > 0, "A nearby car crossing the player must produce a directional pass-by");
                 Require(GameAudio.Active.WhooshCount > 0 && whooshSelectionChecked, "Fast close passes must trigger the independent air whoosh");
                 Require(muzzle.SpawnCount > muzzleBefore, "Aim must reach the animation-ready automatic firing path and spawn muzzle effects");
+                Require(firstPistolShotSeconds>=0,"Ordinary Aim first-shot latency must be measured");
                 aimButton.onClick.Invoke();
                 Require(!player.GetComponent<TouchInputManager>().IsAiming, "The scene Aim button must toggle off");
-                var traffic = UnityEngine.Object.FindFirstObjectByType<TrafficSpawner>();
                 Require(traffic != null && traffic.BufferedWaveCount == traffic.TargetWaveCount,
                     $"Traffic buffer must stay full: {traffic?.BufferedWaveCount}/{traffic?.TargetWaveCount}, horizon {traffic?.FurthestCarDistance}");
                 File.WriteAllText("Logs/traffic-regression-check.txt", $"waves={traffic.BufferedWaveCount}/{traffic.TargetWaveCount}, horizon={traffic.FurthestCarDistance:F1}m");
@@ -296,10 +332,13 @@ public static class GameplaySmokeCheck {
                 tuningWeapon.SetDamage(9);
                 Require(tuningWeapon.TryFire(new ShotRequest(target.transform.position - Vector3.forward * 3, Vector3.forward, null), Time.time),
                     "Live damage tuning must permit a second shot");
-                var playerSettings = new SerializedObject(player);
-                playerSettings.FindProperty("shootingDamage").floatValue = 7;
-                playerSettings.FindProperty("shotInterval").floatValue = 0.01f;
-                playerSettings.ApplyModifiedPropertiesWithoutUndo();
+                var pistolSettings = new SerializedObject(manager);
+                pistolSettings.FindProperty("pistolDamagePerShot").floatValue = 7;
+                pistolSettings.FindProperty("secondsBetweenPistolShots").floatValue = 0.01f;
+                pistolSettings.ApplyModifiedPropertiesWithoutUndo();
+                var playerWeapon=(Weapon)typeof(PlayerController).GetField("weapon",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(player);
+                var shotClock=typeof(Weapon).GetField("lastShotTime",BindingFlags.Instance|BindingFlags.NonPublic);
+                shotClock.SetValue(playerWeapon,Time.time-.02f);
                 int effectsBefore = muzzle.SpawnCount;
                 player.Shoot();
                 Require(muzzle.SpawnCount == effectsBefore + 1, "Live Inspector weapon tuning must preserve firing effects");
@@ -308,10 +347,16 @@ public static class GameplaySmokeCheck {
                     var settings = new SerializedObject(bullet);
                     if (settings.FindProperty("damage").floatValue == 7) foundTunedBullet = true;
                 }
-                Require(foundTunedBullet, "Player Inspector shooting damage must reach the next real projectile");
-                playerSettings.FindProperty("shootingDamage").floatValue = 15;
-                playerSettings.FindProperty("shotInterval").floatValue = 0.45f;
-                playerSettings.ApplyModifiedPropertiesWithoutUndo();
+                Require(foundTunedBullet, "GameplayManager pistol damage must reach the next real projectile");
+                player.Shoot();
+                Require(muzzle.SpawnCount==effectsBefore+1,"Global pistol interval must still block a second shot in the same frame");
+                pistolSettings.FindProperty("pistolDamagePerShot").floatValue = 15;
+                pistolSettings.FindProperty("secondsBetweenPistolShots").floatValue = 0.45f;
+                pistolSettings.ApplyModifiedPropertiesWithoutUndo();
+                shotClock.SetValue(playerWeapon,Time.time-.1f);player.Shoot();
+                Require(muzzle.SpawnCount==effectsBefore+1,"Restoring the global 0.45s interval must immediately enforce the longer cooldown");
+                shotClock.SetValue(playerWeapon,Time.time-.46f);player.Shoot();
+                Require(muzzle.SpawnCount==effectsBefore+2,"The global pistol cooldown must allow firing after 0.45s");
                 stage = 4;
             }
             if (stage == 4 && elapsed > 13) {
@@ -338,6 +383,7 @@ public static class GameplaySmokeCheck {
             }
             if (stage == 6 && elapsed > 17) {
                 var traffic = UnityEngine.Object.FindFirstObjectByType<TrafficSpawner>();
+                if(traffic.BufferedWaveCount!=traffic.TargetWaveCount){Require(elapsed<20,$"Traffic did not refill after advancing: {traffic.BufferedWaveCount}/{traffic.TargetWaveCount}");return;}
                 Require(traffic.BufferedWaveCount == traffic.TargetWaveCount && traffic.FurthestCarDistance > 100,
                     $"Traffic must preserve its forward buffer after repeated advances: {traffic.BufferedWaveCount}/{traffic.TargetWaveCount}, horizon {traffic.FurthestCarDistance}");
                 File.AppendAllText("Logs/traffic-regression-check.txt", $"\nafter 1200m advance: waves={traffic.BufferedWaveCount}/{traffic.TargetWaveCount}, horizon={traffic.FurthestCarDistance:F1}m");
