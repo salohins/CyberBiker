@@ -3452,6 +3452,8 @@ GameObject:
   - component: {fileID: 7820345436161212511}
   - component: {fileID: 3733035946143876942}
   - component: {fileID: 1190406947403100798}
+  - component: {fileID: 6259485780648929920}
+  - component: {fileID: 3334230065206075260}
   m_Layer: 0
   m_Name: Player_Last
   m_TagString: Player
@@ -3516,6 +3518,9 @@ MonoBehaviour:
   smokeRise: 0.45
   steeringSpraySpeed: 0.3
   smokeOpacity: 0.8
+  smokeWindSlowdown: 0
+  smokeWindSpread: 0
+  smokeReleaseTime: 0
   startLeanAngle: 18
   fullLeanAngle: 35
   leanReleaseMargin: 3
@@ -4231,6 +4236,50 @@ MonoBehaviour:
   ignitionShakeRotation: 0.75
   ignitionShakeDuration: 0.32
   ignitionShakeFrequency: 16
+--- !u!114 &6259485780648929920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5681304576912137381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcc2fd50975246d4bf61ecc1f8b6922d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CyberBiker.Player.ShootingFeedback
+  shotKickDegrees: 0.9
+  shotCameraKick: 0.045
+  shotFovKick: 0.65
+  shotRecovery: 15
+  hitMarkerDuration: 0.24
+  hitMarkerSize: 14
+  hitMarkerColor: {r: 0.9, g: 1, b: 1, a: 1}
+  finisherMarkerColor: {r: 1, g: 0.58, b: 0.12, a: 1}
+  damageDuration: 0.38
+  damageScreenStrength: 0.55
+  damageCameraKick: 0.7
+  screenMaterial: {fileID: 2100000, guid: 8a5df578657acee4db5b8dc8629dff7e, type: 2}
+  nearMissRadius: 3.2
+  nearMissScreenStrength: 0.23
+  nearMissMaterial: {fileID: 2100000, guid: 8b8f17897569ef64fb4f09a211ce380a, type: 2}
+--- !u!114 &3334230065206075260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5681304576912137381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9a93999037924c468f4d7bd2f8e5bdd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CyberBiker.Player.PistolAimLaser
+  laserMaterial: {fileID: 2100000, guid: 3d1e9cb9445ba094fa80483d7785462a, type: 2}
+  laserColor: {r: 1, g: 0.025, b: 0.015, a: 0.9}
+  beamWidth: 0.025
+  hitDotSize: 0.07
+  maximumDistance: 120
 --- !u!1 &5812451042449432491
 GameObject:
   m_ObjectHideFlags: 0

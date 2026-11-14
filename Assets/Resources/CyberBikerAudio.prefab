@@ -108,10 +108,16 @@ MonoBehaviour:
   gameOver: {fileID: 8300000, guid: 382c736b43d2524c91e41204b4174dd3, type: 3}
   enemyArrivalEngine: {fileID: 8300000, guid: fe45047ea6bc58289734f9252327afca, type: 3}
   enemyOvertakeWhoosh: {fileID: 8300000, guid: 2068fa340bf84695be1fcfc52a44b342, type: 3}
-  enemyArrivalEngineVolume: .7
+  enemyArrivalEngineVolume: 0.7
   enemyOvertakeWhooshVolume: 1
   enemyArrivalAudibleRange: 100
   enemyOvertakeWhooshDistance: 12
-  enemyArrivalDoppler: .35
-  enemyArrivalReverbAmount: .3
+  enemyArrivalDoppler: 0.35
+  enemyArrivalReverbAmount: 0.3
   enemyArrivalEngineRelease: 1
+  pistolHitConfirm: {fileID: 8300000, guid: 34bcf19c09911f94491eb6ce726ce439, type: 3}
+  playerDamageThud: {fileID: 8300000, guid: 7d24881e3d5c511ba6d70e15f07d477e, type: 3}
+  bulletNearMiss: {fileID: 8300000, guid: d54db6e965a161047b02b7980b30557d, type: 3}
+  hitConfirmVolume: 0.8
+  playerDamageVolume: 0.28
+  bulletNearMissVolume: 0.9

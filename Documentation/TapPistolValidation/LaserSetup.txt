@@ -1,0 +1,1 @@
+PASS configured red muzzle laser and shared material; existing player/sword tuning preserved.

@@ -5,7 +5,7 @@ using Gameplay;
 using UnityEngine.UI;
 using UnityEngine.Animations.Rigging;
 
-public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
+public partial class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
 {
     [Range(0, 19)]
     [SerializeField] private float touchSensitivity = 10f;
@@ -19,7 +19,7 @@ public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
     private bool aimRequested;
     private CyberBiker.Player.BikeSwordCombat swordCombat;
     public bool aim {
-        get => aimRequested && (swordCombat == null || !swordCombat.IsActive);
+        get => UsesTapControls ? tapPlayer!=null && tapPlayer.TapPistolReady : aimRequested && (swordCombat == null || !swordCombat.IsActive);
         private set => aimRequested = value;
     }
     public Vector2 delta { get; private set; }
@@ -43,10 +43,12 @@ public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
 
         gm = FindAnyObjectByType<GameplayManager>();
         swordCombat = GetComponent<CyberBiker.Player.BikeSwordCombat>();
+        InitializeTapControls();
     }
 
     void Update() {
-        if (gm != null && gm.gameState != GameState.Playing) { aim = false; delta = Vector2.zero; drag = Vector2.zero; return; }
+        UpdateTapControls();
+        if (gm != null && gm.gameState != GameState.Playing) { aim = false; tapPlayer?.CancelPistolTaps();ClearTapPointers();delta = Vector2.zero; drag = Vector2.zero; return; }
         delta = Vector2.zero;
 
         if (leftPressed && rightPressed) {
@@ -71,6 +73,10 @@ public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
             if (horizontal != 0) drag = new Vector2(horizontal, 0);
             delta = new Vector2(Input.GetAxis("Mouse X") * 5f, Input.GetAxis("Mouse Y") * 5f);
 
+            if(UsesTapControls){
+                if(Input.GetKeyDown(aimKey) || Input.GetMouseButtonDown(1) || (Input.GetMouseButtonDown(0) && !IsPistolPointerOverUI(Input.mousePosition)))TapPistol();
+                delta=Vector2.zero;
+            } else {
             if (Input.GetKeyDown(aimKey)) SwitchAim(false);
 
             if (Input.GetMouseButtonDown(1)) {
@@ -82,10 +88,12 @@ public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
             }
 
             if (!aim) delta = Vector2.zero;
+            }
 
         }
 #endif
         foreach (Touch touch in Input.touches) {
+            if(UsesTapControls){ProcessPistolTouch(touch.fingerId,touch.position,touch.deltaPosition,touch.phase,Time.unscaledTime);continue;}
 
             if (aim && touch.fingerId == aimTouch.fingerId) {
 
@@ -115,12 +123,14 @@ public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
 
     // Existing scene buttons use this callback as a toggle, including a false argument.
     public void SwitchAim(bool unused) {
+        if(UsesTapControls){TapPistol();return;}
         SetAim(!aimRequested);
         if (gm != null && gm.gameState == GameState.Playing)
             CyberBiker.Audio.SoundEvents.Emit(CyberBiker.Audio.SoundCue.UiClick, transform.position);
     }
 
     public void SetAim(bool on) {
+        if(UsesTapControls){if(on)TapPistol();else {aimRequested=false;tapPlayer?.CancelPistolTaps();}return;}
         if(swordCombat==null)swordCombat=GetComponent<CyberBiker.Player.BikeSwordCombat>();
         if(on)swordCombat?.CancelForAim();
         aim = on && gm != null && gm.gameState == GameState.Playing;
@@ -130,6 +140,7 @@ public class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlayerInput
                 aimTouch = Input.touches[0];
 
                 foreach (Touch touch in Input.touches) {
+            if(UsesTapControls){ProcessPistolTouch(touch.fingerId,touch.position,touch.deltaPosition,touch.phase,Time.unscaledTime);continue;}
                     if (Vector2.Distance(aimButton.transform.position, touch.position) < Vector2.Distance(aimButton.transform.position, aimTouch.position)) {
                         aimTouch = touch;
                     }

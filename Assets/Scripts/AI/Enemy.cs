@@ -15,7 +15,7 @@ public enum EnemyState {
     FinisherReady,
 }
 
-public class Enemy : MonoBehaviour, IDamageable {
+public class Enemy : MonoBehaviour, IDamageable, IDamageState {
     private static readonly List<Enemy> activeEnemies = new List<Enemy>(16);
     public static IReadOnlyList<Enemy> Instances => activeEnemies;
     private void OnEnable() { if(!activeEnemies.Contains(this))activeEnemies.Add(this); }
@@ -64,6 +64,7 @@ public class Enemy : MonoBehaviour, IDamageable {
     public bool SpeedTrailVisible => speedTrail!=null && speedTrail.Visible;
     public void HideSpeedTrailForFinisher(){speedTrail?.Hide();}
     private Weapon weapon;
+    private EnemyHitReaction hitReaction;
     private Gameplay.GameplayManager gameplay;
     public bool IsAlive => vitality != null && vitality.IsAlive;
 
@@ -183,6 +184,7 @@ public class Enemy : MonoBehaviour, IDamageable {
         trafficAvoidance=new EnemyTrafficAvoidance(gameObject,aiConntroller);
 
         animator = GetComponent<Animator>();
+        hitReaction = GetComponent<EnemyHitReaction>() ?? gameObject.AddComponent<EnemyHitReaction>();
         animationRigging = GetComponent<RigBuilder>();
         if(IsEncounterQueued || IsArriving){speed=IsArriving ? arrival.ForwardSpeed : playerBody.linearVelocity.z;ResetEncounterArms();}
         finisherGlow=new EnemyFinisherGlow(this,finisherHighlightShader!=null ? finisherHighlightShader : Shader.Find("CyberBiker/Finisher Highlight"));
@@ -486,11 +488,17 @@ public class Enemy : MonoBehaviour, IDamageable {
     public void TakeDamage(DamageInfo damage) {
         if (gameplay != null && gameplay.gameState != Gameplay.GameState.Playing) return;
         if(IsEncounterQueued || IsArriving || vitality==null || !IsAlive || damage.Amount<=0 || float.IsNaN(damage.Amount))return;
+        bool pistolContact=damage.HasContact && damage.Source!=null && damage.Source.GetComponent<PlayerController>()!=null;
+        bool pistolKill=pistolContact && gameplay!=null && gameplay.PistolInteractionMode==Gameplay.PistolInteraction.TapToFire && gameplay.TapPistolCanKill;
         float floor=Mathf.Max(.001f,Mathf.Min(1,vitality.Maximum*finisherHealthFraction));
-        float amount=swordDefeat ? damage.Amount : Mathf.Min(damage.Amount,Mathf.Max(0,vitality.Current-floor));
+        float amount=(swordDefeat || pistolKill) ? damage.Amount : Mathf.Min(damage.Amount,Mathf.Max(0,vitality.Current-floor));
         bool damaged=amount>0 && vitality.TakeDamage(new DamageInfo(amount,damage.Source));
-        if(damaged && damageParticle!=null)Instantiate(damageParticle,transform.position+Vector3.up*2,Quaternion.identity);
-        if(!swordDefeat && !IsFinisherReady && vitality.Current<=vitality.Maximum*(finisherHealthFraction+.000001f))EnterFinisherReady();
+        // The finisher floor prevents pistol kills, but it does not make
+        // physical bullet contacts disappear. Queued/arriving immunity above
+        // still suppresses reactions; health and the finisher timer stay intact.
+        if(pistolContact)hitReaction?.React(damage.ContactPoint,damage.ContactNormal,damage.TravelDirection);
+        else if(damaged && damageParticle!=null)Instantiate(damageParticle,transform.position+Vector3.up*2,Quaternion.identity);
+        if(!swordDefeat && IsAlive && !IsFinisherReady && vitality.Current<=vitality.Maximum*(finisherHealthFraction+.000001f))EnterFinisherReady();
     }
     private void EnterFinisherReady() {
         state=EnemyState.FinisherReady;finisherRemaining=Mathf.Max(1,finisherWindow);

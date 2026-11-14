@@ -12,6 +12,7 @@ namespace CyberBiker.Pooling {
     public static class PrefabPool {
         internal sealed class Scope {
             internal Transform storage;
+            internal DeferredPoolReturns returns;
             internal readonly Dictionary<GameObject,Bucket> buckets=new Dictionary<GameObject,Bucket>();
             internal readonly int[] retained=new int[4];
             internal bool disposed;
@@ -33,6 +34,8 @@ namespace CyberBiker.Pooling {
         private static Bucket GetBucket(GameObject prefab,Scene scene){
             if(!scopes.TryGetValue(scene,out var scope) || scope.storage==null){
                 scope=new Scope();var root=new GameObject("Runtime pool (inactive)");SceneManager.MoveGameObjectToScene(root,scene);root.SetActive(false);scope.storage=root.transform;scopes[scene]=scope;
+                var returns=new GameObject("Runtime pool returns");SceneManager.MoveGameObjectToScene(returns,scene);
+                scope.returns=returns.AddComponent<DeferredPoolReturns>();scope.returns.enabled=false;
             }
             if(!scope.buckets.TryGetValue(prefab,out var bucket)){
                 int kind=prefab.GetComponent<Bullet>()!=null ? 0 : prefab.GetComponent<Car>()!=null ? 2 : prefab.GetComponent<Tile>()!=null ? 3 : 1;
@@ -59,6 +62,17 @@ namespace CyberBiker.Pooling {
             instance.transform.SetParent(bucket.scope.storage,false);
             if(bucket.retained>=bucket.limit || bucket.scope.retained[bucket.kind]>=budgets[bucket.kind]){Object.Destroy(instance);return;}
             member.EnterCache();bucket.free.Push(member);
+        }
+        // OnDisable can run while Unity is traversing the owner's hierarchy.
+        // Reparent the child only after that transition has completed.
+        public static void ReleaseAfterHierarchyChange(GameObject instance){
+            if(instance==null)return;
+            var member=instance.GetComponent<PooledInstance>();
+            if(member==null || member.Owner==null){Object.Destroy(instance);return;}
+            if(!member.IsRented)return;
+            var scope=member.Owner.scope;
+            if(scope.disposed || scope.returns==null){Object.Destroy(instance);return;}
+            scope.returns.Schedule(member);
         }
     }
 }

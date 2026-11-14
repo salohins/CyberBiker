@@ -1,0 +1,1 @@
+PASS: both enemy prefabs have a configured spine jolt and contact spark material; Enemy gameplay settings preserved.

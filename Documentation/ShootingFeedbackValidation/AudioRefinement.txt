@@ -1,0 +1,8 @@
+Verified in isolated Unity 6000.6.0f1 using the actual Level, player, hostile/player bullets and pooled audio voices.
+- Per-projectile close-pass cues at 1.65 and 2.85 units, with two simultaneous shots inside the former cooldown; each audio cue plays exactly once.
+- Direct damage, obstacles, friendly shots and distant 6-unit misses do not produce false dodge cues.
+- Recorded air-swish and hit-impact assets assigned; both preloaded PCM; no clipped samples in either WAV.
+- Existing damage/fire-rate, camera recovery and automatic aim/draw/shoot checks passed.
+- Current player prefab was synced into validation first. Only nearMissRadius/cooldown serialization changed; movement, sword and finisher settings match the original current prefab snapshot.
+- All unrelated audio prefab fields preserved. Main and tested runtime scripts match.
+No Android build was made for this pass.

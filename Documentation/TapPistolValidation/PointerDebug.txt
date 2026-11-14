@@ -1,0 +1,1 @@
+Screen=640x480 camera=(x:0.00, y:0.00, width:640.00, height:480.00) point=(320.00, 264.00)

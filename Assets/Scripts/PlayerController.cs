@@ -9,7 +9,7 @@ using CyberBiker.Combat;
 using CyberBiker.Player;
 using CyberBiker.UI;
 
-public class PlayerController : MonoBehaviour, IDamageable
+public class PlayerController : MonoBehaviour, IDamageable, IDamageState
 {
     [Header("Motorcycle Movement")]
     [Tooltip("Force that pushes motorcycle the bigger the value the faster motorcycle will accelerate. Be careful if the value is too low motorcycle will not reach max speed")]
@@ -56,6 +56,8 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private float maxSpeed;
     public Health Health { get; private set; }
+    public float CurrentHealth => Health!=null ? Health.Current : 0;
+    private ShootingFeedback shootingFeedback;
     public bool IsAlive => Health != null && Health.IsAlive;
     public bool UsesAutomaticAim => autoAim!=null && autoAim.Enabled;
     public float NormalSpeedLimit => maxSpeed;
@@ -72,7 +74,16 @@ public class PlayerController : MonoBehaviour, IDamageable
         motor?.Configure(accelerationForce, dodgeAccelerationForce, dodgeMaxSpeed);
     }
     private BikeSwordCombat swordCombat;
-    private bool Aiming => input.IsAiming && (swordCombat==null || !swordCombat.IsActive);
+    private readonly PistolTapSession tapPistol = new PistolTapSession();
+    public bool UsesTapPistol => gm!=null && gm.PistolInteractionMode==PistolInteraction.TapToFire;
+    public bool TapPistolReady => UsesTapPistol && tapPistol.Ready && IsAlive && gm.gameState==GameState.Playing && (swordCombat==null || !swordCombat.IsActive);
+    public bool HasBufferedPistolTap => tapPistol.Pending;
+    private bool Aiming => (UsesTapPistol ? TapPistolReady : input!=null && input.IsAiming) && (swordCombat==null || !swordCombat.IsActive);
+    public bool RequestPistolTap(){
+        if(!UsesTapPistol || weapon==null || !IsAlive || gm.gameState!=GameState.Playing || Time.deltaTime<=0)return false;
+        swordCombat?.CancelForAim();tapPistol.Request(gm.PistolHolsterDelay);return true;
+    }
+    public void CancelPistolTaps(){tapPistol.Cancel();}
     private HealthPresenter presenter;
     private BikeMotor motor;
     private BikeImpactResponse impactResponse;
@@ -85,6 +96,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private bool armed;
     private bool wasAiming;
+    public int PistolDrawCount {get;private set;}
     private static readonly int PistolDrawState = Animator.StringToHash("Base Layer.Player_IdleGunGrab_001");
     private static readonly int PistolDrawSpeed = Animator.StringToHash("PistolDrawSpeed");
     public int wallDirection { get; private set; }
@@ -122,6 +134,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         motor = new BikeMotor(rb, accelerationForce, dodgeAccelerationForce, dodgeMaxSpeed);
         impactResponse = GetComponent<BikeImpactResponse>();
         gm = FindAnyObjectByType<GameplayManager>();
+        shootingFeedback=GetComponent<ShootingFeedback>();
         weapon = new ProjectileWeapon(bullet, gm.PlayerPistolShotInterval, gm.PlayerPistolDamage);
         weapon.Fired += OnWeaponFired;
         presentation = new BikePresentation(transform, motorcycleMesh, animator, animationRigging, rotationSensitivity, leanRange);
@@ -174,22 +187,39 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     }
 
-    private void FireWeapon() {
-        if (gm.gameState != GameState.Playing || !IsAlive || (swordCombat!=null && swordCombat.IsActive)) return;
+    public bool IsPistolVisuallyReady => gm!=null && gm.gameState==GameState.Playing && IsAlive && Aiming && armed && animationRigging!=null && animationRigging.layers[0].rig.weight>.8f;
+    private readonly RaycastHit[] pistolSightHits=new RaycastHit[64];
+    private Vector3 PistolTargetPoint(){
+        if(autoAim!=null && autoAim.Enabled && Aiming && autoAim.Target!=null)return autoAim.AimPoint;
+        var origin=camera.transform.position;var forward=camera.transform.forward;var target=origin+forward*120;float nearest=120;
+        int count=Physics.RaycastNonAlloc(origin,forward,pistolSightHits,120,~0,QueryTriggerInteraction.Collide);
+        for(int i=0;i<count;i++){var hit=pistolSightHits[i];var shape=hit.collider;if(shape.transform.IsChildOf(transform) || shape.GetComponentInParent<Bullet>()!=null || (shape.isTrigger && shape.GetComponentInParent<IDamageable>()==null))continue;if(hit.distance<nearest){nearest=hit.distance;target=hit.point;}}
+        return target;
+    }
+    public bool TryGetPistolAim(out Vector3 origin,out Vector3 direction){
+        origin=muzzleFlash!=null ? muzzleFlash.transform.position : transform.position;direction=Vector3.forward;
+        if(!IsPistolVisuallyReady)return false;direction=(PistolTargetPoint()-origin).normalized;return direction.sqrMagnitude>.01f;
+    }
+    private bool FireWeapon(bool tapShot=false) {
+        if (gm.gameState != GameState.Playing || !IsAlive || (swordCombat!=null && swordCombat.IsActive)) return false;
         weapon.SetInterval(gm.PlayerPistolShotInterval);
-        if(!weapon.CanFireAt(Time.time))return;
-        Vector3 target = camera.transform.position + camera.transform.forward * 100f;
-        if(autoAim!=null && autoAim.Enabled && input.IsAiming && autoAim.Target!=null) target=autoAim.AimPoint;
-        else if (Physics.Raycast(camera.transform.position, camera.transform.forward, out var hit)) target = hit.point;
+        if(!tapShot && !weapon.CanFireAt(Time.time))return false;
+        Vector3 target=PistolTargetPoint();
         if (weapon is ProjectileWeapon projectileWeapon) projectileWeapon.SetDamage(gm.PlayerPistolDamage);
-        weapon.TryFire(new ShotRequest(muzzleFlash.transform.position, target - muzzleFlash.transform.position, gameObject), Time.time);
+        var request=new ShotRequest(muzzleFlash.transform.position,target-muzzleFlash.transform.position,gameObject);
+        return tapShot ? weapon.TryFireImmediate(request,Time.time) : weapon.TryFire(request,Time.time);
     }
     private void OnWeaponFired() {
+        shootingFeedback?.Shot();
+        if(UsesTapPistol){tapPistol.Fired(gm.PistolHolsterDelay);tim?.PistolShotPulse();}
         muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
         animator.SetTrigger("Shoot");
     }
 
     private void Update() {
+
+        if(!UsesTapPistol || gm.gameState!=GameState.Playing || !IsAlive)tapPistol.Cancel();
+        else if(Time.deltaTime>0)tapPistol.Tick(Time.unscaledDeltaTime,!armed);
 
         cameraTarget.transform.eulerAngles = new Vector3(0, camera.transform.eulerAngles.y + 10f, 0);
 
@@ -200,7 +230,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         // Speed only the draw state, in real time. Bike lean, jacket animation
         // and recoil retain their own timing, including during a finisher.
         animator.SetFloat(PistolDrawSpeed,pistolDrawSpeed/Mathf.Max(.1f,Time.timeScale));
-        if(aimNow && !wasAiming)animator.CrossFadeInFixedTime(PistolDrawState,pistolDrawBlendTime*Mathf.Max(.1f,Time.timeScale),0,0);
+        if(aimNow && !wasAiming){PistolDrawCount++;animator.CrossFadeInFixedTime(PistolDrawState,pistolDrawBlendTime*Mathf.Max(.1f,Time.timeScale),0,0);}
         wasAiming=aimNow;
         UpdatePresentation(Time.deltaTime);
 
@@ -214,13 +244,16 @@ public class PlayerController : MonoBehaviour, IDamageable
     private void LateUpdate() {
         autoAim?.ApplyArmAim();
         if(input==null || gm.gameState!=GameState.Playing || !Aiming || !armed || animationRigging.layers[0].rig.weight<=.8f) return;
-        if(autoAim==null || !autoAim.Enabled || autoAim.CanFire) FireWeapon();
+        if(UsesTapPistol){
+            if(autoAim==null || !autoAim.Enabled || autoAim.Target==null || autoAim.CanFire)
+                for(int i=0;i<32 && tapPistol.Pending;i++)if(!FireWeapon(true))break;
+        } else if(autoAim==null || !autoAim.Enabled || autoAim.CanFire)FireWeapon();
     }
 
     private void TakeGun(AnimationEvent animationEvent) {
         // The authored grab clip calls TakeGun at both its start and its end.
         // Only the completion event makes the weapon ready for aiming and fire.
-        if(animationEvent.time>.01f && input.IsAiming && gm.gameState==GameState.Playing) armed=true;
+        if(animationEvent.time>.01f && Aiming && gm.gameState==GameState.Playing) armed=true;
     }
 
     private void UpdatePresentation(float dt) {
@@ -243,12 +276,17 @@ public class PlayerController : MonoBehaviour, IDamageable
         zVelocity = motor.LocalVelocity.z;
     }
 
-    public void Shoot() { FireWeapon(); }
+    public void Shoot() { if(!UsesTapPistol)FireWeapon();else if(tapPistol.Pending && Aiming && armed)FireWeapon(true); }
+    private void OnDisable(){tapPistol.Cancel();}
 
     private void GetDamage(int amount) { TakeDamage(new DamageInfo(amount)); }
     public void TakeDamage(DamageInfo damage) {
         if (gm == null || (gm.gameState != GameState.Playing && gm.gameState != GameState.Hit)) return;
-        if (Health != null && Health.TakeDamage(damage) && damage.Source != null && collectibleParticle != null)
+        if(Health==null)return;
+        float previous=Health.Current;
+        if(!Health.TakeDamage(damage))return;
+        shootingFeedback?.Hurt(previous-Health.Current,damage.Source);
+        if(damage.Source != null && collectibleParticle != null)
             Instantiate(collectibleParticle, damage.Source.transform.position, Quaternion.identity, transform);
     }
     private void OnDied() { motor.Stop(); gm.SwitchGameState(GameState.GameOver); }

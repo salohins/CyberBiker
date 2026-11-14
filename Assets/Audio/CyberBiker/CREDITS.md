@@ -135,3 +135,11 @@ sources.json maps the active files to authors, sources, modifications and SHA-25
 ## Jacket fabric
 
 JacketFabricFlutter.wav uses Fabric Flapping by IENBA, CC0: https://freesound.org/people/IENBA/sounds/701647/ . Foley recorded for cape/fabric motion with a Sennheiser MKH50 and Zoom H4n. The HQ preview was decoded to mono; the 0.25–13.25 second section was filtered, given a broad +3 dB presence boost near 1.5 kHz, compressed and level adjusted to help the fabric details stand out in the engine/wind mix, then given a 0.35-second equal-power overlap for a 12.65-second loop. The runtime source is attached to the rider’s animated central jacket hem.
+
+## Pistol hit, damage and projectile near-miss feedback
+
+BulletWhiz.wav is a short mono extract of **Sword or Bullet Swish/Swosh 12.flac** by **qubodup**, CC0 1.0: https://freesound.org/people/qubodup/sounds/59999/ . This is recorded bamboo-stick air movement, not an electronic bullet tone. The downloaded HQ preview is retained as BulletAirSwish_Recorded.mp3. The cue starts 8 ms before the 5%-of-peak onset, lasts 240 ms, has 1 ms/35 ms edge fades and peak normalization to 0.85.
+
+PistolHit.wav uses **body_hit.wav** by **insanity54**, CC0 1.0: https://freesound.org/people/insanity54/sounds/276600/ . A recorded gloved-hand/helmet impact, extracted from 4 ms before the 5%-of-peak onset for 200 ms, with 1 ms/35 ms edge fades and peak normalization to 0.94. The HQ preview is retained as PistolHit_Recorded.mp3. This replaces the UI click as the confirmed-damage cue.
+
+License, download URLs and SHA-256 hashes are in Licenses/GunFeedbackSources.json. Incoming-damage thud still reuses Kenney's impactPlate_heavy_000.ogg, already credited above. The existing pistol shot recording and its mix ducking remain assigned.

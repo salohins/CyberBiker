@@ -15,5 +15,5 @@ public class MuzzleFlash : MonoBehaviour {
         flash.transform.localEulerAngles=new Vector3(Random.Range(0,360),0,0);
         flashes.Add((flash,Time.frameCount+3));
     }
-    private void OnDisable(){foreach(var flash in flashes)PrefabPool.Release(flash.instance);flashes.Clear();}
+    private void OnDisable(){foreach(var flash in flashes)PrefabPool.ReleaseAfterHierarchyChange(flash.instance);flashes.Clear();}
 }

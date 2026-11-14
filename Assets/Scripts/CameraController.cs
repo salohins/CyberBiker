@@ -160,6 +160,8 @@ public class CameraController : MonoBehaviour {
     }
 
     private void LateUpdate() {
+        var gunFeedback=ShootingFeedback.Active;
+        gunFeedback?.RemoveCamera(view);
 
         Vector3 targetOffset;
 
@@ -226,6 +228,7 @@ public class CameraController : MonoBehaviour {
         launchEffects?.ApplyCamera(view);
         swordFinisher?.ApplyCamera(view);
         riderView?.Update(view,riderVisibility,tim.aim && gm.gameState==GameState.Playing,Time.deltaTime);
+        gunFeedback?.ApplyCamera(view);
 
         //aimTarget.transform.position = transform.position + transform.forward * 30f;
         //aimTarget.transform.rotation = transform.rotation;

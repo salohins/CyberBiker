@@ -1,0 +1,7 @@
+Cannot set the parent of the GameObject 'Toon Muzzleflash 8(Clone)' while activating or deactivating the parent GameObject 'MuzzleFlashPosition'.
+UnityEngine.Transform:SetParent (UnityEngine.Transform,bool)
+CyberBiker.Pooling.PrefabPool:Release (UnityEngine.GameObject) (at Assets/Scripts/PrefabPool.cs:59)
+MuzzleFlash:OnDisable () (at Assets/Scripts/MuzzleFlash.cs:18)
+UnityEngine.GameObject:SetActive (bool)
+MuzzleFlashDisableChecks:Tick () (at Assets/Editor/MuzzleFlashDisableChecks.cs:47)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()

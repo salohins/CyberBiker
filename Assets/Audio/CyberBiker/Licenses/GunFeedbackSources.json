@@ -1,0 +1,42 @@
+{
+  "nearMiss": {
+    "author": "qubodup",
+    "source": "https://freesound.org/people/qubodup/sounds/59999/",
+    "download": "https://cdn.freesound.org/previews/59/59999_71257-hq.mp3",
+    "license": "CC0 1.0",
+    "sha256": "249f4312d87855a58be25d499922c1acc2031f591c153e0ec2f40b3ea1075c8b",
+    "source_file": "BulletAirSwish_Recorded.mp3",
+    "title": "Sword or Bullet Swish/Swosh 12.flac",
+    "processing": "Unity mono decode; 8ms pre-roll before 5%-of-peak onset, 240ms duration, 1ms/35ms fades, peak normalized to 0.85 PCM16.",
+    "processed_file": "BulletWhiz.wav",
+    "processed_audio": {
+      "channels": 1,
+      "sample_rate": 44100,
+      "duration": 0.23997732426303856,
+      "peak": 0.8499755859375,
+      "rms_dbfs": -18.614866987110695,
+      "clipped_samples": 0,
+      "sha256": "8de33be7a9188dbde8aa950b2c2f8f528f063a16d25bb29c26738ed007083c81"
+    }
+  },
+  "hitConfirm": {
+    "author": "insanity54",
+    "source": "https://freesound.org/people/insanity54/sounds/276600/",
+    "download": "https://cdn.freesound.org/previews/276/276600_464940-hq.mp3",
+    "license": "CC0 1.0",
+    "sha256": "81f5997c3dc672d5a5dd259044ba16f8012da0fc402b6903ef42dc27bcaa36fb",
+    "source_file": "PistolHit_Recorded.mp3",
+    "title": "body_hit.wav",
+    "processing": "Unity mono decode; 4ms pre-roll before 5%-of-peak onset, 200ms duration, 1ms/35ms fades, peak normalized to 0.94 PCM16.",
+    "processed_file": "PistolHit.wav",
+    "processed_audio": {
+      "channels": 1,
+      "sample_rate": 44100,
+      "duration": 0.2,
+      "peak": 0.939971923828125,
+      "rms_dbfs": -10.29396140470791,
+      "clipped_samples": 0,
+      "sha256": "a6ee12f7e80bd26e90f553ae6f88479db1ef1dc4bad7853c2197b6873c15dd05"
+    }
+  }
+}

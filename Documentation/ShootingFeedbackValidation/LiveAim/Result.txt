@@ -1,0 +1,13 @@
+RENDER MovingAimHit: spark pixels=968, count=40, jolt=21.94833
+RECOIL MovingAimHit: visible head displacement=14.40945 pixels; gun/hand offsets preserved.
+PASS actual automatic-aim hit with live traffic, enabled navigation/animation and 70 m/s riding.
+RENDER FinisherReadyHit: spark pixels=749, count=40, jolt=23.42338
+RECOIL FinisherReadyHit: visible head displacement=13.54928 pixels; gun/hand offsets preserved.
+RENDER FinisherFloorHit: spark pixels=1578, count=40, jolt=23.18419
+RECOIL FinisherFloorHit: visible head displacement=7.760551 pixels; gun/hand offsets preserved.
+PASS continued real pistol contacts still jolt and spark at the finisher floor; no health loss, kill or timer refresh.
+RENDER BodyFlinchHeld: spark pixels=1639, count=40, jolt=23.18419
+RENDER BodyNeutralHeld: spark pixels=1582, count=40, jolt=0
+PASS rendered flinch/neutral comparison with world/camera held: 873 changed enemy pixels.
+PASS nearby moving traffic was present.
+PASS visible contacts recover cleanly and aim shutdown produces no muzzle-flash hierarchy error.

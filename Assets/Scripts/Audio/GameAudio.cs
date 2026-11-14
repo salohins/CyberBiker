@@ -538,6 +538,9 @@ namespace CyberBiker.Audio {
                 case SoundCue.UiClick: Play(uiClick, Vector3.zero, interfaceVolume, 1, true, menu: true); break;
                 case SoundCue.EnemyFinisherReady: PlayFinisherNotification(false); break;
                 case SoundCue.EnemyFinisherWarning: PlayFinisherNotification(true); break;
+                case SoundCue.PistolHitConfirm:
+                case SoundCue.PlayerHurt:
+                case SoundCue.BulletNearMiss: PlayGunFeedback(sound);break;
                 default:
                     if (Time.time < nextImpact) return;
                     nextImpact = Time.time + 0.08f;
@@ -556,6 +559,7 @@ namespace CyberBiker.Audio {
             }
             nextVoice = (index + 1) % voices.Length;
             var source = voices[index]; source.Stop(); suspended[index] = false;
+            source.panStereo=0;
             source.priority=priority;
             source.transform.position = position; source.spatialBlend = local ? 0 : 0.85f;
             // A car can move a long way during its audible tail at arcade speeds.

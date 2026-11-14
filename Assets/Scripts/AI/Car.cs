@@ -7,7 +7,7 @@ using AI;
 using CyberBiker.Combat;
 using CyberBiker.Pooling;
 
-public class Car : MonoBehaviour, IDamageable, IPooledObject
+public class Car : MonoBehaviour, IDamageable, IDamageState, IPooledObject
 {
     private static readonly List<Car> activeCars = new List<Car>(64);
     // Track lifetime, then filter active GameObjects at the call site. A disabled

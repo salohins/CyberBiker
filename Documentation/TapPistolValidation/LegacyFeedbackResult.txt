@@ -1,0 +1,11 @@
+PASS contact sparks render 1766 distinct pixels from the normal gameplay camera.
+PASS actual pistol projectile: 15 damage, exactly one confirmed marker, existing cooldown, short recoil, no camera drift.
+PASS physical bullet contacts at the finisher floor still react without changing health or the expiry timer.
+PASS queued immunity suppresses markers; damaging stagger hit retains finisher behavior and amber marker.
+PASS real incoming projectile triggers damage, directional screen effect and jolt, with no false near miss.
+PASS left/right close passes at 1.65 and 2.85 units, every bullet in a burst audible without a shared cooldown, exactly one cue per projectile, pooled reset and blocked-shot suppression.
+PASS enemy rider jolts and contact sparks on each damaging bullet, no immune reactions, unchanged enemy root, clean recovery and finisher readiness.
+PASS friendly/distant rejection, pause, recovery, assigned audio, unchanged tuning and pooled lifecycle.
+PASS marker rendering: 439 changed pixels against actual gameplay.
+PASS actual aim/draw/automatic shooting, overlay hit-marker alignment and stable camera integration.
+PASS idle screen bypass and near-miss emitter restart.

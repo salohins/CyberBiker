@@ -1,0 +1,3 @@
+PASS ancestor/component disable, immediate aim off/on, newer lease protection, original three-frame expiry and pooled reuse.
+PASS 40 repeated aim off/on cycles with the actual Toon muzzle-flash prefab and no hierarchy errors.
+PASS scene unload with a pending muzzle-flash return.

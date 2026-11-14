@@ -545,6 +545,7 @@ GameObject:
   - component: {fileID: 7876995936719407695}
   - component: {fileID: 5989709410488722959}
   - component: {fileID: 2988694987958484993}
+  - component: {fileID: 2938826502218596434}
   m_Layer: 0
   m_Name: enemy 1
   m_TagString: Enemy
@@ -856,6 +857,28 @@ MonoBehaviour:
   rearWheelContact: {x: 0, y: 0.026613984, z: -0.50877625}
   frontWheelContact: {x: 0, y: 0.026613984, z: 1.4282709}
   enemyEffectRange: 90
+--- !u!114 &2938826502218596434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1486146349346729291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5d173cc3bca12c499d9cd4dc38c7c28, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHitReaction
+  torso: {fileID: 28284875538740361}
+  joltDegrees: 20
+  sideFlinchDegrees: 10
+  torsoKickDistance: 0.2
+  recoveryTime: 0.4
+  sparkMaterial: {fileID: 2100000, guid: 9b8b2d895eec37345858227ef20e4a15, type: 2}
+  sparksPerHit: 40
+  sparkSize: 0.065
+  sparkLength: 0.55
+  sparkSpeed: 12
 --- !u!1 &1648636776327753611
 GameObject:
   m_ObjectHideFlags: 0

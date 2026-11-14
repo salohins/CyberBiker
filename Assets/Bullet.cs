@@ -16,6 +16,9 @@ public class Bullet : MonoBehaviour, IPooledObject {
     private float remainingLifetime;
     private Collider[] shapes;
     private Rigidbody projectileBody;
+    private bool hostile,nearMissChecked,hasContact;
+    private Vector3 contactPoint,contactNormal;
+    private CyberBiker.Player.ShootingFeedback shooterFeedback;
     private readonly List<Collider> ownerShapes=new List<Collider>(16);
     private readonly List<(Collider projectile,Collider owner)> ignored=new List<(Collider,Collider)>(16);
     private readonly RaycastHit[] hits = new RaycastHit[16];
@@ -23,6 +26,9 @@ public class Bullet : MonoBehaviour, IPooledObject {
         Cache();ClearIgnored();
         this.owner = owner;
         this.damage = damage;
+        hostile=owner!=null && owner.GetComponent<Enemy>()!=null;
+        shooterFeedback=owner!=null ? owner.GetComponent<CyberBiker.Player.ShootingFeedback>() : null;
+        nearMissChecked=hasContact=false;
         // Travel and damage are swept in Update. A solid dynamic collider can
         // otherwise depenetrate against a bike and shove it sideways before Hit.
         if(projectileBody!=null){projectileBody.collisionDetectionMode=CollisionDetectionMode.ContinuousSpeculative;projectileBody.isKinematic=true;}
@@ -35,8 +41,8 @@ public class Bullet : MonoBehaviour, IPooledObject {
     }
     private void Cache(){if(shapes!=null)return;shapes=GetComponentsInChildren<Collider>();projectileBody=GetComponent<Rigidbody>();}
     private void ClearIgnored(){foreach(var pair in ignored)if(pair.projectile!=null && pair.owner!=null)Physics.IgnoreCollision(pair.projectile,pair.owner,false);ignored.Clear();ownerShapes.Clear();}
-    public void OnPoolRent(GameObject prefab){Cache();var settings=prefab.GetComponent<Bullet>();bulletSpeed=settings.bulletSpeed;damage=settings.damage;lifetime=settings.lifetime;owner=null;consumed=false;lifetimeStarted=false;}
-    public void OnPoolReturn(){ClearIgnored();owner=null;consumed=true;}
+    public void OnPoolRent(GameObject prefab){Cache();var settings=prefab.GetComponent<Bullet>();bulletSpeed=settings.bulletSpeed;damage=settings.damage;lifetime=settings.lifetime;owner=null;consumed=false;lifetimeStarted=false;hostile=nearMissChecked=hasContact=false;shooterFeedback=null;}
+    public void OnPoolReturn(){ClearIgnored();owner=null;consumed=true;shooterFeedback=null;}
     private void Update() {
         if(consumed)return;
         bool expired=false;
@@ -52,8 +58,17 @@ public class Bullet : MonoBehaviour, IPooledObject {
             var candidate = hits[i].collider;
             if (candidate.transform.IsChildOf(transform) || (owner != null && candidate.transform.IsChildOf(owner.transform))) continue;
             if (candidate.isTrigger && candidate.GetComponentInParent<IDamageable>() == null) continue;
-            if (hits[i].distance < nearestDistance) { nearest = candidate; nearestDistance = hits[i].distance; }
+            if (hits[i].distance < nearestDistance) { nearest = candidate; nearestDistance = hits[i].distance;contactPoint=hits[i].point;contactNormal=hits[i].normal; }
         }
+        if(hostile && !nearMissChecked){
+            var feedback=CyberBiker.Player.ShootingFeedback.Active;
+            if(feedback!=null){
+                bool playerHit=nearest!=null && nearest.GetComponentInParent<PlayerController>()!=null;
+                if(playerHit)nearMissChecked=true;
+                else if(feedback.CheckNearMiss(transform.position,nearest!=null ? contactPoint : transform.position+transform.forward*distance,Time.deltaTime))nearMissChecked=true;
+            }
+        }
+        hasContact=nearest!=null;
         if (nearest != null) Hit(nearest);
         if (!consumed) transform.position += transform.forward * distance;
         if(expired && !consumed){consumed=true;PrefabPool.Release(gameObject);}
@@ -65,7 +80,17 @@ public class Bullet : MonoBehaviour, IPooledObject {
         var target = other.GetComponentInParent<IDamageable>();
         if (other.isTrigger && target == null) return;
         consumed = true;
-        if (target != null && target.IsAlive) target.TakeDamage(new DamageInfo(damage, owner));
+        Vector3 point=hasContact ? contactPoint : other.ClosestPoint(transform.position);
+        Vector3 normal=hasContact ? contactNormal : -transform.forward;
+        if (target != null && target.IsAlive){
+            var state=target as IDamageState;float previous=state!=null ? state.CurrentHealth : 0;
+            target.TakeDamage(new DamageInfo(damage, owner, point, normal, transform.forward));
+            if(shooterFeedback!=null && state!=null && state.CurrentHealth<previous){
+                var component=target as Component;var enemy=component!=null ? component.GetComponent<Enemy>() : null;
+                shooterFeedback.ConfirmHit(component!=null ? component.transform : other.transform,point,normal,enemy!=null && enemy.IsFinisherReady);
+            }
+        }
+        transform.position=point;
         CyberBiker.Audio.SoundEvents.Emit(CyberBiker.Audio.SoundCue.Impact, transform.position);
         PrefabPool.Release(gameObject);
     }

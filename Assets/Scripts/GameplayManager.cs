@@ -7,6 +7,7 @@ using CyberBiker.UI;
 
 namespace Gameplay {
     public enum GameState { GameOver, Playing, Pause, Hit, Intro }
+    public enum PistolInteraction { AimAndAutoFire, TapToFire }
 
     public class GameplayManager : MonoBehaviour {
         [Header("Enemy Following")]
@@ -18,6 +19,14 @@ namespace Gameplay {
         }
 
         [Header("Player Pistol")]
+        [SerializeField] private PistolInteraction pistolInteraction = PistolInteraction.TapToFire;
+        [Tooltip("Real seconds the pistol stays ready after a shot or tap. Pausing cancels the tap session.")]
+        [SerializeField, Range(.3f,3)] private float pistolHolsterDelay = 1.2f;
+        [Tooltip("In Tap To Fire mode, pistol hits can kill and explode enemies. Disable to keep the sword-finisher health floor.")]
+        [SerializeField] private bool tapPistolCanKill = true;
+        public bool TapPistolCanKill {get => tapPistolCanKill;set => tapPistolCanKill=value;}
+        public PistolInteraction PistolInteractionMode {get => pistolInteraction;set => pistolInteraction=value;}
+        public float PistolHolsterDelay {get => Mathf.Max(.3f,pistolHolsterDelay);set => pistolHolsterDelay=Mathf.Max(.3f,value);}
         [Tooltip("Damage dealt by each player pistol hit. Changes apply to the next shot during Play mode.")]
         [SerializeField, Min(0)] private float pistolDamagePerShot = 15f;
         [Tooltip("Gameplay seconds between player pistol shots. Lower values fire faster; 0.45 is about 2.2 shots per second. Changes apply live.")]
