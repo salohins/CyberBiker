@@ -1,0 +1,6 @@
+PASS red muzzle laser follows the actual shot direction and stops at targets/nearer obstacles.
+PASS first-tap draw/single shot, subsequent shot without redraw, every rapid tap fired without a cooldown, no automatic repeat and idle holster.
+PASS pause/resume, screen-tap recognition, steering drag separation and no duplicate UI polling shot.
+PASS launch cancels buffered shots; a new tap returns from sword/launch and fires once.
+PASS Inspector fallback retains continuous aim/automatic shooting; damage and fire interval unchanged.
+PASS tap-mode pistol contact kills and destroys the enemy through its existing death/explosion path; legacy mode retains the finisher floor.

@@ -1,0 +1,6 @@
+RUNNING
+PASS shared profile save and JSON roundtrip; real saved tuning preserved.
+PASS real pass-only trigger, radius filtering, independent sound radius, actual zoom/side camera, frozen bike, pause and smooth recovery.
+PASS left/right direction, player-hit rejection, friendly rejection, pooled projectile reuse, explicit-evade pass, finisher priority, cooldown and disable cleanup.
+PASS Dodge Lab: real moving-world close pass, replay both sides, live edits, slow-motion toggle, effect scrubbing, save/presets, and scene/audio/texture restoration.
+PASS all checks

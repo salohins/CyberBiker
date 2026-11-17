@@ -1,0 +1,10 @@
+RUNNING
+PASS combo arithmetic, variety multiplier, diminishing repetition, multiplier cap, exact-once banking, lost unbanked points and valid-only run score credits.
+PASS numbers use a fixed world-space pool, follow actual enemy translation, show camera parallax, face the camera and only rise/fade without spin or bounce; depth-occlusion preview captured.
+PASS local Carbon prototype: four original-rate mono UI/drift cues import as PCM with peak headroom; real pooled playback uses the active point cue, preserves reward pitches and respects score mute and pause.
+PASS real pistol projectile awards confirmed damage once, creates floating score text and plays an existing mixed UI recording; all HUD graphics ignore input.
+PASS real bullet near miss, perfect-dodge bonus, pistol kill and sword-finisher death paths award points without repeat death rewards.
+PASS real traffic-car bounds detect a 0.5-unit close pass once, place its number between the bike and car surfaces, with no duplicate award after passing.
+PASS pause freezes combo; banked points reach the existing run total; actual player damage loses only the pending chain; reduced motion removes decorative transforms.
+PASS native board animation: bounded rapid-hit spring, stronger multiplier sweep/echo, exact bank count-up, compact layout, pause freeze, input pass-through, both reduced-motion settings; 180-frame native preview captured.
+PASS native style-scoring integration checks.

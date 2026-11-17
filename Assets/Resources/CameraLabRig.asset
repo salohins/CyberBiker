@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7bef772652a7a54e92b228b995faa8f, type: 3}
+  m_Name: CameraLabRig
+  m_EditorClassIdentifier: Assembly-CSharp::CyberBiker.Player.CameraLabRigProfile
+  rigJson: '{"targetOffset":{"x":0,"y":-2,"z":8.81},"ridingFov":50,"ridingPitch":0,"ridingYawOffset":0,"ridingRoll":0,"combatRiding":{"offset":{"x":0,"y":-2.25,"z":7.06},"fov":50,"pitch":10.2,"yaw":0,"roll":0,"shiftX":-3.6,"shiftY":3.8,"forwardShift":2,"steeringRoll":-20,"followResponse":5,"enabled":true,"enemyRange":60,"exitPadding":10,"returnDelay":1,"blendTime":0.8,"configured":true},"aimOffset":{"x":-1.92,"y":-2.11,"z":5.83},"aimFov":40,"aimPitch":0,"aimYawOffset":0,"aimRoll":0,"aimFollowResponse":5,"aimXShiftOffset":-5,"aimYShiftOffset":2,"aimForwardShiftOffset":2,"aimAngleShiftOffset":-20,"combatAim":{"offset":{"x":-1.38,"y":-2.25,"z":7.06},"fov":50,"pitch":10.2,"yaw":0,"roll":0,"shiftX":-5,"shiftY":2,"forwardShift":2,"steeringRoll":-20,"followResponse":5,"configured":true},"useAirborneOffset":false,"airborneOffset":{"x":0,"y":-1.7,"z":9},"airborneFov":80,"airbornePitch":2,"airborneYawOffset":0,"airborneRoll":0,"smoothness":5,"cameraYangle":0,"xShiftOffset":-3.6,"yShiftOffset":2.2,"angleShiftOffset":-20,"dynamicAimShoulder":true,"targetAwareAimShoulder":true,"aimShoulderSwitchDistance":1.5,"aimShoulderSwitchSpeed":5,"aimTargetShoulderDeadZone":1.25,"aimFraming":{"enabled":true,"targetLookWeight":0.35,"maximumYaw":10,"maximumPitch":6,"smoothTime":0.25,"keepPistolVisible":true,"maximumSideCorrection":3,"maximumHeightCorrection":0.8,"screenMargin":0.08,"bodyClearance":0.05},"riderVisibility":{"enabled":true,"fadeNearCameraCenter":true,"obstructedOpacity":0.2,"fadeOutTime":0.22,"fadeInTime":0.18},"speedShakeStartSpeed":25,"speedShakeFullSpeed":75,"speedShakePosition":0.035,"speedShakeRotation":0.3,"speedShakeFrequency":12,"passShakePosition":0.396,"passShakeRotation":8,"passShakeDuration":0.82,"passShakeFrequency":11.9,"carImpactPosition":0.18,"carImpactRotation":3.5,"carImpactDuration":0.4,"carImpactFrequency":6}'

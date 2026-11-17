@@ -1,0 +1,5 @@
+RUNNING
+PASS calibrated held tilt, dead zone, direction/invert, landscape mapping without double compensation, flat-phone rejection and frame-rate-independent smoothing.
+PASS native input routing, sustained tilt, no swipe/firing interference, calibration in pause, focus loss/return, orientation recenter, invert and unsupported-sensor swipe fallback.
+PASS actual Tune selector/sliders/invert/calibration UI, draft/apply, persistence across restart, reset and native overlay capture.
+PASS all gyro checks

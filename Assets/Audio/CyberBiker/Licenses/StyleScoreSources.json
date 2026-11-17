@@ -1,0 +1,176 @@
+{
+  "sources": [
+    {
+      "author": "Hove Audio",
+      "pack": "Free SCI-FI UI Sound Effects Pack",
+      "page": "https://hoveaudio.itch.io/free-sci-fi-ui-sound-effects-pack",
+      "license_summary": "Author permits use and modification in commercial and non-commercial projects, royalty free. Custom permission; not labelled CC0.",
+      "source_format": "48 kHz, 24-bit stereo WAV"
+    },
+    {
+      "author": "Eric Berzins",
+      "pack": "Ultra Sci-Fi Game Audio UI Pack",
+      "page": "https://eberzins.itch.io/ultra-sci-fi-game-audio-ui-pack",
+      "license_summary": "Royalty-free synchronization, embedding and mixing in games and other works; attribution optional. No selling the sounds, claiming authorship, or generative-AI training.",
+      "source_format": "48 kHz, 16-bit mono WAV; UI 03 is a low-level attack layer in point cues only."
+    }
+  ],
+  "downloaded": "2026-11-15",
+  "assets": [
+    {
+      "asset": "Assets\\Audio\\CyberBiker\\StyleScore\\ScorePoint_01.wav",
+      "guid": "7e4f0f2957394ffea4a5e04adff76726",
+      "source": "Tone3/Basic Tones/Tone3A.wav",
+      "source_sha256": "5cb42194f072b83506d4280b3a70f7633aa5c23f297fe4c10db0150a5cb4ab9e",
+      "attack_source": "UIClick_UI 03_Eric Berzins_SFUI.wav",
+      "impact_sources": [
+        "Impacts/Impact_1_Low.wav",
+        "Impacts/Impact_2_Mid.wav"
+      ],
+      "impact_mix_gains": [
+        2.8,
+        0.13
+      ],
+      "source_trim_seconds": [
+        0.0,
+        0.42275
+      ],
+      "seconds": 0.22,
+      "sample_rate": 48000,
+      "bits": 24,
+      "channels": 2,
+      "peak_dbfs": -3.1,
+      "edits": "Trim silence; point attack layer from Eric Berzins; filtered low/mid impact layers from Hove Audio (shorter/quieter for points); 90Hz high-pass, 9.5kHz low-pass (6.5kHz break), low-level 38ms echo, peak level adjustment, edge fades."
+    },
+    {
+      "asset": "Assets\\Audio\\CyberBiker\\StyleScore\\ScorePoint_02.wav",
+      "guid": "9da16ee1f14e41d8b7167fdd61c0da0d",
+      "source": "Tone3/Basic Tones/Tone3B.wav",
+      "source_sha256": "cffa25165ad28e849be43633020b8394ccf41633efa614349c30826efa282f07",
+      "attack_source": "UIClick_UI 03_Eric Berzins_SFUI.wav",
+      "impact_sources": [
+        "Impacts/Impact_1_Low.wav",
+        "Impacts/Impact_2_Mid.wav"
+      ],
+      "impact_mix_gains": [
+        2.8,
+        0.13
+      ],
+      "source_trim_seconds": [
+        0.0,
+        0.35572916666666665
+      ],
+      "seconds": 0.22,
+      "sample_rate": 48000,
+      "bits": 24,
+      "channels": 2,
+      "peak_dbfs": -3.1,
+      "edits": "Trim silence; point attack layer from Eric Berzins; filtered low/mid impact layers from Hove Audio (shorter/quieter for points); 90Hz high-pass, 9.5kHz low-pass (6.5kHz break), low-level 38ms echo, peak level adjustment, edge fades."
+    },
+    {
+      "asset": "Assets\\Audio\\CyberBiker\\StyleScore\\ScorePoint_03.wav",
+      "guid": "b3b84a005348420ba152ea56f05f5d3b",
+      "source": "Tone3/Basic Tones/Tone3C.wav",
+      "source_sha256": "65e53d8d40c38a456a8f7f3b1ba284002d9872774bfe73a328aa13309b7b1513",
+      "attack_source": "UIClick_UI 03_Eric Berzins_SFUI.wav",
+      "impact_sources": [
+        "Impacts/Impact_1_Low.wav",
+        "Impacts/Impact_2_Mid.wav"
+      ],
+      "impact_mix_gains": [
+        2.8,
+        0.13
+      ],
+      "source_trim_seconds": [
+        0.0,
+        0.31166666666666665
+      ],
+      "seconds": 0.22,
+      "sample_rate": 48000,
+      "bits": 24,
+      "channels": 2,
+      "peak_dbfs": -3.1,
+      "edits": "Trim silence; point attack layer from Eric Berzins; filtered low/mid impact layers from Hove Audio (shorter/quieter for points); 90Hz high-pass, 9.5kHz low-pass (6.5kHz break), low-level 38ms echo, peak level adjustment, edge fades."
+    },
+    {
+      "asset": "Assets\\Audio\\CyberBiker\\StyleScore\\ScoreMultiplier.wav",
+      "guid": "76cbcdbce15a463db1e03ea0d5795d7a",
+      "source": "Tone3/Fifth/Tone3A_FifthUp.wav",
+      "source_sha256": "a9d2e5861415e043d8a9c501ca8bf2ca37754cf6276a7e5cd457f66a42cbfb95",
+      "attack_source": null,
+      "impact_sources": [
+        "Impacts/Impact_1_Low.wav",
+        "Impacts/Impact_2_Mid.wav"
+      ],
+      "impact_mix_gains": [
+        3.4,
+        0.45
+      ],
+      "source_trim_seconds": [
+        0.0,
+        0.3815208333333333
+      ],
+      "seconds": 0.41952083333333334,
+      "sample_rate": 48000,
+      "bits": 24,
+      "channels": 2,
+      "peak_dbfs": -1.41,
+      "edits": "Trim silence; point attack layer from Eric Berzins; filtered low/mid impact layers from Hove Audio (shorter/quieter for points); 90Hz high-pass, 9.5kHz low-pass (6.5kHz break), low-level 38ms echo, peak level adjustment, edge fades."
+    },
+    {
+      "asset": "Assets\\Audio\\CyberBiker\\StyleScore\\ScoreBank.wav",
+      "guid": "3ba04102485f4ba2bfccd3a34057b6a2",
+      "source": "Tone3/Major/Tone3A_MajorTriadUp.wav",
+      "source_sha256": "52a51513ed09ea2dd5cfc1d76cbaf41574cc1509d67934276b796fe37647c9d0",
+      "attack_source": null,
+      "impact_sources": [
+        "Impacts/Impact_1_Low.wav",
+        "Impacts/Impact_2_Mid.wav"
+      ],
+      "impact_mix_gains": [
+        4.4,
+        0.55
+      ],
+      "source_trim_seconds": [
+        0.0,
+        0.4555208333333333
+      ],
+      "seconds": 0.49352083333333335,
+      "sample_rate": 48000,
+      "bits": 24,
+      "channels": 2,
+      "peak_dbfs": -1.41,
+      "edits": "Trim silence; point attack layer from Eric Berzins; filtered low/mid impact layers from Hove Audio (shorter/quieter for points); 90Hz high-pass, 9.5kHz low-pass (6.5kHz break), low-level 38ms echo, peak level adjustment, edge fades."
+    },
+    {
+      "asset": "Assets\\Audio\\CyberBiker\\StyleScore\\ScoreBreak.wav",
+      "guid": "76a9610105524ab488c8875382009635",
+      "source": "Tone3/Octave/Tone3A_OctaveDown.wav",
+      "source_sha256": "39b91c0e13090905d6c9451329c26d102b9eeca7ae4af81a00576169d13968c8",
+      "attack_source": null,
+      "impact_sources": [
+        "Impacts/Impact_1_Low.wav",
+        "Impacts/Impact_2_Mid.wav"
+      ],
+      "impact_mix_gains": [
+        2.0,
+        0.1
+      ],
+      "source_trim_seconds": [
+        0.0,
+        0.4563125
+      ],
+      "seconds": 0.34,
+      "sample_rate": 48000,
+      "bits": 24,
+      "channels": 2,
+      "peak_dbfs": -4.44,
+      "edits": "Trim silence; point attack layer from Eric Berzins; filtered low/mid impact layers from Hove Audio (shorter/quieter for points); 90Hz high-pass, 9.5kHz low-pass (6.5kHz break), low-level 38ms echo, peak level adjustment, edge fades."
+    }
+  ],
+  "revision": "Heavier impact layers requested after the initial preview.",
+  "impact_source_hashes": {
+    "Impact_1_Low.wav": "10e0ea88a6697edcb07390316ced83a6a0319560a4ef4aaecdc2ae63589ecfce",
+    "Impact_2_Mid.wav": "8f2a22db60e60484603914e9d6afd8fe58f2fa0ff32a11b494f684d889950416"
+  }
+}

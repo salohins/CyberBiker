@@ -1,0 +1,8 @@
+RUNNING
+PASS preset roundtrip, strict reaction-only save, unrelated player data preserved and invalid values rejected.
+PASS paused live head/neck edits, deterministic timeline scrubbing, real preview orbit/zoom events, closeup and Game view.
+PASS close-pass body response, paused lean edit, single-frame step and replay.
+PASS visible shooter retains priority and returns after leaving the view; enemy attention has no car neck layer.
+PASS aiming preview preserves weapon/torso ownership and visible-shooter head attention.
+PASS live scenario playback and edits outside paused mode.
+PASS all Rider Reactions Lab checks.

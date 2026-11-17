@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using CyberBiker.Player;
 using CyberBiker.UI;
+using CyberBiker.Balance;
+using System.Reflection;
 using Gameplay;
 using TMPro;
 using UnityEditor;
@@ -94,12 +96,13 @@ public static class TestingSettingsChecks {
                 var body = player.GetComponent<Rigidbody>(); body.useGravity = false;
                 body.position = new Vector3(0, 1000, body.position.z); body.linearVelocity = Vector3.zero;
                 menu.Open(); Require(menu.IsOpen && Time.timeScale == 0, "Opening settings must pause riding");
-                Require(menu.GetComponentsInChildren<TMP_InputField>(true).Length == 10, "Expected ten tuning fields");
+                int balanceFields=new[]{typeof(ScoreBalanceTuning),typeof(TriggerBalanceTuning)}.Sum(t=>t.GetFields().Count(f=>f.GetCustomAttribute<BalanceControlAttribute>()!=null && f.FieldType!=typeof(bool)));
+                Require(menu.GetComponentsInChildren<TMP_InputField>(true).Length == 18+balanceFields, "Expected original tuning fields, Launch energy settings and every numeric balance control");
                 Enter("Max speed", "100"); Enter("Acceleration", "450");
                 Enter("Steering acceleration", "70"); Enter("Sideways speed", "25");
                 Enter("Launch multiplier", "1.70"); Enter("Launch duration", "10");
                 Enter("Pistol damage", "22"); Enter("Shot interval", "0.65"); Enter("Enemy distance", "35");
-                Enter("Touch sensitivity", "14.5");
+                Enter("Touch sensitivity", "14.5");Enter("Score motion","0");Enter("Score sounds","0.4");
                 Near(player.ConfiguredMaxSpeed, TestingSettings.Defaults.maxSpeed, "Draft must not apply before button press");
                 Require(!PlayerPrefs.HasKey(TestingSettings.PreferenceKey), "Editing draft must not save preferences");
                 Next();
@@ -123,6 +126,7 @@ public static class TestingSettingsChecks {
                 Near(player.SteeringAcceleration, 70, "Live steering acceleration"); Near(player.SteeringSpeedLimit, 25, "Live sideways limit");
                 Near(gameplay.PlayerPistolDamage, 22, "Live damage"); Near(gameplay.PlayerPistolShotInterval, .65f, "Live interval");
                 Near(gameplay.EnemyDistanceFromPlayer, 35, "Global distance");
+                Near(gameplay.StyleScoring.animationIntensity,0,"Live reduced score motion");Near(gameplay.StyleScoring.soundVolume,.4f,"Live score sound level");
                 Near(player.GetComponent<TouchInputManager>().TouchSteeringSensitivity, 14.5f, "Live touch sensitivity");
                 Near(player.GetComponent<BikeSwordCombat>().TestingSpeedMultiplier, 1.7f, "Launch multiplier");
                 Near(player.GetComponent<BikeSwordCombat>().TestingLaunchDuration, 10, "Launch duration");
@@ -145,16 +149,18 @@ public static class TestingSettingsChecks {
                 if (menu == null || menu.Draft == null) return;
                 Near(player.NormalSpeedLimit, 100, "Saved speed on restart"); Near(gameplay.EnemyDistanceFromPlayer, 35, "Saved global distance");
                 Near(gameplay.PlayerPistolDamage, 22, "Saved damage");
+                Near(gameplay.StyleScoring.animationIntensity,0,"Saved reduced score motion");Near(gameplay.StyleScoring.soundVolume,.4f,"Saved score sound level");
                 Near(TestingSettings.Defaults.maxSpeed, originalSpeed, "Restart must retain original defaults");
                 Near(player.GetComponent<TouchInputManager>().TouchSteeringSensitivity, 14.5f, "Saved touch sensitivity");
                 gameplay.SwitchGameState(GameState.Pause);
                 menu.Open(); menu.ResetDraft(); menu.Apply(false);
                 Near(player.NormalSpeedLimit, originalSpeed, "Reset restores scene speed");
+                Near(gameplay.StyleScoring.animationIntensity,TestingSettings.Defaults.scoreAnimationIntensity,"Reset score motion");Near(gameplay.StyleScoring.soundVolume,TestingSettings.Defaults.scoreSoundVolume,"Reset score sound level");
                 Near(player.GetComponent<TouchInputManager>().TouchSteeringSensitivity, TestingSettings.Defaults.touchSensitivity, "Reset touch sensitivity");
                 Near(gameplay.EnemyDistanceFromPlayer, TestingSettings.Defaults.enemyDistance, "Reset restores global distance");
                 Require(!PlayerPrefs.HasKey(TestingSettings.PreferenceKey), "Reset must remove saved overrides");
                 Require(gameplay.gameState == GameState.Pause && !gameplay.IsResuming, "Settings opened from pause must remain paused");
-                Finish(true, "PASS: original defaults, ten touch-friendly numeric/slider controls, scroll layout, unit conversion, draft/cancel, live motor speed/acceleration/steering, swipe sensitivity, global enemy distance, pistol damage/fire interval, launch tuning, pause/countdown, saved settings across restart, reset to authored defaults and prior-pause preservation. Native overlay-equivalent menu screenshots captured.");
+                Finish(true, "PASS: original defaults, fifteen touch-friendly numeric/slider controls, score motion/volume saved and reset, scroll layout, unit conversion, draft/cancel, live motor speed/acceleration/steering, swipe sensitivity, global enemy distance, pistol damage/fire interval, launch tuning, pause/countdown, saved settings across restart, reset to authored defaults and prior-pause preservation. Native overlay-equivalent menu screenshots captured.");
             }
         } catch (Exception exception) { Finish(false, exception.ToString()); }
     }

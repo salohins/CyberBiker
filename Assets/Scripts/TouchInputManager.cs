@@ -48,8 +48,10 @@ public partial class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlaye
 
     void Update() {
         UpdateTapControls();
+        UpdateGyroscopeInput();
         if (gm != null && gm.gameState != GameState.Playing) { aim = false; tapPlayer?.CancelPistolTaps();ClearTapPointers();delta = Vector2.zero; drag = Vector2.zero; return; }
         delta = Vector2.zero;
+        float keyboardSteering=0;
 
         if (leftPressed && rightPressed) {
 
@@ -70,6 +72,7 @@ public partial class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlaye
         if (Input.touchCount == 0) {
 
             float horizontal = Input.GetAxisRaw("Horizontal");
+            keyboardSteering=horizontal;
             if (horizontal != 0) drag = new Vector2(horizontal, 0);
             delta = new Vector2(Input.GetAxis("Mouse X") * 5f, Input.GetAxis("Mouse Y") * 5f);
 
@@ -109,7 +112,7 @@ public partial class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlaye
                 }
 
             }
-            else {
+            else if(!UsesGyroscopeSteering) {
                 drag += touch.deltaPosition / (2000 - 100 * touchSensitivity);
                 drag = touch.phase == TouchPhase.Ended && Input.touchCount == 1 ? Vector2.zero : Vector2.ClampMagnitude(drag, 1);
 
@@ -118,7 +121,7 @@ public partial class TouchInputManager : MonoBehaviour, CyberBiker.Player.IPlaye
                 }
             }
         }
-
+        if(UsesGyroscopeSteering && keyboardSteering==0)drag=new Vector2(gyroSteering,0);
     }
 
     // Existing scene buttons use this callback as a toggle, including a false argument.

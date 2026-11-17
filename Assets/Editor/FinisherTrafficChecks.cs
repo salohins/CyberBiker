@@ -65,7 +65,7 @@ public static class FinisherTrafficChecks {
                 CheckAttackSide(sword);
                 kicks=player.GetComponent<BikeImpactResponse>().KickCount;stage=1;
             }
-            if(stage==1 && sword.Phase==BikeSwordCombat.CombatPhase.Striking) {
+            if(stage==1 && sword.IsDashing) {
                 Require(sword.TrafficProtected,"Protection must start by the committed dash");
                 SpawnCar(player.transform.position+Vector3.up*1.2f);dashX=body.linearVelocity.x;input.value=.8f;stage=2;
             } else if(stage==2) {
@@ -103,8 +103,10 @@ public static class FinisherTrafficChecks {
                 Require(gm.gameState==GameState.Playing,"Clearing an overlapping car must be safe");
                 if(Physics.GetIgnoreCollision(bikeShape,carShape))return;
                 Require(!sword.IgnoresTraffic(carShape),"A separated car must return to normal collisions");
+                sword.GainLaunchEnergy(100000);Require(sword.LaunchCharge>.99f,"Crash fixture must begin fully charged");
                 body.linearVelocity=new Vector3(0,0,110);SpawnCar(player.transform.position+new Vector3(0,1.2f,8));stage=7;
             } else if(stage==7 && gm.gameState==GameState.Hit) {
+                Require(sword.LaunchCharge==0 && !sword.IsPursuing,"Actual car crash must burn all Launch energy");
                 Finish(true,"PASS: actual finisher survives an overlapping real car through dash, hit, slow motion and 0.8-second grace; manual steering accelerates during dash and reverses after contact; normal motor owns post-hit movement; pause freezes grace; cars remain intact; no collision kick; expiry inside a car waits for separation; collisions restore after clearing; a subsequent ordinary rear collision still crashes. Front/near-centre/left targets choose the left swing; right targets choose the right swing. Owned-pair cleanup, pooled collider reuse, walls, old presets and saved grace also checked.");
             }
         }catch(Exception error){Finish(false,error.ToString());}
@@ -116,10 +118,10 @@ public static class FinisherTrafficChecks {
         try {
             foreach(float x in new[]{0f,.2f,-3f,3f}) {
                 target.transform.position=sword.transform.position+new Vector3(x,0,10);Physics.SyncTransforms();
-                Require((bool)canStart.Invoke(sword,new object[]{0f}),"Attack-side target must be reachable");
+                Require((bool)canStart.Invoke(sword,null),"Attack-side target must be reachable");
                 Require(sword.LastAttackSide==(x>1 ? BikeSwordCombat.AttackSide.Right : BikeSwordCombat.AttackSide.Left),"Front must prefer left, with right reserved for a target on the right; x="+x);
             }
-        } finally {target.transform.position=original;Physics.SyncTransforms();canStart.Invoke(sword,new object[]{20f});}
+        } finally {target.transform.position=original;Physics.SyncTransforms();canStart.Invoke(sword,null);}
     }
     private static void CheckSave() {
         var draft=FinisherLabTuning.ReadSavedDefaults();draft.Get("trafficRecoveryGrace").number=1.2f;

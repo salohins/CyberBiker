@@ -1,0 +1,6 @@
+RUNNING
+PASS default arithmetic retained; live combo growth/caps and fractional hit banking; deep draft copies; legacy field overlay; finite/range/cross-field validation; invalid/future/oversized preset rejection.
+PASS all numeric balance controls exist; tabs render; draft/cancel/import separation; portable JSON and exact file bytes; actual bullet pass obeys tuned radius and points; actual damage obeys tuned payout once; authored assets unchanged.
+PASS new balance groups save across scene restart; original defaults remain intact; Reset stays a draft until Apply and clears saved overrides.
+PASS old saved JSON containing only existing fields loads without zeroing the new scoring and trigger settings.
+PASS native balance tuning and export/import checks.

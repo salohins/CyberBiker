@@ -44,6 +44,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd03f714c55dab45ab39b3143c4c867, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  styleScoring:
+    enabled: 1
+    distancePointsPerUnit: 0.01
+    comboWindow: 5
+    maximumMultiplier: 10
+    stepsPerMultiplier: 4
+    repetitionValue: 0.72
+    minimumRepeatValue: 0.25
+    minimumAwardPoints: 1
+    holdComboDuringFinisher: 1
+    alternateCarveSides: 1
+    varietySteps: 2
+    repeatSteps: 1
+    impactPayoutFraction: 0.5
+    pistolHit: 40
+    pistolKill: 350
+    swordFinisher: 800
+    bulletDodge: 150
+    perfectDodge: 350
+    nearMiss: 120
+    gapPass: 300
+    speedRun: 100
+    hardCarve: 75
+    nearMissClearance: 1.2
+    minimumDrivingSpeed: 25
+    cleanSpeedInterval: 8
+    carveSteering: 0.75
+    carveHold: 0.45
+    minimumNearMissClearance: 0.03
+    razorClearance: 0.35
+    razorMultiplier: 2
+    carveCooldown: 2
+    postHitDrivingCooldown: 2
+    speedThreshold: 0.9
+    preventPassiveSpeedChains: 1
+    passiveSpeedGap: 1
+    displayFont: {fileID: 0}
+    popupTypeface: {fileID: 12800000, guid: 9dc78168258c6b146897cb60954919e4, type: 3}
+    showHud: 1
+    worldPopups: 1
+    worldNumberLifetime: 0.9
+    worldNumberScale: 0.018
+    worldNumberBrightness: 0.82
+    worldNumberAppearanceBrightness: 0.94
+    worldNumberGlowSettle: 0.22
+    worldNumberBackgroundOpacity: 0.96
+    worldNumberNearDistance: 16
+    worldNumberRise: 0.45
+    worldNumberOffset: {x: 0, y: 0.9, z: 0}
+    reducedMotion: 0
+    animationIntensity: 1
+    soundVolume: 0.75
+    hudPosition: {x: 0.5, y: 0.82}
+    hudScale: 1
+    boardScorePunch: 0.18
+    boardMultiplierPunch: 0.32
+    boardSweepStrength: 0.19
+    boardBankCountSeconds: 0.32
+    boardComboEnergy: 0.75
   enemyDistanceFromPlayer: 20
   pistolDamagePerShot: 15
   secondsBetweenPistolShots: 0.45

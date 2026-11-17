@@ -1,0 +1,2 @@
+System.Exception: Committed gap abandoned when Launch energy expired: Gap assist requires Launch mode. Â· dashes 1 Â· cleared 0 Â· gap 2.11 m
+  at GapLaunchContinuityChecks.Tick () [0x0019e] in C:\Users\salek\Documents\ChatGPT\cb\Logs\RefactorValidation\Assets\Editor\GapLaunchContinuityChecks.cs:55 

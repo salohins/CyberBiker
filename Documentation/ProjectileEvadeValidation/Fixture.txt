@@ -1,0 +1,1 @@
+Player collider Motorcycle Center: (0.00, 1.71, 49.96), Extents: (0.68, 0.67, 1.71) shot (0.00, 1.71, 72.67) impact 0.7001051

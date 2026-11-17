@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 namespace CyberBiker.Audio {
-    public enum SoundCue { PlayerShot, EnemyShot, Impact, Explosion, Pickup, Crash, UiClick, EnemyFinisherReady, EnemyFinisherWarning, PistolHitConfirm, PlayerHurt, BulletNearMiss }
+    public enum SoundCue { PlayerShot, EnemyShot, Impact, Explosion, Pickup, Crash, UiClick, EnemyFinisherReady, EnemyFinisherWarning, PistolHitConfirm, PlayerHurt, BulletNearMiss, EnemyShotWarning, EvadeReady, BulletEvade, PerfectEvade }
     public readonly struct SoundEvent {
         public SoundCue Cue { get; }
         public Vector3 Position { get; }

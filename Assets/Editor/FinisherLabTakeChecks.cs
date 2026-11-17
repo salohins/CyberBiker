@@ -10,7 +10,7 @@ public static class FinisherLabTakeChecks {
     private const string Key="CyberBiker.TakeChecks.";
     private static int stage;
     private static double began,heartbeat;
-    private static bool finishing,sawSlow;
+    private static bool finishing,sawSlow,sawDashCamera;
     static FinisherLabTakeChecks(){if(SessionState.GetBool(Key+"Pending",false))EditorApplication.delayCall+=Attach;}
     private static void Require(bool value,string message){if(!value)throw new Exception(message);}
     public static void CheckPersistence() {
@@ -34,6 +34,7 @@ public static class FinisherLabTakeChecks {
         var tuning=FinisherLabTuning.ReadSavedDefaults();
         tuning.Get("drawPlaybackSpeed").number=1.4f;tuning.Get("strikePlaybackSpeed").number=1;tuning.Get("sliceReturnPlaybackSpeed").number=1.5f;
         tuning.Get("slowMotionEnabled").number=1;tuning.Normalize();
+        tuning.Get("dashCameraFovOffset").number=8;tuning.Get("dashCameraPosition.x").number=1.1f;tuning.Get("dashCameraRotation.z").number=9;
         SessionState.SetBool(Key+"Pending",true);SessionState.SetInt(Key+"Stage",1);
         FinisherLabPreview.CaptureLength=3;FinisherLabPreview.Sound=false;FinisherLabPreview.Left=true;FinisherLabPreview.RecordTake(tuning);
     }
@@ -50,14 +51,27 @@ public static class FinisherLabTakeChecks {
             if(EditorApplication.timeSinceStartup-began>180)throw new Exception("Take capture timed out at stage "+stage+": "+FinisherLabPreview.Status);
             if(EditorApplication.timeSinceStartup-heartbeat>3){heartbeat=EditorApplication.timeSinceStartup;File.AppendAllText("Logs/FinisherTake/progress.txt","stage="+stage+" recording="+FinisherLabPreview.Recording+" frames="+(FinisherLabPreview.Take?.FrameCount ?? 0)+" "+FinisherLabPreview.Status+"\n");}
             if(stage==1 && FinisherLabPreview.Recording && Time.timeScale<.95f)sawSlow=true;
+            if(stage==1 && FinisherLabPreview.Recording && FinisherLabPreview.Effects!=null && FinisherLabPreview.Effects.LastDashCameraFovOffset>1)sawDashCamera=true;
             if(stage==1 && FinisherLabPreview.Take!=null && FinisherLabPreview.ViewingTake && !FinisherLabPreview.Recording) {
                 var take=FinisherLabPreview.Take;Require(sawSlow,"Enabled slow motion must actually slow the world");
+                Require(sawDashCamera && FinisherLabPreview.Sword.LaunchCount==0,"Recording must include the independent dash camera without manual Launch/nitro entry");
                 Require(take.FrameCount>60,"Expected a multi-frame 3D take");
                 foreach(var phase in new[]{BikeSwordCombat.CombatPhase.Drawing,BikeSwordCombat.CombatPhase.Striking,BikeSwordCombat.CombatPhase.Sheathing,BikeSwordCombat.CombatPhase.Recovering})
                     Require(take.PhaseFrameCount(phase)>=2,"Take must include the complete "+phase+" transition");
                 Require(take.ExplosionTime>take.ImpactTime && take.ImpactTime>0,"Hit and explosion must be separate recorded events");
                 Require(EditorApplication.isPaused && FinisherClock.EditorCaptureStep==0 && Time.captureDeltaTime==0,"Recording must pause and restore the ordinary clock");
                 int hits=FinisherLabPreview.Sword.HitCount;float score=FinisherLabPreview.Gameplay.score;var position=FinisherLabPreview.Player.transform.position;
+                var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+                var frames=(System.Collections.IList)typeof(FinisherLabTake).GetField("frames",flags).GetValue(take);
+                var rig=Camera.main.GetComponent<CameraController>();var combat=new SerializedObject(rig).FindProperty("combatRiding");
+                Require(rig.CombatCameraAmount>.999f && rig.CombatEnemyNearby,"Recorded preview must retain combat mode after the kill");
+                var firstFrame=frames[0];var firstRotation=(Quaternion)firstFrame.GetType().GetField("cameraRotation").GetValue(firstFrame);
+                Require(Mathf.Abs(Mathf.DeltaAngle(firstRotation.eulerAngles.x,combat.FindPropertyRelative("pitch").floatValue))<1,"Take must start at saved combat pitch, without a cruise transition");
+                Require(Mathf.Abs((float)firstFrame.GetType().GetField("fov").GetValue(firstFrame)-combat.FindPropertyRelative("fov").floatValue)<1,"Take must start at saved combat FOV");
+                object dashFrame=null;foreach(var frame in frames)if((BikeSwordCombat.CombatPhase)frame.GetType().GetField("phase").GetValue(frame)==BikeSwordCombat.CombatPhase.Drawing && (float)frame.GetType().GetField("time").GetValue(frame)>.2f){dashFrame=frame;break;}
+                Require(dashFrame!=null,"No recorded dash camera frame");FinisherLabPreview.SeekTake((float)dashFrame.GetType().GetField("time").GetValue(dashFrame));take.GameplayCamera();
+                var preview=(PreviewRenderUtility)typeof(FinisherLabTake).GetField("preview",flags).GetValue(take);
+                Require(Mathf.Abs(preview.camera.fieldOfView-(float)dashFrame.GetType().GetField("fov").GetValue(dashFrame))<.001f && Vector3.Distance(preview.camera.transform.position,(Vector3)dashFrame.GetType().GetField("cameraPosition").GetValue(dashFrame))<.001f && Quaternion.Angle(preview.camera.transform.rotation,(Quaternion)dashFrame.GetType().GetField("cameraRotation").GetValue(dashFrame))<.01f,"Recorded dash camera pose/FOV did not restore on seek");Image("DashGameCamera");
                 float early=take.FirstPhaseTime(BikeSwordCombat.CombatPhase.Striking)+.1f;
                 FinisherLabPreview.SeekTake(take.ImpactTime+.05f);Require(take.SelectedWorldSpeed<1,"Recorded world-speed display must reflect the selected slow-motion frame");
                 FinisherLabPreview.SeekTake(early);Require(take.RenderedParticleCount==take.SelectedParticleCount,"Particle buffers must restore exactly");

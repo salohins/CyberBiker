@@ -1,0 +1,2 @@
+System.Exception: No pass for countersteer from right: Approach a gap between two cars. Â· dashes 0 Â· cleared 0 Â· gap 0.00 m
+  at GapSideEntryChecks.Tick () [0x0010b] in C:\Users\salek\Documents\ChatGPT\cb\Logs\RefactorValidation\Assets\Editor\GapSideEntryChecks.cs:57 

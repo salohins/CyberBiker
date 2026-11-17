@@ -1,0 +1,68 @@
+{
+  "dry_note": "Installed score clips at twice production dry gain for comfortable standalone listening.",
+  "mix_note": "Approximate straight full-speed engine/wind bed using current prefab gains and 1.913 cruise pitch, including the existing 5dB reward duck. Unity reverb, 3D attenuation, gunfire and traffic are not included.",
+  "events": [
+    {
+      "time": 0,
+      "clip": "ScorePoint_01",
+      "cue_gain": 0.65,
+      "pitch": 1
+    },
+    {
+      "time": 0.3,
+      "clip": "ScorePoint_02",
+      "cue_gain": 0.65,
+      "pitch": 1.035
+    },
+    {
+      "time": 0.6,
+      "clip": "ScorePoint_03",
+      "cue_gain": 0.65,
+      "pitch": 1.06
+    },
+    {
+      "time": 1.1,
+      "clip": "ScoreMultiplier",
+      "cue_gain": 0.9,
+      "pitch": 1
+    },
+    {
+      "time": 1.85,
+      "clip": "ScorePoint_02",
+      "cue_gain": 0.65,
+      "pitch": 1.08
+    },
+    {
+      "time": 2.15,
+      "clip": "ScorePoint_01",
+      "cue_gain": 0.65,
+      "pitch": 1.12
+    },
+    {
+      "time": 2.65,
+      "clip": "ScoreMultiplier",
+      "cue_gain": 0.9,
+      "pitch": 1
+    },
+    {
+      "time": 3.5,
+      "clip": "ScoreBank",
+      "cue_gain": 1,
+      "pitch": 1
+    },
+    {
+      "time": 4.7,
+      "clip": "ScoreBreak",
+      "cue_gain": 0.65,
+      "pitch": 1
+    }
+  ],
+  "dry": {
+    "peak_dbfs_before_preview_gain": -3.1185213876712083,
+    "preview_gain": 1
+  },
+  "mix": {
+    "peak_dbfs_before_preview_gain": -7.618571046242817,
+    "preview_gain": 1
+  }
+}

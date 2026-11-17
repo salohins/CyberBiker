@@ -3,6 +3,7 @@ using CyberBiker.Pooling;
 
 namespace CyberBiker.Combat {
     public sealed class ProjectileWeapon : Weapon {
+        public Bullet LastProjectile {get;private set;}
         private readonly GameObject projectile;
         private readonly Transform parent;
         private float damage;
@@ -21,6 +22,7 @@ namespace CyberBiker.Combat {
                 Quaternion.LookRotation(request.Direction), parent);
             var bullet = instance.GetComponent<Bullet>();
             if (bullet != null) bullet.Initialize(request.Owner, damage);
+            LastProjectile=bullet;
             if (request.Owner != null) CyberBiker.Audio.SoundEvents.Emit(
                 request.Owner.GetComponent<PlayerController>() != null ? CyberBiker.Audio.SoundCue.PlayerShot : CyberBiker.Audio.SoundCue.EnemyShot,
                 request.Origin);

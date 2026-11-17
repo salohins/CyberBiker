@@ -1,0 +1,5 @@
+PASS 12 independent Dash camera controls; vector axes and preset round trip; old draft migration; invalid input rejected; tuning saved on prefab copy with original untouched.
+PASS live left dash FOV/position/rotation; mirrored or fixed side; paused edits render without camera drift or gameplay advancement; swing/impact controls independent; entry and exit timing tested at fixed real-time steps.
+PASS Replay clears left state, retains dash tuning and correctly mirrors the right dash.
+PASS dash blends out through the actual swing and kill; impact and carried explosion still play; dash camera fully releases afterward.
+PASS independent finisher dash camera checks.

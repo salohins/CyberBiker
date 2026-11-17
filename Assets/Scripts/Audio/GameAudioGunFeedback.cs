@@ -1,6 +1,13 @@
 using UnityEngine;
 namespace CyberBiker.Audio {
     public sealed partial class GameAudio {
+        private void PlayEvadeFeedback(SoundEvent sound){
+            if(paused || masterVolume<=0)return;
+            if(sound.Cue==SoundCue.BulletEvade){Play(bulletNearMiss,sound.Position,bulletNearMissVolume,1.08f,true,priority:28);return;}
+            if(sound.Cue==SoundCue.PerfectEvade){Play(pickup,Vector3.zero,interfaceVolume*.65f,1.15f,true,priority:26);return;}
+            Play(uiClick,sound.Position,interfaceVolume*(sound.Cue==SoundCue.EvadeReady ? .65f : .35f),sound.Cue==SoundCue.EvadeReady ? 1.45f : .8f,sound.Cue==SoundCue.EvadeReady,priority:30);
+            finisherDuckAge=0;UpdateFinisherDucking(0);ApplyRidingLevels();
+        }
         [Header("Pistol combat feedback")]
         [SerializeField] private AudioClip pistolHitConfirm;
         [SerializeField] private AudioClip playerDamageThud;

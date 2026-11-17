@@ -21213,7 +21213,8 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bcd03f714c55dab45ab39b3143c4c867, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
+  closeDodgeProfile: {fileID: 11400000, guid: 9fdfc270a9a44f9ca89179386fb7a213, type: 2}
 --- !u!114 &1416553922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21226,9 +21227,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54982a0cf6bcc5745b636da22ecb3161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameDuration: 3
+  startMode: 0
+  constantCombatDifficulty: {fileID: 3274471787456314188, guid: c4463e6cb7ab74f409918e53ecc851a3, type: 3}
+  gameDuration: 5
   difficultySections:
-  - {fileID: 3274471787456314188, guid: c4463e6cb7ab74f409918e53ecc851a3, type: 3}
+  - {fileID: 3274471787456314188, guid: d35c79a4871842f5802448af0d076092, type: 3}
+  - {fileID: 3274471787456314188, guid: ef30beaa1b224b36935f638c66f6a9c8, type: 3}
+  - {fileID: 3274471787456314188, guid: 1b67f5bb87504beb920fd6fa8a82cb10, type: 3}
+  - {fileID: 3274471787456314188, guid: 66c435c330914a8ebed2203e66614593, type: 3}
+  - {fileID: 3274471787456314188, guid: 163c4722019a4adc9fd600e9a58b7d1f, type: 3}
+  - {fileID: 3274471787456314188, guid: 3906467cd96348609e7a533c293e3730, type: 3}
+  - {fileID: 3274471787456314188, guid: 56f0d759580640c1aa86d5fe2d8daa5e, type: 3}
+  - {fileID: 3274471787456314188, guid: 454f84956371402292ad374366bd7e5a, type: 3}
+  loopFromSection: 6
   currentDifficulty: {fileID: 0}
 --- !u!1 &1421349450
 GameObject:
@@ -35309,6 +35320,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 1486146349346729291, guid: 66af00c5d1b479c4cbcfc1efe0b64836, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3253376787485478577, guid: 66af00c5d1b479c4cbcfc1efe0b64836, type: 3}
       propertyPath: bulletParent
       value: 
@@ -36152,15 +36167,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3910659230279519786, guid: faa7063db795e1e4cbe53403e3b67948, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.9
+      value: 1.71
       objectReference: {fileID: 0}
     - target: {fileID: 3910659230279519786, guid: faa7063db795e1e4cbe53403e3b67948, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.9
+      value: 1.71
       objectReference: {fileID: 0}
     - target: {fileID: 3910659230279519786, guid: faa7063db795e1e4cbe53403e3b67948, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.9
+      value: 1.71
       objectReference: {fileID: 0}
     - target: {fileID: 3910659230279519786, guid: faa7063db795e1e4cbe53403e3b67948, type: 3}
       propertyPath: m_LocalPosition.x

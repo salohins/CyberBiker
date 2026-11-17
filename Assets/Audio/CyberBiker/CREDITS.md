@@ -143,3 +143,73 @@ BulletWhiz.wav is a short mono extract of **Sword or Bullet Swish/Swosh 12.flac*
 PistolHit.wav uses **body_hit.wav** by **insanity54**, CC0 1.0: https://freesound.org/people/insanity54/sounds/276600/ . A recorded gloved-hand/helmet impact, extracted from 4 ms before the 5%-of-peak onset for 200 ms, with 1 ms/35 ms edge fades and peak normalization to 0.94. The HQ preview is retained as PistolHit_Recorded.mp3. This replaces the UI click as the confirmed-damage cue.
 
 License, download URLs and SHA-256 hashes are in Licenses/GunFeedbackSources.json. Incoming-damage thud still reuses Kenney's impactPlate_heavy_000.ogg, already credited above. The existing pistol shot recording and its mix ducking remain assigned.
+
+
+## Carbon score reference (active local prototype)
+
+The local user-requested experiment loads four original **Need for Speed:
+Carbon** PC interface/drift clips from Resources/CarbonScorePrototype.
+These remain EA / EA Black Box game assets; the archive supplies no release
+license. This local folder and its metadata are ignored by Git.
+
+Sources (The Sounds Resource, uploaded by WF4123):
+https://sounds.spriters-resource.com/pc_computer/needforspeedcarbon/asset/441631/
+https://sounds.spriters-resource.com/pc_computer/needforspeedcarbon/asset/441632/
+
+The experiment maps drift bank entries 4, 3 and 1 to point, multiplier and
+bank rewards, and front-end bank entry 3 to combo loss. These are proposed
+roles for CyberBiker, not verified names of their original Carbon events.
+Only gain is changed: timing, pitch and 44.1kHz/16-bit mono format are retained.
+There are no scratch/click layers. CyberBikerAudio's Use Carbon Score Prototype
+loads the local set at startup if every file is present. Without it, the
+assigned licensed fallback remains usable. See Documentation/CarbonScorePrototype.md.
+
+## Clean arcade score sounds (licensed fallback)
+
+The active score cues now use **WobbleBoxx Workshop — Level up, power up, Coin
+get (13 Sounds)**, CC0-1.0:
+https://opengameart.org/content/level-up-power-up-coin-get-13-sounds .
+Download: https://opengameart.org/sites/default/files/SoundPack01.zip .
+
+`CleanArcadeScore/ArcadePoint.wav` uses `Coin01.aif` (340ms),
+`ArcadeMultiplier.wav` uses `Rise01.aif` (780ms), `ArcadeBank.wav` uses
+`Rise03.aif` (1s), and `ArcadeBreak.wav` uses `Downer01.aif` (700ms).
+Each has exactly one source. Edits are tail trimming, gain, small boundary
+fades and conversion from 44.1kHz/24-bit stereo AIFF to project-rate
+48kHz/24-bit stereo WAV. No impact/click layers, added echo, EQ, distortion
+or synthesized sources are used. One consistent point cue replaces random
+click variants. The existing rate limit, restrained pitch progression,
+volume controls, pooled playback, pause and reward ducking still apply.
+
+## Previous sci-fi score experiment (unassigned)
+
+The files below are retained only as previous experiment assets. None is
+assigned to score playback in CyberBikerAudio.prefab.
+
+`StyleScore/ScorePoint_01.wav` through `_03.wav`, `ScoreMultiplier.wav`,
+`ScoreBank.wav` and `ScoreBreak.wav` use **Hove Audio — Free SCI-FI UI Sound
+Effects Pack**, https://hoveaudio.itch.io/free-sci-fi-ui-sound-effects-pack .
+The author permits use and modification in commercial games, royalty free.
+Source files are 48 kHz / 24-bit stereo. Tone3 A/B/C are the point bodies;
+Tone3A_FifthUp, Tone3A_MajorTriadUp and Tone3A_OctaveDown provide multiplier,
+bank and combo-loss cues. These are downloaded effects, not newly synthesized clips.
+
+The point sounds also mix a quiet attack from **Eric Berzins — Ultra Sci-Fi
+Game Audio UI Pack**, `UIClick_UI 03_Eric Berzins_SFUI.wav`, 48 kHz / 16-bit mono.
+Source/license: https://eberzins.itch.io/ultra-sci-fi-game-audio-ui-pack .
+Royalty-free game embedding/mixing is permitted; attribution is optional.
+Do not sell the sounds as a library, claim authorship, or use them for AI training.
+
+After preview feedback, low/mid impact layers from Hove Audio's
+`Impact_1_Low.wav` and `Impact_2_Mid.wav` add weight beneath the tones, strongest
+on multiplier and banking cues. Point impact tails are cut to 180/100 ms.
+Edits: trimmed silence, high-pass at 90 Hz, high-frequency softening, a quiet
+38 ms reflection, measured peak adjustment and edge fades. Point cues are
+220 ms; multiplier 420 ms; bank 494 ms; combo-loss 340 ms. Source stereo is
+retained, with 24-bit PCM WAV assets and decompressed PCM import for low-latency
+mobile playback. Runtime point pitch rises only from 1.00 to 1.12; composed
+reward cues play at their original pitch. Clips and separate cue gains are
+exposed on CyberBikerAudio → Style Score Sounds. Overall volume remains under
+GameplayManager → Style Scoring and the game's TUNE menu.
+Full source filenames, hashes, trim ranges, levels and GUIDs:
+`Licenses/StyleScoreSources.json`.

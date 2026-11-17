@@ -19,18 +19,55 @@ namespace CyberBiker.Player {
         [SerializeField, Min(.05f)] private float boostRiseTime = .45f;
         [SerializeField, Min(.05f)] private float boostFallTime = .5f;
         [SerializeField, Min(1)] private float launchDuration = 7;
+        [Header("Launch energy")]
+        [Tooltip("Score needed to refill an empty Launch bar. Scoring moves refill immediately; banking does not count them twice.")]
+        [SerializeField, Min(1)] private float launchScoreForFullCharge=1500;
+        [SerializeField, Range(.01f,1)] private float minimumLaunchCharge=.1f;
+        [SerializeField, Range(0,1)] private float startingLaunchCharge=1;
+        private float launchCharge;
+        private bool launchChargeInitialized;
+        private LaunchEnergyHud energyHud;
+        public LaunchEnergyHud EnergyHud=>energyHud;
+        public float LaunchCharge=>launchCharge;
+        public bool CanStartLaunch=>launchChargeInitialized && launchCharge>=minimumLaunchCharge;
+        public float TestingLaunchRefillScore {get=>launchScoreForFullCharge;set=>launchScoreForFullCharge=Mathf.Clamp(value,1,100000);}
+        public float TestingLaunchMinimumCharge {get=>minimumLaunchCharge*100;set=>minimumLaunchCharge=Mathf.Clamp(value,1,100)*.01f;}
+        public float TestingLaunchStartingCharge {get=>startingLaunchCharge*100;set=>startingLaunchCharge=Mathf.Clamp(value,0,100)*.01f;}
+        public void BurnLaunchEnergy(){
+            launchCharge=0;launchRunning=false;boost=0;
+            if(Phase==CombatPhase.Pursuing)ReturnSword(true);
+        }
+        private void LaunchStateChanged(GameState previous,GameState current){if(current==GameState.Hit || current==GameState.GameOver)BurnLaunchEnergy();}
+#if UNITY_EDITOR
+        public void ResetLaunchEnergyForPreview(){launchCharge=1;}
+#endif
+        public void GainLaunchEnergy(float score){
+            if(!launchChargeInitialized || !isActiveAndEnabled || gameplay==null || gameplay.gameState!=GameState.Playing || !player.IsAlive || score<=0 || float.IsNaN(score) || float.IsInfinity(score))return;
+            float before=launchCharge;launchCharge=Mathf.Clamp01(launchCharge+score/Mathf.Max(1,launchScoreForFullCharge));
+            if(launchCharge>before && score>=1)energyHud?.Refilled();
+        }
         public float TestingSpeedMultiplier { get => speedMultiplier; set => speedMultiplier = Mathf.Clamp(value, 1, 2); }
         public float TestingLaunchDuration { get => launchDuration; set => launchDuration = Mathf.Clamp(value, 1, 30); }
+        public void ReadBalanceTriggers(CyberBiker.Balance.TriggerBalanceTuning value){
+            value.swordTargetRange=targetRange;value.swordPickupRange=pickupRange;value.swordSideRange=pickupSideRange;value.swordVerticalReach=verticalReach;value.swordStopDistance=dashStopDistance;value.swordRightThreshold=rightAttackSideThreshold;value.swordCooldown=cooldown;value.swordChainDelay=chainPickupDelay;value.swordTrafficGrace=trafficRecoveryGrace;
+        }
+        public void ApplyBalanceTriggers(CyberBiker.Balance.TriggerBalanceTuning value){
+            targetRange=value.swordTargetRange;pickupRange=value.swordPickupRange;pickupSideRange=value.swordSideRange;verticalReach=value.swordVerticalReach;dashStopDistance=value.swordStopDistance;rightAttackSideThreshold=value.swordRightThreshold;cooldown=value.swordCooldown;chainPickupDelay=value.swordChainDelay;trafficRecoveryGrace=value.swordTrafficGrace;
+        }
         [SerializeField, Min(0)] private float cooldown = .6f;
         [SerializeField] private KeyCode launchKey = KeyCode.Space;
         [Header("Pickup targeting")]
+        [Tooltip("Maximum distance for selecting and immediately dashing to a glowing, finisher-ready enemy. No close-range approach is required.")]
         [SerializeField, Min(5)] private float targetRange = 150;
         [SerializeField, Min(.2f)] private float verticalReach = 3;
         [Tooltip("Enemies directly ahead use the left swing. Use the right swing only when the enemy is farther right than this distance in world units.")]
         [SerializeField, Range(0,2)] private float rightAttackSideThreshold = .5f;
-        [Header("Close pickup dash")]
+        [Header("Nearby target priority")]
+        [Tooltip("Prefer nearby ready enemies within this distance when several finishers are available. Does not limit dash reach.")]
         [SerializeField, Range(4,25)] private float pickupRange = 14;
+        [Tooltip("Sideways reach of the nearby-target preference. Does not limit dash reach.")]
         [SerializeField, Range(2,14)] private float pickupSideRange = 9;
+        [Header("Finisher dash")]
         [SerializeField, Range(.15f,.6f)] private float dashDuration = .3f;
         [SerializeField, Range(1.5f,4)] private float dashStopDistance = 2.8f;
         [Header("Finisher traffic protection")]
@@ -81,7 +118,7 @@ namespace CyberBiker.Player {
         public Enemy Target { get; private set; }
         public int HitCount { get; private set; }
         public float BoostBlend => boost;
-        public bool IsAssisting => Phase==CombatPhase.Striking && !hitApplied;
+        public bool IsAssisting => (Phase==CombatPhase.Drawing || Phase==CombatPhase.Striking) && !hitApplied;
         public int LaunchCount { get; private set; }
         public int SheatheCompletionCount { get; private set; }
         public int DrawCompletionCount { get; private set; }
@@ -89,8 +126,8 @@ namespace CyberBiker.Player {
         public float SwingProgress => Phase==CombatPhase.Striking ? Mathf.Clamp01(phaseTime/AttackClip.length) : 0;
         public float SwingDuration => AttackClip!=null ? AttackClip.length : .567f;
         public float SwingRealDuration => SwingDuration/strikePlaybackSpeed;
-        public bool IsDashing => Phase==CombatPhase.Striking && !hitApplied && !dashComplete;
-        public bool HoldsEnemyForStrike(Enemy enemy) => Phase==CombatPhase.Striking && Target==enemy;
+        public bool IsDashing => IsAssisting && !dashComplete;
+        public bool HoldsEnemyForStrike(Enemy enemy) => (Phase==CombatPhase.Drawing || Phase==CombatPhase.Striking) && Target==enemy;
         public bool TrafficProtected => trafficCommitted || trafficGraceRemaining>0;
         public float TrafficGraceRemaining => trafficGraceRemaining;
         public bool IgnoresTraffic(Collider shape) => (TrafficProtected && FinisherTrafficContacts.IsTraffic(shape)) || (trafficContacts!=null && trafficContacts.Contains(shape));
@@ -115,7 +152,7 @@ namespace CyberBiker.Player {
         private SkinnedMeshRenderer[] skins;
         private bool[] originalMatrixUpdates;
         private readonly RaycastHit[] sightHits = new RaycastHit[48];
-        private float elapsed,phaseTime,boost,nextLaunch,nextSearch,steering;
+        private float phaseTime,boost,nextLaunch,nextSearch,steering;
         private bool initialized,hasCachedPose,hitApplied;
         private bool returningForAim,returningAfterAttack,launchRunning;
         private bool contactPending,dashComplete;
@@ -132,6 +169,9 @@ namespace CyberBiker.Player {
         private void Start() {
             player=GetComponent<PlayerController>();input=GetComponent<TouchInputManager>();
             gameplay=FindAnyObjectByType<GameplayManager>();body=GetComponent<Rigidbody>();
+            launchCharge=Mathf.Clamp01(startingLaunchCharge);launchChargeInitialized=true;
+            if(gameplay!=null){gameplay.Session.NonComboScoreEarned+=GainLaunchEnergy;gameplay.Session.StateChanged+=LaunchStateChanged;}
+            if(launchButton!=null)energyHud=LaunchEnergyHud.Create(this,launchButton.transform);
             if(draw==null || sheathe==null || idle==null || idleLeft==null || idleRight==null || attackLeft==null || attackRight==null || poseBones==null || poseBones.Length==0) {
                 Debug.LogError("Sword launch is missing its imported clips or bone bindings.",this);enabled=false;return;
             }
@@ -189,7 +229,7 @@ namespace CyberBiker.Player {
             if(TrafficProtected)trafficContacts?.ProtectPath(body.position,body.position+body.linearVelocity*Time.fixedDeltaTime);
             trafficContacts?.ReleaseClearPairs(TrafficProtected);
             if(IsPursuing && Target!=null && Vector3.Distance(Target.transform.position,transform.position)<pickupRange+6)IgnoreTargetContacts();
-            if(Phase!=CombatPhase.Striking)return false;
+            if(Phase!=CombatPhase.Drawing && Phase!=CombatPhase.Striking)return false;
             // The snap owns movement only until contact. Give steering back as
             // soon as the cut lands, even while the sword animation continues.
             if(hitApplied)return false;
@@ -209,19 +249,23 @@ namespace CyberBiker.Player {
             dashComplete=t>=1;return true;
         }
         private void BeginPickup() {
-            LastPickupDistance=Vector3.Distance(Target.transform.position,transform.position);
             ChangePhase(CombatPhase.Striking);contactHoldRemaining=0;
+            effects?.BeginSwing();
+        }
+        private void BeginDash() {
+            LastPickupDistance=Vector3.Distance(Target.transform.position,transform.position);
             dashStart=body.position;dashVelocity=new Vector3(0,body.linearVelocity.y,Mathf.Max(body.linearVelocity.z,SpeedLimit(player.NormalSpeedLimit)));dashAge=0;dashComplete=false;hitApplied=false;contactPending=false;
             dashSteeringOffset=0;
             IgnoreTargetContacts();
             Target.HideSpeedTrailForFinisher();
-            effects?.BeginSwing();
+            effects?.BeginDash();
         }
         private void BeginDraw() {
             trafficCommitted=true;trafficGraceRemaining=trafficRecoveryGrace;
             trafficContacts?.ProtectPath(body.position,ContactPosition);
             returningAfterAttack=false;ChangePhase(CombatPhase.Drawing);
             for(int i=0;i<skins.Length;i++)skins[i].forceMatrixRecalculationPerRender=true;
+            BeginDash();
         }
         private void IgnoreTargetContacts() {
             if(Target==null)return;
@@ -239,21 +283,44 @@ namespace CyberBiker.Player {
         public void Launch() {
             if(!initialized || gameplay==null || gameplay.gameState!=GameState.Playing || !player.IsAlive)return;
             if(IsActive){ReturnSword();return;}
-            if(Time.time<nextLaunch)return;
+            if(Time.time<nextLaunch || !CanStartLaunch)return;
+            StartLaunch();
+        }
+        // All phone buttons and PC fire inputs share PlayerController's tap
+        // entry point. A ready finisher consumes that tap instead of a bullet.
+        public bool TryFinisherFromShoot() {
+            if(!initialized || gameplay==null || gameplay.gameState!=GameState.Playing || !player.IsAlive)return false;
+            // Rapid taps must not cancel an already committed draw or cut.
+            if(Phase==CombatPhase.Drawing || Phase==CombatPhase.Striking)return true;
+            if(IsActive && !IsPursuing)return false;
+            if(Time.time<nextLaunch)return false;
+            var previous=Target;
+            var aimed=GetComponent<BikeAutoAim>()?.Target;
+            if(Eligible(aimed))Target=aimed;else FindTarget();
+            if(!CanPrepareStrike()){Target=previous;return false;}
+            var victim=Target;
+            if(IsPursuing)BeginDraw();else StartLaunch(victim,true);
+            return true;
+        }
+        private void StartLaunch(Enemy readyTarget=null,bool directFinisher=false) {
             input.SetAim(false);GetComponent<BikeAutoAim>()?.Tick(false,false,0);
-            elapsed=0;boost=0;hitApplied=false;returningForAim=returningAfterAttack=false;launchRunning=true;finishingNaturally=false;nextSearch=0;Target=null;contactPending=false;nextPickup=0;LaunchCount++;
-            EnterMountedPursuit();FindTarget();
+            boost=0;hitApplied=false;returningForAim=returningAfterAttack=false;launchRunning=true;finishingNaturally=false;nextSearch=0;Target=null;contactPending=false;nextPickup=0;if(!directFinisher)LaunchCount++;
+            EnterMountedPursuit();
+            // Shoot commits directly to a finisher, without boost/nitro entry.
+            if(directFinisher){launchRunning=false;finishingNaturally=true;}
+            if(readyTarget!=null)Target=readyTarget;else FindTarget();
+            if(CanPrepareStrike())BeginDraw();
             CyberBiker.Audio.SoundEvents.Emit(CyberBiker.Audio.SoundCue.UiClick,transform.position);
         }
         public void CancelForAim(){finishingNaturally=false;if(IsActive){returningForAim=true;ReturnSword();}gameplay?.EndCombatSlowMotion();}
         private void Update() {
             if(!initialized)return;
-            if(Phase!=CombatPhase.Striking)ReleaseDashCollisions();
+            if(Phase!=CombatPhase.Drawing && Phase!=CombatPhase.Striking)ReleaseDashCollisions();
 #if UNITY_EDITOR || UNITY_STANDALONE
             if(Input.GetKeyDown(launchKey))Launch();
 #endif
             bool playing=gameplay!=null && gameplay.gameState==GameState.Playing && player.IsAlive;
-            if(launchButton!=null)launchButton.interactable=playing && (IsActive || Time.time>=nextLaunch);
+            if(launchButton!=null)launchButton.interactable=playing && (IsActive || (Time.time>=nextLaunch && CanStartLaunch));
             if(launchLabel!=null)launchLabel.text=IsActive ? "CANCEL" : "LAUNCH";
             if(!playing) {
                 if(gameplay!=null && (gameplay.gameState==GameState.Hit || gameplay.gameState==GameState.GameOver))ResetCombat();
@@ -266,10 +333,17 @@ namespace CyberBiker.Player {
                 else trafficCommitted=false;
             }
             if(!trafficCommitted)trafficGraceRemaining=Mathf.Max(0,trafficGraceRemaining-FinisherClock.UnscaledDeltaTime);
+            if(launchRunning){
+                launchCharge=Mathf.Max(0,launchCharge-FinisherClock.UnscaledDeltaTime/Mathf.Max(1,launchDuration));
+                if(launchCharge<=0){
+                    launchRunning=false;finishingNaturally=true;
+                    // Exhaustion ends the boost, never an already committed cut.
+                    if(Phase==CombatPhase.Pursuing)ReturnSword(true);
+                }
+            }
             boost=Mathf.MoveTowards(boost,launchRunning ? 1 : 0,dt/(launchRunning ? boostRiseTime : boostFallTime));
             if(!IsActive)return;
-            elapsed+=dt;float playback=Phase==CombatPhase.Striking ? strikePlaybackSpeed : Phase==CombatPhase.Drawing ? drawPlaybackSpeed : Phase==CombatPhase.Sheathing ? returningForAim ? aimReturnPlaybackSpeed : returningAfterAttack ? sliceReturnPlaybackSpeed : 1 : 1;
-            if(launchRunning && elapsed>=launchDuration && (Phase==CombatPhase.Sheathing || Phase==CombatPhase.Recovering)){launchRunning=false;finishingNaturally=true;}
+            float playback=Phase==CombatPhase.Striking ? strikePlaybackSpeed : Phase==CombatPhase.Drawing ? drawPlaybackSpeed : Phase==CombatPhase.Sheathing ? returningForAim ? aimReturnPlaybackSpeed : returningAfterAttack ? sliceReturnPlaybackSpeed : 1 : 1;
             if(Phase==CombatPhase.Striking) {
                 if(contactHoldRemaining>0)contactHoldRemaining=Mathf.Max(0,contactHoldRemaining-FinisherClock.UnscaledDeltaTime);
                 else phaseTime+=FinisherClock.UnscaledDeltaTime*playback;
@@ -277,12 +351,11 @@ namespace CyberBiker.Player {
             steering=Mathf.Lerp(steering,player.xThrow,1-Mathf.Exp(-dt*swordSteeringResponse));
             UpdateTarget();
             if((Phase==CombatPhase.Drawing || (Phase==CombatPhase.Striking && !hitApplied)) && (Target==null || !Target.IsFinisherReady)) {
-                returningAfterAttack=true;ReturnSword(true,launchRunning && elapsed<launchDuration);
+                returningAfterAttack=true;ReturnSword(true,launchRunning && launchCharge>0);
             }
             if(Phase==CombatPhase.Drawing)phaseTime=Mathf.Min(phaseTime,draw.length);
             if(Phase==CombatPhase.Pursuing) {
-                if(elapsed>=launchDuration)ReturnSword(true);
-                else if(Time.time>=nextPickup && CanPrepareStrike())BeginDraw();
+                if(Time.time>=nextPickup && CanPrepareStrike())BeginDraw();
             } else if(Phase==CombatPhase.Striking) {
                 float fraction=phaseTime/AttackClip.length;
                 float previousFraction=(phaseTime-FinisherClock.UnscaledDeltaTime*playback)/AttackClip.length;
@@ -292,11 +365,11 @@ namespace CyberBiker.Player {
                     phaseTime=AttackClip.length*strikeContactTime;contactPending=dashComplete;
                 }
                 if(phaseTime>=AttackClip.length) {
-                    returningAfterAttack=true;ReturnSword(true,elapsed<launchDuration);
+                    returningAfterAttack=true;ReturnSword(true,launchRunning && launchCharge>0);
                 }
             } else if(Phase==CombatPhase.Sheathing)phaseTime=Mathf.Min(phaseTime,sheathe.length);
             else if(Phase==CombatPhase.Recovering && phaseTime>=RecoveryDuration && (launchRunning || returningForAim || returningAfterAttack || boost<=.0001f)) {
-                if(launchRunning && elapsed<launchDuration)EnterMountedPursuit();else ResetCombat(false,true);
+                if(launchRunning && launchCharge>0)EnterMountedPursuit();else ResetCombat(false,true);
             }
         }
         private float RecoveryDuration => returningForAim ? aimReturnBlendTime : returningAfterAttack ? sliceReturnBlendTime : ridingRecoveryTime;
@@ -306,7 +379,7 @@ namespace CyberBiker.Player {
             Phase=next;phaseTime=0;
         }
         private void ReturnSword(bool naturally=false,bool keepLaunching=false){
-            launchRunning=keepLaunching && elapsed<launchDuration;finishingNaturally=naturally;
+            launchRunning=keepLaunching && launchCharge>0;finishingNaturally=naturally;
             contactPending=false;contactHoldRemaining=0;Target=null;nextSearch=0;
             if(!naturally)gameplay?.EndCombatSlowMotion();
             if(Phase==CombatPhase.Pursuing){if(launchRunning)EnterMountedPursuit();else ResetCombat(false,true);return;}
@@ -338,12 +411,10 @@ namespace CyberBiker.Player {
         private bool Eligible(Enemy enemy) {
             if(enemy==null || !enemy.isActiveAndEnabled || enemy.IsEncounterQueued || enemy.IsArriving || !enemy.IsFinisherReady)return false;
             var delta=enemy.transform.position-transform.position;
-            return delta.z>=-3 && delta.z<=targetRange && Mathf.Abs(delta.y)<=verticalReach;
+            return delta.z>=-3 && Vector3.ProjectOnPlane(delta,Vector3.up).sqrMagnitude<=targetRange*targetRange && Mathf.Abs(delta.y)<=verticalReach;
         }
         public bool IsInFinisherRange(Enemy enemy) {
-            if(!Eligible(enemy))return false;
-            var delta=enemy.transform.position-transform.position;
-            return delta.z<=pickupRange && Mathf.Abs(delta.x)<=pickupSideRange && Vector3.ProjectOnPlane(delta,Vector3.up).magnitude<=pickupRange;
+            return Eligible(enemy);
         }
         private void FindTarget() {
             nextSearch=Time.time+.15f;Enemy best=null;float score=float.PositiveInfinity;
@@ -358,20 +429,10 @@ namespace CyberBiker.Player {
             }
             Target=best;
         }
-        private bool CanPrepareStrike() {
-            if(Target==null || !Target.IsFinisherReady)return false;
-            var direction=Vector3.ProjectOnPlane(Target.transform.position-transform.position,Vector3.up).normalized;
-            var relative=body.linearVelocity-new Vector3(Target.LateralSpeed,0,Target.ForwardSpeed);
-            // Finish a little inside dash range rather than on its exact edge;
-            // target motion and the next physics step can otherwise cancel a draw.
-            float drawLead=Mathf.Clamp(Vector3.Dot(relative,direction)*(draw.length/drawPlaybackSpeed)*Time.timeScale*.8f,0,8);
-            return CanStartStrike(drawLead);
-        }
-        private bool CanStartStrike(float drawLead=0) {
-            if(Target==null || !Target.IsFinisherReady)return false;
+        private bool CanPrepareStrike() => CanStartStrike();
+        private bool CanStartStrike() {
+            if(!Eligible(Target))return false;
             var delta=Target.transform.position-transform.position;
-            float range=pickupRange+drawLead;
-            if(delta.z< -3 || delta.z>range || Mathf.Abs(delta.x)>pickupSideRange || Vector3.ProjectOnPlane(delta,Vector3.up).magnitude>range || Mathf.Abs(delta.y)>verticalReach)return false;
             LastAttackSide=delta.x>rightAttackSideThreshold ? AttackSide.Right : AttackSide.Left;
             dashDirection=Vector3.ProjectOnPlane(delta,Vector3.up).normalized;
             if(dashDirection.sqrMagnitude<.01f)dashDirection=Vector3.forward;
@@ -402,7 +463,7 @@ namespace CyberBiker.Player {
             if(!initialized || !IsActive || Phase==CombatPhase.Pursuing || gameplay.gameState!=GameState.Playing || Time.deltaTime<=0)return;
             for(int i=0;i<poseBones.Length;i++)basePose[i]=new Pose(poseBones[i]);
             if(!hasCachedPose)Array.Copy(basePose,transitionPose,basePose.Length);
-            float poseAge=Phase==CombatPhase.Striking ? dashAge : phaseTime;
+            float poseAge=Phase==CombatPhase.Striking ? phaseTime/Mathf.Max(.01f,strikePlaybackSpeed) : phaseTime;
             float blendTime=Phase==CombatPhase.Striking ? strikeBlendTime : Phase==CombatPhase.Sheathing ? sheatheBlendTime : poseBlendTime;
             float blend=Mathf.SmoothStep(0,1,poseAge/Mathf.Max(.01f,blendTime));
             if(Phase==CombatPhase.Recovering) {
@@ -420,7 +481,9 @@ namespace CyberBiker.Player {
             hasCachedPose=true;ApplyCachedPose();
             if(Phase==CombatPhase.Drawing && phaseTime>=draw.length) {
                 DrawCompletionCount++;
-                if(CanStartStrike())BeginPickup();else {returningAfterAttack=true;ReturnSword(true,elapsed<launchDuration);}
+                // The approach already started with the draw. Preserve its
+                // direction, progress and steering offset when the swing starts.
+                if(Target!=null && Target.IsFinisherReady && DashPathClear(SteeredContactPosition))BeginPickup();else {returningAfterAttack=true;ReturnSword(true,launchRunning && launchCharge>0);}
             }
             if(Phase==CombatPhase.Sheathing && phaseTime>=sheathe.length) {
                 // Apply the authored last frame before handing the pose back.
@@ -435,7 +498,12 @@ namespace CyberBiker.Player {
                     var shape=victim.GetComponentInChildren<Collider>();
                     if(shape!=null && Camera.main!=null){var towardCamera=-Camera.main.transform.forward;impact=shape.ClosestPoint(impact+towardCamera*5)+towardCamera*.1f;}
                     hitApplied=victim.DefeatFromSword(gameObject,enemyForwardKick,enemyExplosionDelay);
-                    if(hitApplied){HitCount++;contactHoldRemaining=contactPoseHold;effects?.PlayHit(impact,victim.SwordDefeatVelocity,LastAttackSide);}
+                    if(hitApplied){
+                        // One Launch commits one kill. Keep the aftermath alive,
+                        // but never reacquire another target during the return.
+                        launchRunning=false;finishingNaturally=true;
+                        HitCount++;contactHoldRemaining=contactPoseHold;effects?.PlayHit(impact,victim.SwordDefeatVelocity,LastAttackSide);
+                    }
                 } else if(phaseTime>=AttackClip.length*strikeContactTime) {
                     // An intervening wall/car cancels the committed cut; never
                     // damage through an obstruction or stall at the hit frame.
@@ -452,6 +520,6 @@ namespace CyberBiker.Player {
         private void ApplyCachedPose(){for(int i=0;i<poseBones.Length;i++)cachedPose[i].Apply(poseBones[i]);}
         private void ApplyRenderPose(Camera view){if(initialized && IsActive && hasCachedPose && view.cameraType==CameraType.Game)ApplyCachedPose();}
         private void OnDisable(){if(initialized)ResetCombat();ReleaseDashCollisions(true);}
-        private void OnDestroy(){Camera.onPreCull-=ApplyRenderPose;ReleaseDashCollisions(true);trafficContacts?.Dispose();if(sampleRoot!=null)Destroy(sampleRoot);}
+        private void OnDestroy(){if(gameplay!=null && gameplay.Session!=null){gameplay.Session.NonComboScoreEarned-=GainLaunchEnergy;gameplay.Session.StateChanged-=LaunchStateChanged;}Camera.onPreCull-=ApplyRenderPose;ReleaseDashCollisions(true);trafficContacts?.Dispose();if(sampleRoot!=null)Destroy(sampleRoot);if(energyHud!=null)Destroy(energyHud.gameObject);}
     }
 }

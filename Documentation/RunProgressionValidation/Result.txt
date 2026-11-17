@@ -1,0 +1,13 @@
+RUNNING
+PASS saved Level resolves all eight stage assets; five-minute sequence; correct boundaries and repeating 25-second ride / 60-second fight tail; no active authored enemies.
+PASS legacy timing remains compatible; long frames preserve elapsed time; last section holds when looping is disabled.
+PASS runtime stage 1
+PASS real Play mode starts without enemies; pause freezes the stage clock; gap assist rejects riding, permits Launch and rejects Launch cancellation.
+PASS runtime stage 2
+PASS runtime stage 3
+PASS solo stage spawns and finishes one real enemy; exhausting its cooldown cannot restart the wave.
+PASS runtime stage 4
+PASS runtime stage 5
+PASS runtime stage 6
+PASS riding break clears pending spawns; second encounter consumes two enemies; next break remains peaceful.
+PASS native progression and encounter integration checks.

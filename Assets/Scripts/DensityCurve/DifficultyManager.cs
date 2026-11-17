@@ -1,77 +1,77 @@
 using Gameplay;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DifficultyManager : MonoBehaviour {
-    public float gameDuration = 3.0f; // Game duration in minutes (e.g., 3.0 for 3 minutes, 3.30 for 3 minutes 30 seconds)
-    public Difficulty[] difficultySections; // Array of difficulty sections
+    [Header("Play modes")]
+    [Tooltip("Mode when starting Level directly. A choice made through Play or TUNE takes priority for this play session.")]
+    public RunPlayMode startMode=RunPlayMode.Progression;
+    [Tooltip("The old five-enemy Difficulty 4 setup. Constant Combat holds this difficulty and replaces defeated riders continuously.")]
+    public Difficulty constantCombatDifficulty;
+    public RunPlayMode Mode {get;private set;}
+    public bool IsConstantCombat=>Mode==RunPlayMode.ConstantCombat;
+    [Header("Run progression")]
+    [Tooltip("Fallback total duration in decimal minutes for sections whose Duration Seconds is zero. 3.5 means 3 minutes 30 seconds.")]
+    [Min(.1f)] public float gameDuration = 3;
+    [Tooltip("Played in order. Each difficulty prefab controls traffic, encounters and its own duration.")]
+    public Difficulty[] difficultySections;
+    [Tooltip("Zero-based section to repeat after the last section. -1 keeps the last difficulty indefinitely.")]
+    [Min(-1)] public int loopFromSection = -1;
 
-    [HideInInspector]
-    public Difficulty currentDifficulty;
-
-    private float sectionDuration; // Duration of each difficulty section in seconds
-    private float elapsedTime = 0f; // Elapsed time in seconds
-    private int currentDifficultyIndex = 0; // Index of the current difficulty
-
+    [HideInInspector] public Difficulty currentDifficulty;
+    public int CurrentSectionIndex => currentDifficultyIndex;
+    public int SectionRevision { get; private set; }
+    public float SectionElapsed => elapsedTime;
+    public float SectionRemaining => Mathf.Max(0, SectionDuration - elapsedTime);
+    public float RunElapsed { get; private set; }
+    public float SectionDuration {
+        get {
+            if(IsConstantCombat)return 0;
+            if (difficultySections == null || difficultySections.Length == 0) return 0;
+            var section = difficultySections[currentDifficultyIndex];
+            return section != null && section.durationSeconds > 0
+                ? Mathf.Max(.1f, section.durationSeconds)
+                : Mathf.Max(.1f, gameDuration * 60 / difficultySections.Length);
+        }
+    }
+    private float elapsedTime;
+    private int currentDifficultyIndex;
     private GameplayManager gameplayManager;
 
-    // Start is called before the first frame update
-    void Awake() {
+    private void Awake() {
         gameplayManager = GetComponent<GameplayManager>();
-        float gameDurationInSeconds = ConvertMinutesToSeconds(gameDuration); // Convert game duration to seconds
-
-        if (difficultySections != null && difficultySections.Length > 0) {
+        Mode=RunModeSelection.HasSelection ? RunModeSelection.Selected : RunModeSelection.Normalize(startMode);
+        if(IsConstantCombat && constantCombatDifficulty==null){
+            var modes=Resources.Load<RunModeSettings>("RunModes");
+            if(modes!=null)constantCombatDifficulty=modes.constantCombatDifficulty;
+        }
+        if(IsConstantCombat && constantCombatDifficulty!=null){currentDifficulty=constantCombatDifficulty;return;}
+        if(IsConstantCombat)Debug.LogError("Constant Combat requires the RunModes combat preset.",this);
+        Mode=RunPlayMode.Progression;
+        if (difficultySections != null && difficultySections.Length > 0)
             currentDifficulty = difficultySections[0];
-            sectionDuration = gameDurationInSeconds / difficultySections.Length; // Calculate section duration in seconds
-            //Debug.Log($"Game started. Each section duration: {sectionDuration:F2} seconds.");
-           // Debug.Log($"Initial difficulty index: {currentDifficultyIndex}");
-        }
-        else {
-            //Debug.LogError("Difficulty sections array is empty or null.");
-        }
     }
-
-    // Update is called once per frame
-    void Update() {
-        if (difficultySections == null || difficultySections.Length == 0) return;
-
-        // Pause the timer if the game state is not Playing
-        if (gameplayManager != null && gameplayManager.gameState != GameState.Playing) {
-
-            return;
-        }
-
-        elapsedTime += Time.deltaTime; // Track elapsed time in seconds
-
-        // Log the elapsed time and current difficulty index
-        //Debug.Log($"Elapsed Time: {elapsedTime:F2} seconds, Current Difficulty Index: {currentDifficultyIndex}");
-
-        // Check if it's time to move to the next difficulty section
-        if (elapsedTime >= sectionDuration) {
-            ProgressToNextDifficulty();
-        }
+    private void Update() {
+        if (gameplayManager != null && gameplayManager.gameState != GameState.Playing) return;
+        AdvanceTime(Time.deltaTime);
     }
-
-    void ProgressToNextDifficulty() {
-        if (currentDifficultyIndex < difficultySections.Length - 1) {
-            currentDifficultyIndex++;
-            currentDifficulty = difficultySections[currentDifficultyIndex];
-            elapsedTime = 0f; // Reset elapsed time for the next section
-
-            //Debug.Log($"Difficulty changed! New Difficulty Index: {currentDifficultyIndex}");
+    private void AdvanceTime(float deltaTime) {
+        if(IsConstantCombat){if(deltaTime>0)RunElapsed+=deltaTime;return;}
+        if (difficultySections == null || difficultySections.Length == 0 || deltaTime <= 0) return;
+        RunElapsed += deltaTime;
+        elapsedTime += deltaTime;
+        while (elapsedTime >= SectionDuration) {
+            int next = currentDifficultyIndex + 1;
+            if (next >= difficultySections.Length) {
+                if (loopFromSection < 0 || loopFromSection >= difficultySections.Length) {
+                    elapsedTime = SectionDuration;
+                    return;
+                }
+                next = loopFromSection;
+            }
+            elapsedTime -= SectionDuration;
+            currentDifficultyIndex = next;
+            currentDifficulty = difficultySections[next];
+            SectionRevision++;
         }
-        else {
-            //Debug.Log("Max difficulty level reached. No more changes.");
-        }
-    }
-
-    // Convert minutes (and fractions of minutes) to seconds
-    float ConvertMinutesToSeconds(float minutes) {
-        int wholeMinutes = Mathf.FloorToInt(minutes); // Get the whole number of minutes
-        float fractionalMinutes = minutes - wholeMinutes; // Get the fractional part (e.g., 0.30 for 3.30)
-        float secondsFromFraction = fractionalMinutes * 60; // Convert the fractional part to seconds
-
-        return (wholeMinutes * 60) + secondsFromFraction; // Total time in seconds
     }
 }

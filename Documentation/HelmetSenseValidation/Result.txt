@@ -1,0 +1,9 @@
+PASS natural enemy shot at the rider's head activates visible helmet strokes even above the low traffic collision boxes.
+PASS hidden pre-fire trajectory, hidden permanent lasers, exact bullet path, frozen flight line and endpoint cleanup without altering bullet lifetime.
+PASS pooled reuse/stale-bullet safety, cancelled windup cleanup and obstacle-impact cleanup.
+PASS pause/resume, reversible experiment toggle and in-flight guide survival after shooter destruction.
+PASS moving BulletLocal at 70–110 m/s with steering and independent shooter motion: 68 rendered frames, 111.7998m parent travel, maximum bullet/line error 1.69491E-05m.
+PASS slow-motion riding: 195 rendered frames, 110.7406m parent travel, maximum bullet/line error 4.019738E-05m.
+PASS flight-only green line stays visible on the player path, while steering out and back in, and after evasion.
+PASS helmet sense: real head attachment, no pre-fire warning, animated green strokes on path, smooth fade on steering clear, retrigger on re-entry, pause hide/freeze, evasion cleanup and empty flight registry.
+PASS approaching real bullet: far pulse 1.8Hz, near pulse 6.487229Hz; independent brighter helmet material; green trajectory unchanged.

@@ -1,0 +1,12 @@
+RUNNING
+PASS wide approach left; normal speed, no crash, held steering retained, pair-only forgiveness restored on exit.
+PASS wide approach right; normal speed, no crash, held steering retained, pair-only forgiveness restored on exit.
+PASS held steer left; normal speed, no crash, held steering retained, pair-only forgiveness restored on exit.
+PASS held steer right; normal speed, no crash, held steering retained, pair-only forgiveness restored on exit.
+PASS tight gap left; normal speed, no crash, held steering retained, pair-only forgiveness restored on exit.
+PASS tight gap right; normal speed, no crash, held steering retained, pair-only forgiveness restored on exit.
+PASS late approach left; normal speed, no crash, held steering retained, pair-only forgiveness restored on exit.
+PASS late approach right; normal speed, no crash, held steering retained, pair-only forgiveness restored on exit.
+PASS rejected blocked exit.
+PASS rejected bike cannot fit.
+PASS forgiving alignment matrix; all eight passes completed without damage or speed boost, selected-car protection released, and invalid routes stayed blocked.

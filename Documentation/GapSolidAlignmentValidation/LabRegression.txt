@@ -1,0 +1,14 @@
+RUNNING
+PASS preset roundtrip and isolated Save for game preserve material/audio references.
+Body shape Player_Last BoxCollider: Center: (0.75, 0.32, 28.68), Extents: (0.60, 0.33, 2.69)
+Body shape Motorcycle BoxCollider: Center: (0.75, 1.72, 27.97), Extents: (0.68, 0.67, 1.71)
+Body shape Motorcycle BoxCollider: Center: (0.75, 2.74, 29.68), Extents: (0.84, 0.17, 0.23)
+PASS real gap detection, smooth lateral alignment at unchanged riding speed, live wind emission and paused camera tuning without accumulation.
+PASS actual solid-car passage completes without damage and retains normal speed.
+PASS narrow gap rejected.
+PASS blocked exit rejected.
+PASS single car and gap outside snap radius rejected.
+PASS opposing steering immediately cancels gap alignment.
+PASS gap alignment works from both sides.
+PASS paused camera/VFX timeline preview, with independent camera and particle controls.
+PASS all Gap Dash checks.

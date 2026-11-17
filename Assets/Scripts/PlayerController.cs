@@ -78,15 +78,18 @@ public class PlayerController : MonoBehaviour, IDamageable, IDamageState
     public bool UsesTapPistol => gm!=null && gm.PistolInteractionMode==PistolInteraction.TapToFire;
     public bool TapPistolReady => UsesTapPistol && tapPistol.Ready && IsAlive && gm.gameState==GameState.Playing && (swordCombat==null || !swordCombat.IsActive);
     public bool HasBufferedPistolTap => tapPistol.Pending;
+    public bool IsPistolEngaged => Aiming || tapPistol.Pending;
     private bool Aiming => (UsesTapPistol ? TapPistolReady : input!=null && input.IsAiming) && (swordCombat==null || !swordCombat.IsActive);
     public bool RequestPistolTap(){
         if(!UsesTapPistol || weapon==null || !IsAlive || gm.gameState!=GameState.Playing || Time.deltaTime<=0)return false;
+        if(swordCombat!=null && swordCombat.TryFinisherFromShoot()){tapPistol.Cancel();return true;}
         swordCombat?.CancelForAim();tapPistol.Request(gm.PistolHolsterDelay);return true;
     }
     public void CancelPistolTaps(){tapPistol.Cancel();}
     private HealthPresenter presenter;
     private BikeMotor motor;
     private BikeImpactResponse impactResponse;
+    private GapDashAssist gapDash;
     private IPlayerInput input;
     private Weapon weapon;
     private BikePresentation presentation;
@@ -144,6 +147,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IDamageState
         SwitchRagDoll(false);
         autoAim=GetComponent<BikeAutoAim>();
         swordCombat=GetComponent<BikeSwordCombat>();
+        gapDash=GetComponent<GapDashAssist>();if(gapDash==null)gapDash=gameObject.AddComponent<GapDashAssist>();
         TestingSettings.Initialize(this, gm, swordCombat);
         if(autoAim!=null) autoAim.Initialize(muzzleFlash!=null ? muzzleFlash.transform : null,bullet,animationRigging);
     }
@@ -180,7 +184,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IDamageState
             }
         }
 
-        if (gm.gameState == GameState.Playing)
+        if (gm.gameState == GameState.Playing && !(gapDash!=null && gapDash.IsActive))
             xThrow = input.Steering.x == 0 ? 0 : Mathf.Sign(input.Steering.x) == wallDirection ? 0 : input.Steering.x;
         else
             xThrow = 0;
@@ -191,7 +195,11 @@ public class PlayerController : MonoBehaviour, IDamageable, IDamageState
     private readonly RaycastHit[] pistolSightHits=new RaycastHit[64];
     private Vector3 PistolTargetPoint(){
         if(autoAim!=null && autoAim.Enabled && Aiming && autoAim.Target!=null)return autoAim.AimPoint;
-        var origin=camera.transform.position;var forward=camera.transform.forward;var target=origin+forward*120;float nearest=120;
+        // With no locked enemy, shoot along the rider's neutral aim, independent
+        // of camera framing. Start at the muzzle so nearby cover still blocks it.
+        var origin=muzzleFlash!=null ? muzzleFlash.transform.position : transform.position;
+        var forward=autoAim!=null && autoAim.Enabled && Aiming ? autoAim.AimDirection : Vector3.forward;
+        var target=origin+forward*120;float nearest=120;
         int count=Physics.RaycastNonAlloc(origin,forward,pistolSightHits,120,~0,QueryTriggerInteraction.Collide);
         for(int i=0;i<count;i++){var hit=pistolSightHits[i];var shape=hit.collider;if(shape.transform.IsChildOf(transform) || shape.GetComponentInParent<Bullet>()!=null || (shape.isTrigger && shape.GetComponentInParent<IDamageable>()==null))continue;if(hit.distance<nearest){nearest=hit.distance;target=hit.point;}}
         return target;
@@ -200,6 +208,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IDamageState
         origin=muzzleFlash!=null ? muzzleFlash.transform.position : transform.position;direction=Vector3.forward;
         if(!IsPistolVisuallyReady)return false;direction=(PistolTargetPoint()-origin).normalized;return direction.sqrMagnitude>.01f;
     }
+    private Vector3 firedDirection=Vector3.forward;
     private bool FireWeapon(bool tapShot=false) {
         if (gm.gameState != GameState.Playing || !IsAlive || (swordCombat!=null && swordCombat.IsActive)) return false;
         weapon.SetInterval(gm.PlayerPistolShotInterval);
@@ -207,12 +216,13 @@ public class PlayerController : MonoBehaviour, IDamageable, IDamageState
         Vector3 target=PistolTargetPoint();
         if (weapon is ProjectileWeapon projectileWeapon) projectileWeapon.SetDamage(gm.PlayerPistolDamage);
         var request=new ShotRequest(muzzleFlash.transform.position,target-muzzleFlash.transform.position,gameObject);
+        firedDirection=request.Direction;
         return tapShot ? weapon.TryFireImmediate(request,Time.time) : weapon.TryFire(request,Time.time);
     }
     private void OnWeaponFired() {
         shootingFeedback?.Shot();
         if(UsesTapPistol){tapPistol.Fired(gm.PistolHolsterDelay);tim?.PistolShotPulse();}
-        muzzleFlash.GetComponent<MuzzleFlash>().Spawn();
+        muzzleFlash.GetComponent<MuzzleFlash>().Spawn(firedDirection);
         animator.SetTrigger("Shoot");
     }
 
@@ -259,19 +269,24 @@ public class PlayerController : MonoBehaviour, IDamageable, IDamageState
     private void UpdatePresentation(float dt) {
         bool reacting=impactResponse!=null && gm.gameState==GameState.Playing;
         float visual=reacting ? impactResponse.PresentationSteering(xThrow,dt) : xThrow;
+        bool guiding=gapDash!=null && gapDash.IsActive;if(guiding)visual=gapDash.VisualSteering;
         presentation.AimRigBlendTime=aimRigBlendTime;
-        presentation.Tick(xThrow,Aiming,armed,visual,reacting ? impactResponse.PresentationResponse : BikePresentation.DefaultPoseResponse,dt,gm.gameState==GameState.Playing ? Time.unscaledDeltaTime : 0);
+        presentation.HeadingResponse=guiding ? 14 : 3;
+        presentation.Tick(guiding ? 0 : xThrow,Aiming,armed,visual,guiding ? 14 : reacting ? impactResponse.PresentationResponse : BikePresentation.DefaultPoseResponse,dt,gm.gameState==GameState.Playing ? Time.unscaledDeltaTime : 0);
     }
 
     private void processVelocity() {
         if(swordCombat!=null && swordCombat.StepPickupDash()) {
+            gapDash?.Cancel("Sword finisher took over.");
             motor.TickSteering(xThrow,impactResponse!=null ? impactResponse.SteeringAccelerationMultiplier(xThrow) : 1);
             xVelocity=rb.linearVelocity.x;zVelocity=rb.linearVelocity.z;return;
         }
-        motor.Tick(xThrow, grounded, wallDirection, swordCombat!=null ? swordCombat.SpeedLimit(maxSpeed) : maxSpeed,
+        bool gapSteering=gapDash!=null && gapDash.Step(input!=null ? input.Steering.x : xThrow);
+        float ridingLimit=swordCombat!=null ? swordCombat.SpeedLimit(maxSpeed) : maxSpeed;
+        motor.Tick(xThrow, grounded, wallDirection, ridingLimit,
             impactResponse!=null ? impactResponse.MotorAccelerationMultiplier : 1,
             impactResponse!=null ? impactResponse.SteeringAccelerationMultiplier(xThrow) : 1,
-            impactResponse!=null && impactResponse.IsRecovering);
+            impactResponse!=null && impactResponse.IsRecovering,gapSteering);
         xVelocity = motor.LocalVelocity.x;
         zVelocity = motor.LocalVelocity.z;
     }

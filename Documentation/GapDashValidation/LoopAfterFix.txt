@@ -1,0 +1,7 @@
+RUNNING
+PASS automatic pass 1; 10 road tiles retained their pose and pool generation.
+PASS automatic pass 2; 10 road tiles retained their pose and pool generation.
+PASS automatic pass 3; 10 road tiles retained their pose and pool generation.
+PASS automatic pass 4; 10 road tiles retained their pose and pool generation.
+PASS automatic pass 5; 10 road tiles retained their pose and pool generation.
+PASS five consecutive automatic passes with fixed road tiles, normal riding speed and safe camera follow.

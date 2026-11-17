@@ -1,0 +1,18 @@
+{
+  "apk": "C:\\Users\\salek\\Documents\\ChatGPT\\cb\\Builds\\Android\\CyberBiker-latest.apk",
+  "size_bytes": 103840666,
+  "sha256": "d53d3de1be1ca36931c1760c2bb9e8fb6c61bb603d96c387891bffb77032a87b",
+  "version_code": 4,
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a"
+  ],
+  "signature": "verified; matches previous APK",
+  "archive_integrity": "passed",
+  "gyro_and_latest_gameplay_code": "present in IL2CPP metadata",
+  "editor_sensor_test_hooks": "excluded",
+  "sensor_features": [
+    "  uses-feature-not-required: name='android.hardware.sensor.accelerometer'"
+  ],
+  "development_build": false
+}

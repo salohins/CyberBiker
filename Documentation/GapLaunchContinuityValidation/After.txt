@@ -1,0 +1,5 @@
+PASS energy exhaustion during alignment: pass completed with solid cars, no damage, held steering locked and no speed boost.
+PASS manual cancellation inside the car corridor: pass completed with solid cars, no damage, held steering locked and no speed boost.
+PASS Gap Lab replay restores a fresh Launch charge.
+PASS new assists still require Launch; ordinary riding stays manual.
+PASS Launch gap continuity checks.

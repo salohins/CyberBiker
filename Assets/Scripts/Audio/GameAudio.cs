@@ -153,6 +153,7 @@ namespace CyberBiker.Audio {
         private float lastTrafficScan = -1;
         private PlayerController player;
         private CameraController passCamera;
+        private CyberBiker.Player.RiderLife riderLife;
         private GameplayManager manager;
         private Rigidbody bike;
         private Health boundHealth;
@@ -181,6 +182,7 @@ namespace CyberBiker.Audio {
         private void Awake() {
             if (Active != null && Active != this) { Destroy(gameObject); return; }
             Active = this;
+            LoadStyleScorePrototype();
             engineSource = CreateSource("Bike engine cruise", true);
             launchSource = CreateSource("Bike engine launch", false);
             engineSource.clip = engineCruise;
@@ -456,7 +458,10 @@ namespace CyberBiker.Audio {
                     WhooshCount++;
                 }
                 if (passCamera == null && Camera.main != null) passCamera = Camera.main.GetComponent<CameraController>();
-                if (passCamera != null) passCamera.TriggerPassShake(Mathf.Lerp(1f, 0.25f, proximity) * Mathf.Lerp(0.35f, 1f, speedGain), -closestSide);
+                float passStrength=Mathf.Lerp(1f,0.25f,proximity)*Mathf.Lerp(0.35f,1f,speedGain);
+                if (passCamera != null) passCamera.TriggerPassShake(passStrength, -closestSide);
+                if(riderLife==null)riderLife=player.GetComponent<CyberBiker.Player.RiderLife>();
+                riderLife?.ReactToPass(closestWhoosh.transform.position,passStrength,closestWhoosh.transform);
                 nextWhoosh = Time.time + Mathf.Max(0, whooshInterval);
             }
             removed.Clear();
@@ -533,6 +538,10 @@ namespace CyberBiker.Audio {
                     Play(clip,sound.Position,weaponVolume,Range(0.985f,1.015f),true,priority:48);
                     break;
                 case SoundCue.EnemyShot: Play(Pick(shots), sound.Position, weaponVolume * 0.65f, Range(0.985f, 1.015f), false); break;
+                case SoundCue.EnemyShotWarning:
+                case SoundCue.EvadeReady:
+                case SoundCue.BulletEvade:
+                case SoundCue.PerfectEvade: PlayEvadeFeedback(sound);break;
                 case SoundCue.Explosion: Play(Pick(explosions), sound.Position, explosionVolume, Range(0.94f, 1.03f), false); break;
                 case SoundCue.Pickup: Play(pickup, sound.Position, interfaceVolume, 1, true); break;
                 case SoundCue.UiClick: Play(uiClick, Vector3.zero, interfaceVolume, 1, true, menu: true); break;

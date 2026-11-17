@@ -1,0 +1,4 @@
+RUNNING
+PASS automatic pass 1; 10 road tiles retained their pose and pool generation.
+System.Exception: Preview road streamer changed the fixed road layout before pass 2.
+  at GapDashLoopChecks.Tick () [0x00281] in C:\Users\salek\Documents\ChatGPT\cb\Logs\RefactorValidation\Assets\Editor\GapDashLoopChecks.cs:40 

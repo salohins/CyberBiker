@@ -1,0 +1,5 @@
+RUNNING
+PASS editable serialized controls, radius change and live apply before preview at 765px width.
+PASS editable serialized controls, radius change and live apply during preview at 765px width.
+PASS editable serialized controls, radius change and live apply while paused at 765px width.
+PASS all editing checks

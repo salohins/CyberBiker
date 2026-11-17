@@ -10,6 +10,33 @@ namespace Gameplay {
     public enum PistolInteraction { AimAndAutoFire, TapToFire }
 
     public class GameplayManager : MonoBehaviour {
+        [Header("Enemy shots, muzzle effects and timed evade")]
+        [SerializeField] private CyberBiker.Combat.ProjectileCombatSettings projectileCombat = new CyberBiker.Combat.ProjectileCombatSettings();
+        public CyberBiker.Combat.ProjectileCombatSettings ProjectileCombat => projectileCombat;
+        [Header("Close-dodge cinematic — tune in CyberBiker / Dodge Lab")]
+        [SerializeField] private CyberBiker.Combat.CloseDodgeProfile closeDodgeProfile;
+        private CyberBiker.Combat.CloseDodgeSettings closeDodgePreview;
+        private CyberBiker.Combat.CloseDodgeSettings runtimeCloseDodge;
+        private readonly CyberBiker.Combat.CloseDodgeSettings closeDodgeFallback=new CyberBiker.Combat.CloseDodgeSettings();
+        public CyberBiker.Combat.CloseDodgeSettings CloseDodge=>closeDodgePreview ?? runtimeCloseDodge ?? (closeDodgeProfile!=null ? closeDodgeProfile.settings : closeDodgeFallback);
+        public CyberBiker.Player.CloseDodgeEffects DodgeEffects {get;private set;}
+        [Header("Traffic gap dash — tune in CyberBiker / Gap Dash Lab")]
+        [SerializeField] private CyberBiker.Player.GapDashProfile gapDashProfile;
+        private CyberBiker.Player.GapDashSettings gapDashPreview;
+        private CyberBiker.Player.GapDashSettings runtimeGapDash;
+        private readonly CyberBiker.Player.GapDashSettings gapDashFallback=new CyberBiker.Player.GapDashSettings();
+        public CyberBiker.Player.GapDashProfile GapDashProfile=>gapDashProfile;
+        public CyberBiker.Player.GapDashSettings GapDash=>gapDashPreview ?? runtimeGapDash ?? (gapDashProfile!=null ? gapDashProfile.settings : gapDashFallback);
+        public void SetRuntimeCloseDodge(CyberBiker.Combat.CloseDodgeSettings value){runtimeCloseDodge=value.Copy();runtimeCloseDodge.Normalize();}
+        public void SetRuntimeGapDash(CyberBiker.Player.GapDashSettings value){runtimeGapDash=value.Copy();runtimeGapDash.Normalize();}
+        public CyberBiker.Player.GapDashAssist GapDashEffects {get;private set;}
+        internal void BindGapDash(CyberBiker.Player.GapDashAssist effect){GapDashEffects=effect;}
+        internal void BindCloseDodge(CyberBiker.Player.CloseDodgeEffects effects){DodgeEffects=effects;}
+        public void RefreshTimeState(){ApplyTimeState();}
+#if UNITY_EDITOR
+        public void SetCloseDodgePreview(CyberBiker.Combat.CloseDodgeSettings settings){closeDodgePreview=settings.Copy();}
+        public void SetGapDashPreview(CyberBiker.Player.GapDashSettings settings){gapDashPreview=settings.Copy();gapDashPreview.Normalize();}
+#endif
         [Header("Enemy Following")]
         [Tooltip("Target distance from the player in world units for every enemy, including newly spawned enemies and during Launch. Changes apply live. Finisher-ready enemies release this gap so they can be caught.")]
         [SerializeField, Min(1)] private float enemyDistanceFromPlayer = 20f;
@@ -39,6 +66,11 @@ namespace Gameplay {
             get => Mathf.Max(.01f, secondsBetweenPistolShots);
             set => secondsBetweenPistolShots = Mathf.Max(.01f, value);
         }
+
+        [Header("Style scoring — combos, multipliers and feedback")]
+        [SerializeField] private CyberBiker.Scoring.StyleScoringSettings styleScoring=new CyberBiker.Scoring.StyleScoringSettings();
+        public CyberBiker.Scoring.StyleScoringSettings StyleScoring=>styleScoring;
+        public CyberBiker.Scoring.StyleScoreController StyleScore {get;private set;}
 
         [Header("Run Difficulty")]
         [SerializeField] private AnimationCurve difficultyCurve;
@@ -72,10 +104,13 @@ namespace Gameplay {
         public bool IsCombatTimeRecovering => combatSlowRemaining<=0 && combatRecoveryElapsed<combatRecoveryDuration;
 
         private void Awake() {
+            if(closeDodgeProfile==null)closeDodgeProfile=Resources.Load<CyberBiker.Combat.CloseDodgeProfile>("CloseDodgeTuning");
+            if(gapDashProfile==null)gapDashProfile=Resources.Load<CyberBiker.Player.GapDashProfile>("GapDashTuning");
             normalFixedStep=Time.fixedDeltaTime;
-            Session = new RunSession(initialState);
+            Session = new RunSession(initialState){DistanceScoreRate=styleScoring.distancePointsPerUnit};
             Session.StateChanged += OnStateChanged;
             scorePresenter = new ScorePresenter(Session, scoreText);
+            StyleScore=gameObject.AddComponent<CyberBiker.Scoring.StyleScoreController>();
             CyberBiker.Audio.GameAudio.EnsurePresent();
         }
         private void Start() {
@@ -159,7 +194,9 @@ namespace Gameplay {
             combatTimeScale=combatTargetScale=combatRecoveryStart=1;ApplyTimeState();
         }
         private void ApplyTimeState() {
-            Time.timeScale=gameState==GameState.Pause ? 0 : CombatSlowMotionRemaining>0 && gameState==GameState.Playing ? combatTimeScale : 1;
+            float combat=CombatSlowMotionRemaining>0 ? combatTimeScale : 1;
+            float dodge=DodgeEffects!=null && DodgeEffects.isActiveAndEnabled ? DodgeEffects.WorldTimeScale : 1;
+            Time.timeScale=gameState==GameState.Pause ? 0 : gameState==GameState.Playing ? Mathf.Min(combat,dodge) : 1;
             Time.fixedDeltaTime=normalFixedStep*(Time.timeScale>0 ? Time.timeScale : 1);
         }
         private void UpdateScreens() {

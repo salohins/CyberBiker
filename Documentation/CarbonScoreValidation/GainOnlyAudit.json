@@ -1,0 +1,54 @@
+[
+  {
+    "prototype_role": "CarbonPoint",
+    "archive_source": "Game/GLOBAL/fe_common_drift_mb [4].wav",
+    "seconds": 0.3506575963718821,
+    "rate": 44100,
+    "channels": 1,
+    "bits": 16,
+    "gain": 0.7,
+    "max_rounding_error_pcm_units": 0.500000000001819,
+    "original_sha256": "657ab634ea90951fe3f3e3f2b703803a8c4bf4335958e01a2920765e0d3b8435",
+    "installed_sha256": "95bec1575cc341a988b6bcddcdd3dbbc871c0bc290e77130c2489d4fab27058b",
+    "edits": "gain only; waveform sample count, timing and pitch retained"
+  },
+  {
+    "prototype_role": "CarbonMultiplier",
+    "archive_source": "Game/GLOBAL/fe_common_drift_mb [3].wav",
+    "seconds": 1.3905895691609977,
+    "rate": 44100,
+    "channels": 1,
+    "bits": 16,
+    "gain": 0.8,
+    "max_rounding_error_pcm_units": 0.4000000000014552,
+    "original_sha256": "4fc70287ef55ebf1ffe7c44949a99bea0d60f1f205e3b93eabbb59da55fab2e2",
+    "installed_sha256": "ab5019bdf9a791518bb41a3864dcde5f2a789dce41cac26c18476e2a6e234c6f",
+    "edits": "gain only; waveform sample count, timing and pitch retained"
+  },
+  {
+    "prototype_role": "CarbonBank",
+    "archive_source": "Game/GLOBAL/fe_common_drift_mb [1].wav",
+    "seconds": 1.4233333333333333,
+    "rate": 44100,
+    "channels": 1,
+    "bits": 16,
+    "gain": 0.8,
+    "max_rounding_error_pcm_units": 0.4000000000014552,
+    "original_sha256": "369f3d0fa595659dd677a96bf2d1d30bee8e4b1fcdde80360e4d02b260def84d",
+    "installed_sha256": "06c72dae0843c6faa9cf0e9f33a54d4f8a95f422288ce1005e49ac21bc4a974b",
+    "edits": "gain only; waveform sample count, timing and pitch retained"
+  },
+  {
+    "prototype_role": "CarbonBreak",
+    "archive_source": "Front/FE/fe_mb [3].wav",
+    "seconds": 0.3263265306122449,
+    "rate": 44100,
+    "channels": 1,
+    "bits": 16,
+    "gain": 0.9,
+    "max_rounding_error_pcm_units": 0.5,
+    "original_sha256": "21640bb47ccd0701e2c29b709935e4a7a9bc3eae0ccf2c63c16e7cbc4b028681",
+    "installed_sha256": "0ccb596eb22dca230e71cf543fde09216fbc4556930fe9992c76d166ccc6c524",
+    "edits": "gain only; waveform sample count, timing and pitch retained"
+  }
+]

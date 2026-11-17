@@ -1,0 +1,19 @@
+PASS predictive TUNE control exists; preset false round trip and legacy profile default retained.
+PASS 20m hard limit: no control/camera change far away or at 20.3m; predictive countersteering catch at 19.7m.
+PASS too-short high-speed correction rejected without starting outside the limit.
+PASS countersteer from right: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS countersteer from left: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS fast inward right: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS fast inward left: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS normal speed inward right: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS normal speed inward left: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS already in catch radius right: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS already in catch radius left: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS neutral correction right: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS neutral correction left: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS banked side approach right: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS banked side approach left: moving/steering approach aligned before bumpers, solid cars, no damage or forward boost.
+PASS rejected blocked side entry
+PASS rejected narrow side entry
+PASS rejected too late side entry
+PASS moving side-entry gap checks.

@@ -80,8 +80,13 @@ namespace CyberBiker.EditorTools {
         }
         public static void Apply(FinisherLabTuning tuning) {
             tuning.Normalize();SessionState.SetString(Key+"Tuning",JsonUtility.ToJson(tuning));
-            if(Ready)tuning.Apply(Sword,Effects);
+            if(Ready){tuning.Apply(Sword,Effects);RefreshLiveCamera();}
             if(take!=null)takeDirty=true;
+        }
+        public static void RefreshLiveCamera(){
+            if(!Ready || !EditorApplication.isPaused || viewingTake || viewCamera==null)return;
+            ShootingFeedback.Active?.RemoveCamera(viewCamera);Gameplay.DodgeEffects?.RemoveCamera(viewCamera);Gameplay.GapDashEffects?.RemoveCamera(viewCamera);Effects.RemoveCamera(viewCamera);
+            Effects.ApplyCamera(viewCamera);Gameplay.GapDashEffects?.ApplyCamera(viewCamera);Gameplay.DodgeEffects?.ApplyCamera(viewCamera);ShootingFeedback.Active?.ApplyCamera(viewCamera);viewCamera.Render();
         }
         public static void RecordTake(FinisherLabTuning tuning) {
             if(EditorApplication.isPlayingOrWillChangePlaymode && !Active)throw new InvalidOperationException("Stop the current Play session before recording in the Lab.");
@@ -177,6 +182,7 @@ namespace CyberBiker.EditorTools {
             typeof(Enemy).GetField("followTarget",Private).SetValue(target,instance.transform.position+Vector3.forward*10);
             instance.SetActive(true);
             viewCamera=Camera.main;if(viewCamera==null)throw new InvalidOperationException("Preview scene has no main camera.");
+            viewCamera.GetComponent<CameraController>().BeginFinisherCombatCameraPreview();
             previousTarget=viewCamera.targetTexture;view=new RenderTexture(1280,720,24){name="Finisher Lab live view"};view.Create();viewCamera.targetTexture=view;
             AudioListener.volume=Sound ? 1 : 0;stage=1;readyAt=EditorApplication.timeSinceStartup;
         }
@@ -199,7 +205,10 @@ namespace CyberBiker.EditorTools {
                     target.TakeDamage(new DamageInfo(10000,Player.gameObject));
                     if(!target.IsFinisherReady)throw new InvalidOperationException("The preview target could not enter finisher state.");
                     if(SessionState.GetBool(Key+"RecordRequested",false)){SessionState.SetBool(Key+"RecordRequested",false);BeginTake();}
-                    Sword.Launch();stage=2;hitAt=0;began=EditorApplication.timeSinceStartup;Status="Live finisher preview";
+                    // Match the current Shoot-triggered finisher, including its
+                    // camera, without adding the manual Launch/nitro camera.
+                    if(!Sword.TryFinisherFromShoot())throw new InvalidOperationException("The ready preview target could not start its finisher.");
+                    stage=2;hitAt=0;began=EditorApplication.timeSinceStartup;Status="Live finisher preview — combat camera";
                 } else if(stage==2 && Sword!=null) {
                     if(recording && !EditorApplication.isPaused && recordedFrame!=Time.frameCount) {
                         recordedFrame=Time.frameCount;recordedTime+=1f/60;take.Capture(recordedTime,viewCamera,Player,Sword,Effects);
@@ -222,7 +231,7 @@ namespace CyberBiker.EditorTools {
             } catch(Exception error) {Status=error.Message;Debug.LogException(error);Stop();}
         }
         private static void ReleaseView() {
-            if(viewCamera!=null)viewCamera.targetTexture=previousTarget;
+            if(viewCamera!=null){viewCamera.GetComponent<CameraController>()?.EndFinisherCombatCameraPreview();viewCamera.targetTexture=previousTarget;}
             if(view!=null) {
                 if(EditorApplication.isPlaying)UnityEngine.Object.Destroy(view);
                 else {view.Release();UnityEngine.Object.DestroyImmediate(view);}

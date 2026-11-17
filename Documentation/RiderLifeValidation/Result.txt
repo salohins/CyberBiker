@@ -1,0 +1,17 @@
+RUNNING
+PASS original riding helmet pitch retained; no level-head override outside aiming.
+PASS predictive car attention starts at 50 m, before the old 20 m threshold.
+PASS gaze points at the car in 3D and shares the motion between neck and helmet.
+Car return: yaw=0.2304023, neck correction=0, animated-neck change=1.016438, attention=False
+PASS continuous car-glance return and restoration of the original neck pose.
+PASS armed/shooting enemy interrupts an existing closer-car glance and blocks new traffic distractions.
+PASS brief nearby-car glance, bounded pitch, shoulder follow and smooth return.
+PASS actual muted-audio traffic crossing triggers a visible body lean and glance; no physics movement added.
+PASS rider notices a nearby enemy while riding.
+PASS first shooting input suppresses traffic before animation state catches up.
+PASS pistol alignment preserved and environmental body kicks suppressed while aiming.
+PASS visible attacker wins head attention even while the pistol targets a different enemy; gun alignment remains correct.
+PASS shooter loses priority when outside the camera view.
+PASS shooter regains priority when visible again.
+PASS sword strike retains exclusive ownership of the authored pose.
+PASS all Rider Life checks.

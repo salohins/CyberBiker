@@ -34,7 +34,7 @@ namespace CyberBiker.EditorTools {
                 if(GUILayout.Button("Load saved defaults"))tuning=FinisherLabTuning.ReadSavedDefaults();return;
             }
             EditorGUILayout.Space(8);EditorGUILayout.LabelField("FINISHER LAB",EditorStyles.boldLabel);
-            EditorGUILayout.LabelField("Real animations, particles, camera and sound. Changes apply to the preview as you edit.",EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Combat riding camera + finisher animation, particles and sound. Changes apply to the preview as you edit.",EditorStyles.miniLabel);
             DrawToolbar();
             DrawPresets();
             using(new EditorGUILayout.HorizontalScope()) {
@@ -56,7 +56,7 @@ namespace CyberBiker.EditorTools {
                     scroll=EditorGUILayout.BeginScrollView(scroll);
                     float labelWidth=EditorGUIUtility.labelWidth;EditorGUIUtility.labelWidth=210;
                     foreach(string group in FinisherLabTuning.Controls.Select(control=>control.group).Distinct()) {
-                        if(!expanded.ContainsKey(group))expanded[group]=group=="Animation";
+                        if(!expanded.ContainsKey(group))expanded[group]=group=="Dash camera";
                         expanded[group]=EditorGUILayout.Foldout(expanded[group],group,true,EditorStyles.foldoutHeader);
                         if(!expanded[group])continue;
                         using(new EditorGUILayout.VerticalScope(EditorStyles.helpBox)) {
@@ -188,9 +188,8 @@ namespace CyberBiker.EditorTools {
                 if(GUILayout.Button("Import preset…",EditorStyles.toolbarButton,GUILayout.Width(115))) {
                     string path=EditorUtility.OpenFilePanel("Import finisher preset",Application.dataPath,"json");
                     if(!string.IsNullOrEmpty(path))try {
-                        var imported=JsonUtility.FromJson<FinisherLabTuning>(File.ReadAllText(path));
-                        if(imported==null || imported.version!=1)throw new ArgumentException("Unsupported finisher preset.");
-                        imported.Normalize();tuning=imported;Remember();notice="Preset loaded into the preview.";
+                        var imported=FinisherLabTuning.ImportJson(File.ReadAllText(path));
+                        tuning=imported;Remember();notice="Preset loaded into the preview.";
                     } catch(Exception error){notice="Preset was not loaded: "+error.Message;}
                 }
                 GUILayout.FlexibleSpace();

@@ -1,0 +1,5 @@
+PASS white windup preview, hidden permanent lasers, exact bullet path, frozen flight line and endpoint cleanup without altering bullet lifetime.
+PASS pooled reuse/stale-bullet safety, cancelled windup cleanup and obstacle-impact cleanup.
+PASS pause/resume, reversible experiment toggle and in-flight guide survival after shooter destruction.
+PASS moving BulletLocal at 70–110 m/s with steering and independent shooter motion: 68 rendered frames, 111.7999m parent travel, maximum bullet/line error 3.351092E-05m.
+PASS slow-motion riding: 195 rendered frames, 113.0504m parent travel, maximum bullet/line error 2.720766E-05m.

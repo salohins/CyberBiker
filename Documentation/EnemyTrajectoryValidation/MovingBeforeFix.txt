@@ -1,0 +1,5 @@
+System.Exception: Rendered guide left its bullet by 0.08318391 world units at sample 1
+  at EnemyTrajectoryChecks.Tick () [0x00bb2] in C:\Users\salek\Documents\ChatGPT\cb\Logs\RefactorValidation\Assets\Editor\EnemyTrajectoryChecks.cs:89 
+PASS white windup preview, hidden permanent lasers, exact bullet path, frozen flight line and endpoint cleanup without altering bullet lifetime.
+PASS pooled reuse/stale-bullet safety, cancelled windup cleanup and obstacle-impact cleanup.
+PASS pause/resume, reversible experiment toggle and in-flight guide survival after shooter destruction.

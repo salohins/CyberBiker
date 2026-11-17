@@ -25,12 +25,16 @@ namespace CyberBiker.Player {
         [Header("Projectile near misses")]
         [Tooltip("Distance from the rider torso that counts as a dodged hostile projectile. Each projectile gives feedback once; separate bullets never suppress each other.")]
         [SerializeField,Range(.5f,6)] private float nearMissRadius=3.2f;
+        [SerializeField,Range(.5f,4)] private float nearMissCenterHeight=1.6f;
+        public float NearMissRadius {get=>nearMissRadius;set=>nearMissRadius=Mathf.Clamp(value,.5f,6);}
+        public float NearMissCenterHeight {get=>nearMissCenterHeight;set=>nearMissCenterHeight=Mathf.Clamp(value,.5f,4);}
         [SerializeField,Range(0,1)] private float nearMissScreenStrength=.23f;
         [SerializeField] private Material nearMissMaterial;
         private sealed class Marker {public RectTransform root;public CanvasGroup group;public Image[] strokes;public Transform target;public Vector3 localPoint,worldPoint;public float time;public bool stagger;}
         private readonly Marker[] markers=new Marker[8];
         private int nextMarker,shotSequence;
         private PlayerController player;private Rigidbody body;private GameplayManager manager;private Camera view;
+        private PlayerProjectileEvade evade;
         private Canvas hud;private RectTransform hudRect;private CombatDamageScreen screen;private ParticleSystem slipstream;
         private float recoil,hurtTime,hurtPeak,missTime,missSide;
         private Vector2 damageDirection;
@@ -39,7 +43,7 @@ namespace CyberBiker.Player {
         public float DamageAmount=>hurtTime>0 ? hurtPeak*Mathf.Pow(hurtTime/Mathf.Max(.01f,damageDuration),1.3f) : 0;
         public float RecoilAmount=>recoil;
         public int LiveMarkerCount {get {int count=0;foreach(var marker in markers)if(marker!=null && marker.time>0)count++;return count;}}
-        public Vector3 NearMissCenter=>transform.position+Vector3.up*1.6f;
+        public Vector3 NearMissCenter=>transform.position+Vector3.up*nearMissCenterHeight;
         private bool Playing=>manager!=null && (manager.gameState==GameState.Playing || manager.gameState==GameState.Hit);
         private void Awake(){player=GetComponent<PlayerController>();body=GetComponent<Rigidbody>();manager=FindAnyObjectByType<GameplayManager>();BuildHud();BuildSlipstream();}
         private void OnEnable(){Active=this;}
@@ -56,9 +60,11 @@ namespace CyberBiker.Player {
             if(!isActiveAndEnabled || !Playing)return;var marker=markers[nextMarker];nextMarker=(nextMarker+1)%markers.Length;
             marker.target=target;marker.worldPoint=point;marker.localPoint=target!=null ? target.InverseTransformPoint(point) : point;marker.time=hitMarkerDuration;marker.stagger=finisherReady;
             ConfirmedHitCount++;SoundEvents.Emit(SoundCue.PistolHitConfirm,point);
+            if(target!=null && target.GetComponent<Enemy>()!=null)CyberBiker.Scoring.StyleScoreController.Award(CyberBiker.Scoring.StyleAction.PistolHit,point);
         }
         public void Hurt(float damage,GameObject source){
             if(!isActiveAndEnabled || damage<=0 || manager==null || manager.gameState==GameState.Pause)return;
+            CyberBiker.Scoring.StyleScoreController.BankOnImpact();
             hurtPeak=Mathf.Max(DamageAmount,Mathf.Clamp(damage/30,.35f,1));hurtTime=damageDuration;DamageCount++;
             var camera=view!=null ? view : Camera.main;var direction=source!=null ? source.transform.position-transform.position : -transform.forward;
             if(camera!=null){var local=camera.transform.InverseTransformDirection(direction.normalized);damageDirection=new Vector2(local.x,local.z>=0 ? .6f : -.6f).normalized;}
@@ -66,13 +72,17 @@ namespace CyberBiker.Player {
         }
         // Returns true once the closest point has been passed, even if it was
         // too far away. This projectile must never report a second near miss.
-        public bool CheckNearMiss(Vector3 start,Vector3 end,float dt){
+        public bool CheckNearMiss(Vector3 start,Vector3 end,float dt,Bullet shot=null){
             if(!isActiveAndEnabled || !Playing || player==null || !player.IsAlive || dt<=0)return false;
-            var center=NearMissCenter;var movement=body!=null ? body.linearVelocity*dt : Vector3.zero;
+            var velocity=body!=null ? body.linearVelocity : Vector3.zero;
+            if(shot!=null && shot.FollowsRider)velocity.z=0;
+            var movement=velocity*dt;
+            var center=NearMissCenter;
             var a=start-(center-movement);var b=end-center;var segment=b-a;float length=segment.sqrMagnitude;
             if(length<.000001f)return false;float t=-Vector3.Dot(a,segment)/length;if(t<0 || t>1)return false;
             var separation=Vector3.Lerp(a,b,t);if(separation.sqrMagnitude>nearMissRadius*nearMissRadius)return true;
             NearMissCount++;missTime=.22f;
+            CyberBiker.Scoring.StyleScoreController.Award(CyberBiker.Scoring.StyleAction.BulletDodge,Vector3.Lerp(start,end,t));
             var point=Vector3.Lerp(start,end,t);var camera=view!=null ? view : Camera.main;
             missSide=camera!=null ? Mathf.Sign(Vector3.Dot(point-center,camera.transform.right)) : Mathf.Sign(separation.x);if(missSide==0)missSide=1;
             SoundEvents.Emit(SoundCue.BulletNearMiss,point);
@@ -81,6 +91,17 @@ namespace CyberBiker.Player {
                 for(int i=0;i<4;i++){var emit=new ParticleSystem.EmitParams{position=point+Vector3.up*(i-.5f)*.04f,velocity=(body!=null ? body.linearVelocity*.82f : Vector3.zero)+transform.right*missSide*(3+i),startLifetime=.12f+i*.018f,startSize3D=new Vector3(.025f,.25f,.025f),startColor=new Color(.3f,.8f,1,.65f),rotation=20+i*13,randomSeed=(uint)(417+i+NearMissCount*7)};slipstream.Emit(emit,1);}
             }
             return true;
+        }
+        // Separate retirement from the sound check: the cinematic can use a
+        // different radius and torso height without losing its passing sample.
+        public bool CheckCloseDodge(Vector3 start,Vector3 end,float dt,Bullet shot){
+            if(!isActiveAndEnabled || !Playing || player==null || !player.IsAlive || dt<=0 || shot==null || !shot.IsHostile)return false;
+            var dodge=manager.DodgeEffects;if(dodge==null)return true;
+            var velocity=body!=null ? body.linearVelocity : Vector3.zero;if(shot.FollowsRider)velocity.z=0;
+            var a=start-(dodge.Center-velocity*dt);var b=end-dodge.Center;var travel=b-a;float span=travel.sqrMagnitude;
+            if(span<.000001f)return false;float closest=-Vector3.Dot(a,travel)/span;
+            if(closest<0)return true;if(closest>1)return false;
+            dodge.TryClosePass(Vector3.Lerp(a,b,closest).magnitude,Vector3.Lerp(start,end,closest));return true;
         }
         public void RemoveCamera(Camera camera){
             if(!cameraApplied || camera==null)return;
@@ -93,11 +114,14 @@ namespace CyberBiker.Player {
             if(camera==null)return;view=camera;
             if(screen==null){screen=camera.GetComponent<CombatDamageScreen>() ?? camera.gameObject.AddComponent<CombatDamageScreen>();}
             float damage=Playing ? DamageAmount : 0;float miss=Playing ? missTime/.22f : 0;float kick=Playing ? recoil : 0;
+            if(evade==null)evade=GetComponent<PlayerProjectileEvade>();
+            float dodgeRoll=Playing && evade!=null ? evade.PoseAmount*evade.Settings.cameraRoll : 0;
+            float dodgeFov=Playing && evade!=null && evade.LastPerfect && !manager.CloseDodge.enabled ? evade.FeedbackAmount*evade.Settings.perfectFovKick : 0;
             basePosition=camera.transform.position;baseRotation=camera.transform.rotation;baseFov=camera.fieldOfView;
             float vibration=Mathf.Sin(Time.time*81)*damage;
             camera.transform.position+=camera.transform.forward*(-shotCameraKick*kick)+camera.transform.right*(vibration*.025f);
-            camera.transform.rotation*=Quaternion.Euler(-shotKickDegrees*kick+vibration*damageCameraKick,.13f*kick*(shotSequence%2==0 ? 1 : -1),damage*.45f*damageDirection.x+miss*missSide*.12f);
-            camera.fieldOfView=Mathf.Clamp(camera.fieldOfView-shotFovKick*kick,20,130);
+            camera.transform.rotation*=Quaternion.Euler(-shotKickDegrees*kick+vibration*damageCameraKick,.13f*kick*(shotSequence%2==0 ? 1 : -1),damage*.45f*damageDirection.x+miss*missSide*.12f+dodgeRoll);
+            camera.fieldOfView=Mathf.Clamp(camera.fieldOfView-shotFovKick*kick+dodgeFov,20,130);
             finalPosition=camera.transform.position;finalRotation=camera.transform.rotation;finalFov=camera.fieldOfView;cameraApplied=true;
             screen.Configure(screenMaterial,damage*damageScreenStrength,miss*nearMissScreenStrength,damageDirection,missSide);
             DrawMarkers(camera);

@@ -1,0 +1,8 @@
+PASS real incoming bullet prediction, early rejection, original prefab rendering and obstacle filtering.
+PASS timed evade without HUD, visible rider movement, unchanged bike position, no bullet damage and smooth pose recovery.
+PASS perfect timing, one reward per burst and smooth return to full speed.
+PASS no input still takes original bullet damage.
+PASS pooled friendly/hostile reset, pause input and no evade HUD and existing slow-motion priority.
+PASS last-moment steering dodge earns a perfect reward after a real threatened trajectory becomes a close pass.
+PASS permanent bright white gun lasers, full red warning before both shots, white recovery, player-end gradient, brief post-shot dimming/recovery, cadence expansion, queued suppression, lazy muzzle reconnection and gun smoke.
+PASS sword strike prevents competing evade animation.

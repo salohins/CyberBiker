@@ -1,0 +1,1 @@
+PASS readable bullet material and player evade component; movement/sword settings preserved.

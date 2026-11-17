@@ -1,0 +1,13 @@
+RUNNING
+PASS extra wide left; automatically centred before bumpers, no collider overlap, cars remained solid and forward speed retained.
+PASS extra wide right; automatically centred before bumpers, no collider overlap, cars remained solid and forward speed retained.
+PASS wide left; automatically centred before bumpers, no collider overlap, cars remained solid and forward speed retained.
+PASS wide right; automatically centred before bumpers, no collider overlap, cars remained solid and forward speed retained.
+PASS held steer left; automatically centred before bumpers, no collider overlap, cars remained solid and forward speed retained.
+PASS held steer right; automatically centred before bumpers, no collider overlap, cars remained solid and forward speed retained.
+PASS small correction left; automatically centred before bumpers, no collider overlap, cars remained solid and forward speed retained.
+PASS small correction right; automatically centred before bumpers, no collider overlap, cars remained solid and forward speed retained.
+PASS rejected physically narrow gap.
+PASS rejected too late for wide correction.
+PASS rejected blocked exit.
+PASS eight automatic solid-collision passes, including 4.8 m offsets on both sides, centred before bumpers without overlap or speed boost; impossible routes rejected.

@@ -1,0 +1,13 @@
+RUNNING
+PASS old Lab drafts/presets and saved rig profiles retain their existing camera values.
+PASS strict camera-only preset save/load, nested fields, invalid-value rejection; sword gameplay and dodge timing preserved.
+PASS paused live pan, rotation and FOV controls; real preview mouse wheel and drag events.
+PASS independent combat view pan/rotation/FOV; planar enemy radius, exit padding, delayed return, smooth blend, pause and dead/inactive/queued filtering.
+PASS automatic real-camera transitions for enemy arrival, disappearance and range exit.
+PASS independent cruising/combat aim pan, rotation and FOV; both left/right shoulder previews.
+PASS automatic aiming transitions, separate FOVs and cruising restoration after enemy departure.
+PASS left/right aim shoulders.
+PASS airborne and independent launch view.
+PASS real finisher preview and live camera edits.
+PASS real passing-bullet dodge preview and live camera edits.
+PASS all Camera Lab checks

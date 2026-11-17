@@ -50,6 +50,7 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
         StopAllCoroutines();isShootingRunning=false;ClearPath();ResetEncounterArms();
     }
     private void ResetEncounterArms() {
+        CancelPendingTrajectory();
         if(animator!=null){animator.SetBool("Attack",false);animator.SetBool("GunReady",false);animator.SetLayerWeight(1,0);animator.SetLayerWeight(2,0);}
         if(animationRigging!=null){animationRigging.layers[0].rig.weight=0;animationRigging.layers[1].rig.weight=0;}
         if(gunParticle1!=null)gunParticle1.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -64,6 +65,21 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
     public bool SpeedTrailVisible => speedTrail!=null && speedTrail.Visible;
     public void HideSpeedTrailForFinisher(){speedTrail?.Hide();}
     private Weapon weapon;
+    private EnemyShotWarning shotWarning;
+    private EnemyGunEffects gunEffects;
+    private EnemyShotTrajectory pendingTrajectory;
+    private int pendingTrajectoryGun;
+    public EnemyShotTrajectory PendingTrajectory=>pendingTrajectory!=null && pendingTrajectory.IsPreviewFor(this) ? pendingTrajectory : null;
+    private void CancelPendingTrajectory(bool deferred=false){if(pendingTrajectory!=null)pendingTrajectory.CancelPreview(this,deferred);pendingTrajectory=null;}
+    private void PrepareTrajectory(int gunIndex,float warningTime){
+        if(gameplay==null || !gameplay.ProjectileCombat.enemyTrajectoryGuides)return;
+        CancelPendingTrajectory();pendingTrajectoryGun=gunIndex;
+        pendingTrajectory=EnemyShotTrajectory.Create(this,GunMuzzle(gunIndex),player.transform,warningTime);
+    }
+    private void BeginShotWarning(int gunIndex,float warningTime){
+        if(shotWarning==null){shotWarning=GetComponent<EnemyShotWarning>();if(shotWarning==null)shotWarning=gameObject.AddComponent<EnemyShotWarning>();}
+        shotWarning.Begin(GunMuzzle(gunIndex),warningTime);PrepareTrajectory(gunIndex,warningTime);
+    }
     private EnemyHitReaction hitReaction;
     private Gameplay.GameplayManager gameplay;
     public bool IsAlive => vitality != null && vitality.IsAlive;
@@ -107,6 +123,7 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
     public float FinisherFlashEndRate => Mathf.Max(FinisherFlashStartRate,finisherFlashEndRate);
     public Color FinisherHighlightColor => finisherGlow!=null ? finisherGlow.CurrentColor : finisherReadyColor;
     public int FiredShotCount { get; private set; }
+    public float LastFiredTime {get;private set;}=float.NegativeInfinity;
     [Header("Weapon Tuning")]
     [Tooltip("Seconds between alternating left/right shots. 0.5 = 2 shots/second. Keeps the existing two-arm firing sequence.")]
     [SerializeField, Min(0.01f)] private float shootInterval = .5f;
@@ -152,6 +169,8 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
     private RigBuilder animationRigging;
 
     private bool armed;
+    public bool IsAimingWeapons => armed && IsAlive && !IsEncounterQueued && !IsArriving && !IsFinisherReady;
+    public Transform GunMuzzle(int index) => index==0 ? leftBulletSpawn : rightBulletSpawn;
     private bool isShootingRunning;
     private GameObject bulletHit;
 
@@ -184,6 +203,8 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
         trafficAvoidance=new EnemyTrafficAvoidance(gameObject,aiConntroller);
 
         animator = GetComponent<Animator>();
+        shotWarning=GetComponent<EnemyShotWarning>() ?? gameObject.AddComponent<EnemyShotWarning>();
+        gunEffects=GetComponent<EnemyGunEffects>() ?? gameObject.AddComponent<EnemyGunEffects>();
         hitReaction = GetComponent<EnemyHitReaction>() ?? gameObject.AddComponent<EnemyHitReaction>();
         animationRigging = GetComponent<RigBuilder>();
         if(IsEncounterQueued || IsArriving){speed=IsArriving ? arrival.ForwardSpeed : playerBody.linearVelocity.z;ResetEncounterArms();}
@@ -197,7 +218,7 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
         speedTrail?.Tick(player!=null ? player.transform : null,ForwardSpeed,speedTrailLifetime,speedTrailMaxLength,speedTrailWidth,speedTrailBrightness,
             !IsAlive || ArrivalVisibility<.99f || (playerSword!=null && playerSword.HoldsEnemyForStrike(this)));
     }
-    private void OnDisable(){speedTrail?.Hide();arrival?.Dispose();arrival=null;}
+    private void OnDisable(){CancelPendingTrajectory(true);shotWarning?.Cancel();speedTrail?.Hide();arrival?.Dispose();arrival=null;}
     private void Update() {
         if (!IsAlive || (gameplay != null && gameplay.gameState != Gameplay.GameState.Playing)) return;
         if(IsFinisherReady) {
@@ -377,12 +398,19 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
         // First shot with the left arm
         animator.SetLayerWeight(2, 1);
         animator.SetLayerWeight(1, 1);
+        float lead=gameplay!=null ? Mathf.Max(0,gameplay.ProjectileCombat.firingWarning) : 0;
+        float cadence=Mathf.Max(Mathf.Max(.01f,shootInterval),lead+(gameplay!=null ? Mathf.Max(0,gameplay.ProjectileCombat.enemyShotRecovery) : 0));
+        if(lead>0){BeginShotWarning(0,lead);yield return new WaitForSeconds(lead);}
+        shotWarning.Cancel();
         GunShoot(0);
 
         animator.SetTrigger("LeftArmShoot");
          // Play particle effect for left arm
 
-        yield return new WaitForSeconds(shootInterval);
+        float rightLead=lead;
+        if(cadence>rightLead)yield return new WaitForSeconds(cadence-rightLead);
+        if(rightLead>0){BeginShotWarning(1,rightLead);yield return new WaitForSeconds(rightLead);}
+        shotWarning.Cancel();
 
         // Second shot with the right arm
 
@@ -390,7 +418,9 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
         animator.SetTrigger("RightArmShoot");
          // Play particle effect for right arm
 
-        yield return new WaitForSeconds(shootInterval);
+        // Every shot gets the full warning, even when the old shot interval is
+        // shorter. Keep a short white-laser recovery between red warnings.
+        if(cadence>lead)yield return new WaitForSeconds(cadence-lead);
 
         // Reset the layers back to prevent overriding other animations
         animator.SetLayerWeight(2, 0);
@@ -411,7 +441,16 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
         if (gameplay != null && gameplay.gameState != Gameplay.GameState.Playing) return;
         if (weapon == null) weapon = new ProjectileWeapon(bullet, 0.01f, shootingDamage, bulletParent != null ? bulletParent.transform : null);
         if (weapon is ProjectileWeapon projectileWeapon) projectileWeapon.SetDamage(shootingDamage);
-        if(weapon.TryFire(new ShotRequest(targetGun.position, direction, gameObject), Time.time))FiredShotCount++;
+        var request=new ShotRequest(targetGun.position,direction,gameObject);
+        if(gameplay!=null && gameplay.ProjectileCombat.enemyTrajectoryGuides && (PendingTrajectory==null || pendingTrajectoryGun!=gunIndex))PrepareTrajectory(gunIndex,0);
+        if(weapon.TryFire(request, Time.time)){
+            FiredShotCount++;
+            LastFiredTime=Time.time;
+            if(PendingTrajectory!=null){pendingTrajectory.Commit(request,targetPosition,(weapon as ProjectileWeapon)?.LastProjectile);pendingTrajectory=null;}
+            shotWarning?.Fired(gunIndex);
+            if(gunEffects==null)gunEffects=GetComponent<EnemyGunEffects>() ?? gameObject.AddComponent<EnemyGunEffects>();
+            gunEffects.Fire(gunIndex,targetGun,direction);
+        }else CancelPendingTrajectory();
     }
 
     private void TakeGun() {if(!IsEncounterQueued && !IsArriving)armed=true;}
@@ -483,6 +522,7 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
         swordExplosionVelocity=new Vector3(0,0,Mathf.Max(ForwardSpeed,attackerBody!=null ? attackerBody.linearVelocity.z : 0));
         SwordDefeatVelocity=swordExplosionVelocity+Vector3.forward*Mathf.Max(0,forwardKick);
         TakeDamage(new DamageInfo(vitality.Current,attacker));
+        if(!IsAlive && attacker!=null && attacker.GetComponent<PlayerController>()!=null)CyberBiker.Scoring.StyleScoreController.Award(CyberBiker.Scoring.StyleAction.SwordFinisher,transform.position+Vector3.up*2);
         return !IsAlive;
     }
     public void TakeDamage(DamageInfo damage) {
@@ -493,6 +533,7 @@ public class Enemy : MonoBehaviour, IDamageable, IDamageState {
         float floor=Mathf.Max(.001f,Mathf.Min(1,vitality.Maximum*finisherHealthFraction));
         float amount=(swordDefeat || pistolKill) ? damage.Amount : Mathf.Min(damage.Amount,Mathf.Max(0,vitality.Current-floor));
         bool damaged=amount>0 && vitality.TakeDamage(new DamageInfo(amount,damage.Source));
+        if(damaged && !IsAlive && !swordDefeat && pistolContact)CyberBiker.Scoring.StyleScoreController.Award(CyberBiker.Scoring.StyleAction.PistolKill,damage.HasContact ? damage.ContactPoint : transform.position);
         // The finisher floor prevents pistol kills, but it does not make
         // physical bullet contacts disappear. Queued/arriving immunity above
         // still suppresses reactions; health and the finisher timer stay intact.

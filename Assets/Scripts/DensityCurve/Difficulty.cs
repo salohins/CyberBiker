@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class Difficulty : MonoBehaviour
 {
+    [Header("Progression")]
+    [Tooltip("Gameplay seconds in this section. Zero uses DifficultyManager's evenly divided fallback duration. Pause and slow motion affect this timer.")]
+    [Min(0)] public float durationSeconds;
+
     [Header("Traffic")]
     public float carOffsetModifier = 0;
     public int oneCarRow = 1;
@@ -9,6 +13,9 @@ public class Difficulty : MonoBehaviour
     public int threeCarRow = 1;
 
     [Header("Enemy encounters")]
+    [Tooltip("Maximum waves started during this section. Zero allows unlimited waves. Existing enemies finish naturally when a riding break starts.")]
+    [Min(0)] public int maxWavesPerSection;
+
     [Tooltip("Total riders in each wave, fought one at a time. Zero stops new enemy spawns; existing riders finish their encounter.")]
     [Range(0,10)] public int enemiesPerWave = 3;
     [Tooltip("Maximum live riders, including the fighter and waiting riders. A larger wave refills the queue as riders are defeated.")]

@@ -10,6 +10,7 @@ namespace CyberBiker.Player {
         private readonly float rotationSensitivity, leanRange;
         private float yawRotation, animationFrame, steering, visualSteering, poseResponse, dt, aimDt;
         public float AimRigBlendTime { get; set; } = .08f;
+        public float HeadingResponse {get;set;}=3;
         private bool aiming, armed;
         public BikePresentation(Transform bike, Transform mesh, Animator animator, RigBuilder rig, float sensitivity, float lean) {
             transform = bike; motorcycleMesh = mesh; this.animator = animator;
@@ -27,7 +28,7 @@ namespace CyberBiker.Player {
             ProcessYaw(); ProcessPitch(); ProcessLeans(); ProcessAnimations();
         }
     private void ProcessYaw() {
-        yawRotation = Mathf.Lerp(yawRotation, steering * rotationSensitivity, dt * 3f);
+        yawRotation = Mathf.Lerp(yawRotation, steering * rotationSensitivity, dt * HeadingResponse);
 
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, yawRotation, transform.eulerAngles.z);
     }

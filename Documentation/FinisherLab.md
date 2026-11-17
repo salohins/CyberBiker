@@ -2,6 +2,34 @@ Open CyberBiker > Finisher Lab. Stop and restart an existing Lab preview once af
 
 The fixed toolbar at the top contains Save for game, Reload saved defaults, Export preset and Import preset.
 
+Open **Dash camera** for the independent finisher approach view. This group opens
+by default. **Swing & impact camera** contains the existing swing, hit and
+explosion controls.
+
+| Dash camera setting | Effect |
+|---|---|
+| Enable dash camera | Enables this camera layer independently of the finisher. |
+| FOV offset (+ = wider) | Added to the normal FOV; positive widens and negative zooms in. The final FOV retains the 38–110 degree guard. |
+| Position X / Y / Z | Camera-local sideways, height and forward offsets. Negative Z pulls back. |
+| Rotation pitch / yaw / roll | Independent rotation offsets in degrees. |
+| Mirror X/yaw/roll for side | Mirrors those axes for left/right cuts. Turn off for a fixed camera side. |
+| Target framing | Maximum turn toward the enemy; set zero for only the chosen rotation. |
+| Blend into / out of dash | Transition durations in real seconds, independent of world slow motion. |
+
+This view starts with the draw/approach and blends into the swing after drawing
+and the physical dash are complete. Existing swing/impact sliders do not control
+the dash view. The Lab uses the direct Shoot-triggered finisher, so manual
+Launch/nitro camera motion does not contaminate the preview. The Lab uses
+the saved **Combat Riding** view from Camera Lab as the base, pinned throughout
+the preview and explosion. Restart or Replay after changing the saved Camera Lab
+profile. Recorded takes include this combat view from their first frame, with
+the finisher's dash, swing and impact camera layers applied over it. Camera edits update
+the live preview; paused FOV, position and
+rotation edits refresh without advancing the rider, damage or particles. Use
+Replay to test transition timing, and Record a new full 3D take to update a scrubbed
+recording. Save for game and the Lab JSON preset include all dash controls.
+Older drafts migrate using their existing swing offsets without resetting them.
+
 - Replay tests the current draft on a fresh target. Left/Right chooses the enemy side.
 - Save for game writes only the Lab's animation, finisher camera, particle and sound tuning fields to Player_Last.prefab. Future runs and builds use those values.
 - Export preset writes a separate JSON settings file. Import preset loads one into the draft. Neither button exports a recorded take.
@@ -16,6 +44,16 @@ When recording finishes, the live run pauses. Use Whole finisher (s) to seek bac
 Drag the recorded image to orbit. Middle-drag pans; the wheel zooms. Front/Left/Right/Back choose fixed views; Game camera returns to the recorded cinematic view. Orbiting never changes gameplay camera settings or advances the particles. These are 3D snapshots, so the enemy and effects can be inspected at earlier times even after their original objects have been destroyed.
 
 Changing tuning marks a take as stale. Record again to include the edits. Takes are temporary and are cleared by Replay, Stop or an assembly reload; they are inspection data, not saved game settings. Capture extends beyond the minimum length through recovery, with a 20-second/1,200-frame cap and an estimated 256 MB limit. If a limit is reached, the Lab states that the captured range was capped. Timeline playback and scrubbing are silent; use live Replay with Sound (live) for audio review.
+
+In tap-to-fire mode, pressing Shoot when a glowing enemy is available immediately draws the sword and dashes to finish it; pressing Launch is optional. With no eligible glowing enemy, Shoot remains a pistol shot. The currently aimed glowing enemy takes priority; otherwise a ready target is selected normally. The finisher consumes the tap without queuing a pistol shot, and further taps during the committed draw or cut do not cancel it.
+
+The draw animation and dash start together. The approach does not restart when
+the draw transitions into the swing. Shoot-triggered finishers do not activate
+Launch speed boost or nitro ignition; manual Launch still provides its normal
+boost. Dash wind and slow motion begin with the approach, while sword ribbon and
+swish effects follow the swing. Draw and swing speeds remain tunable in this Lab.
+
+Launch also immediately draws for a glowing enemy within the full finisher range (150 world units by default), then the dash covers the distance to that enemy. There is no requirement to ride within 14 metres first. Adjust the full range in TUNE > TRIGGERS > Sword Finisher Targeting > Full dash / target range. The nearby-target priority settings only choose which ready enemy to prefer when several are available. Healthy enemies remain ineligible. One successful sword kill ends Launch; the sword return, explosion, slow motion and traffic recovery continue normally without automatically finishing another enemy.
 
 The dash continues directly toward the enemy and stops short along its approach line. Blade offsets do not steer the motorcycle into a side lane or move the enemy. Manual steering remains active during the dash and adds its own sideways movement to that approach. After contact the normal motor immediately owns movement again, even while the animation continues. Steering far enough away can miss the strike. Frontal targets prefer the left swing; only targets more than 0.5 world units to the right select the right swing (Bike Sword Combat > Pickup targeting > Right Attack Side Threshold).
 

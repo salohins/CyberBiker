@@ -7,8 +7,64 @@ using CyberBiker.Player;
 [DefaultExecutionOrder(100)]
 public class CameraController : MonoBehaviour {
     [SerializeField] private Vector3 targetOffset;
+    [Header("Riding with nearby enemies")]
+    [SerializeField] private CombatRidingCamera combatRiding=new CombatRidingCamera();
+    [Header("Aiming with nearby enemies")]
+    [SerializeField] private CombatAimCamera combatAim=new CombatAimCamera();
+    [SerializeField] private float aimFollowResponse=-1;
+    public float CombatCameraAmount=>combatRiding.Amount;
+    public bool CombatEnemyNearby=>combatRiding.EnemyNearby;
+    // Older scenes/profiles inherit their existing riding composition until tuned.
+    public void InitializeCombatCameraDefaults(bool force=false){
+        if(combatRiding==null)combatRiding=new CombatRidingCamera();
+        if(combatRiding.configured && !force)return;
+        combatRiding.offset=targetOffset;combatRiding.fov=ridingFov;
+        combatRiding.pitch=ridingPitch;combatRiding.yaw=ridingYawOffset;combatRiding.roll=ridingRoll;
+        combatRiding.shiftX=xShiftOffset;combatRiding.shiftY=yShiftOffset;combatRiding.forwardShift=2;
+        combatRiding.steeringRoll=angleShiftOffset;combatRiding.followResponse=smoothness;combatRiding.configured=true;
+    }
+#if UNITY_EDITOR
+    private bool finisherCombatPreview;
+    public void SetCombatCameraPreview(bool? combat,bool instant=false)=>combatRiding.SetPreview(combat,instant);
+    // The finisher Lab starts inside an established fight, rather than
+    // blending out of the cruising/intro camera as its target is spawned.
+    public void BeginFinisherCombatCameraPreview(){
+        EnsureAimHelpers();InitializeCombatCameraDefaults();finisherCombatPreview=true;combatRiding.SetPreview(true,true);
+        float amount=combatRiding.Amount;
+        fov=Mathf.Lerp(ridingFov,combatRiding.fov,amount);offset=Vector3.Lerp(targetOffset,combatRiding.offset,amount);
+        cameraXangle=Mathf.Lerp(ridingPitch,combatRiding.pitch,amount);
+        sideOffset=rotationOffset=rotationX=rotationY=aimShoulderX=aimShoulderVelocity=0;
+        transform.rotation=Quaternion.Euler(cameraXangle,cameraYangle+Mathf.Lerp(ridingYawOffset,combatRiding.yaw,amount),Mathf.Lerp(ridingRoll,combatRiding.roll,amount));
+        if(target!=null)transform.position=target.position-transform.TransformDirection(offset);
+        view.fieldOfView=fov;
+    }
+    public void EndFinisherCombatCameraPreview(){finisherCombatPreview=false;combatRiding.SetPreview(null);}
+#endif
+    private bool IsGroundCamera {
+        get {
+#if UNITY_EDITOR
+            if(finisherCombatPreview)return true;
+#endif
+            return playerController.grounded;
+        }
+    }
+    private float GroundCombatAmount=>IsGroundCamera ? combatRiding.Amount : 0;
+    private float GroundValue(float regular,float fighting)=>Mathf.Lerp(regular,fighting,GroundCombatAmount);
+    private float AimValue(float cruising,float fighting)=>Mathf.Lerp(cruising,fighting,combatRiding.Amount);
+    private Vector3 CurrentAimOffset=>Vector3.Lerp(aimOffset,combatAim.offset,combatRiding.Amount);
+    public void InitializeCombatAimDefaults(bool force=false,bool inheritFollow=false){
+        if(inheritFollow || aimFollowResponse<=0)aimFollowResponse=smoothness;
+        if(combatAim==null)combatAim=new CombatAimCamera();
+        if(combatAim.configured && !force)return;
+        combatAim.offset=aimOffset;combatAim.fov=aimFov;combatAim.pitch=aimPitch;combatAim.yaw=aimYawOffset;combatAim.roll=aimRoll;
+        combatAim.shiftX=aimXShiftOffset;combatAim.shiftY=aimYShiftOffset;combatAim.forwardShift=aimForwardShiftOffset;
+        combatAim.steeringRoll=aimAngleShiftOffset;combatAim.followResponse=aimFollowResponse;combatAim.configured=true;
+    }
     [Tooltip("Base aiming offset. With dynamic shoulders enabled, X sets the shoulder distance; the road side chooses its sign.")]
     [SerializeField] private Vector3 aimOffset;
+    [Header("Independent airborne framing")]
+    [SerializeField] private bool useAirborneOffset;
+    [SerializeField] private Vector3 airborneOffset=new Vector3(0,-1.7f,9);
     [SerializeField] private float smoothness = 3f;
     [Header("Riding steering camera")]
     [Tooltip("Dynamic offset on x axis. Triggered by dragging the screeen left/right")]
@@ -65,6 +121,11 @@ public class CameraController : MonoBehaviour {
     [SerializeField, Range(15,120)] private float aimFov = 40;
 
     [Header("Camera orientation")]
+    [SerializeField] private float ridingPitch=2;
+    [SerializeField] private float aimPitch;
+    [SerializeField] private float airbornePitch=2;
+    [SerializeField] private float ridingYawOffset,aimYawOffset,airborneYawOffset;
+    [SerializeField] private float ridingRoll,aimRoll,airborneRoll;
     [Tooltip("Dynamic Y axis rotation offset. Triggered by dragging the screeen left/right.")]
     [SerializeField] private float cameraXangle = 0;
     [SerializeField] private float cameraYangle = 0;
@@ -139,6 +200,9 @@ public class CameraController : MonoBehaviour {
     }
 
     private void Start() {
+        Resources.Load<CameraLabRigProfile>("CameraLabRig")?.Apply(this);
+        InitializeCombatCameraDefaults();
+        InitializeCombatAimDefaults();
         tim = FindAnyObjectByType<TouchInputManager>();
         gm = FindAnyObjectByType<GameplayManager>();
         playerController = FindAnyObjectByType<PlayerController>();
@@ -153,6 +217,7 @@ public class CameraController : MonoBehaviour {
     }
 
     private void Update() {
+        combatRiding.Tick(playerController.transform.position,Time.deltaTime);
         sideOffset = Mathf.Lerp(sideOffset, playerController.xThrow, Time.deltaTime);
         UpdateAimShoulder(Time.deltaTime);
         ProcessRotation();
@@ -162,6 +227,9 @@ public class CameraController : MonoBehaviour {
     private void LateUpdate() {
         var gunFeedback=ShootingFeedback.Active;
         gunFeedback?.RemoveCamera(view);
+        gm.DodgeEffects?.RemoveCamera(view);
+        gm.GapDashEffects?.RemoveCamera(view);
+        swordFinisher?.RemoveCamera(view);
 
         Vector3 targetOffset;
 
@@ -169,15 +237,15 @@ public class CameraController : MonoBehaviour {
 
         if (!(gm.gameState == GameState.Hit)) {
             if (tim.aim) {
-                targetOffset = aimOffset;
+                targetOffset = CurrentAimOffset;
                 // Shoulder placement is a separate camera channel. Keeping it
                 // out of this follow offset preserves steering X-shift response.
                 targetOffset.x=0;
-                targetOffset -= transform.right * sideOffset * aimXShiftOffset;
-                targetOffset += transform.up * Mathf.Abs(sideOffset) * aimYShiftOffset;
-                targetOffset += transform.forward * Mathf.Abs(sideOffset) * aimForwardShiftOffset;
+                targetOffset -= transform.right * sideOffset * AimValue(aimXShiftOffset,combatAim.shiftX);
+                targetOffset += transform.up * Mathf.Abs(sideOffset) * AimValue(aimYShiftOffset,combatAim.shiftY);
+                targetOffset += transform.forward * Mathf.Abs(sideOffset) * AimValue(aimForwardShiftOffset,combatAim.forwardShift);
 
-                fov = Mathf.Lerp(fov, aimFov, Time.deltaTime * 1.5f);
+                fov = Mathf.Lerp(fov, AimValue(aimFov,combatAim.fov), Time.deltaTime * 1.5f);
                 GetComponent<Camera>().fieldOfView = fov;
                 //frameX = Mathf.Lerp(frameX, rotationX, Time.deltaTime * 5f);
                 //frameY = Mathf.Lerp(frameY, rotationY, Time.deltaTime * 5f);
@@ -189,13 +257,13 @@ public class CameraController : MonoBehaviour {
 
             }
             else {
-                targetOffset = this.targetOffset;
-                targetOffset -= transform.right * sideOffset * xShiftOffset;
-                targetOffset += transform.up * Mathf.Abs(sideOffset) * yShiftOffset;
-                targetOffset += transform.forward * Mathf.Abs(sideOffset) * 2;
+                targetOffset = !IsGroundCamera && useAirborneOffset ? airborneOffset : Vector3.Lerp(this.targetOffset,combatRiding.offset,GroundCombatAmount);
+                targetOffset -= transform.right * sideOffset * GroundValue(xShiftOffset,combatRiding.shiftX);
+                targetOffset += transform.up * Mathf.Abs(sideOffset) * GroundValue(yShiftOffset,combatRiding.shiftY);
+                targetOffset += transform.forward * Mathf.Abs(sideOffset) * GroundValue(2,combatRiding.forwardShift);
 
-                if (playerController.grounded) {
-                    fov = Mathf.Lerp(fov, ridingFov, Time.deltaTime * 1.5f);
+                if (IsGroundCamera) {
+                    fov = Mathf.Lerp(fov, GroundValue(ridingFov,combatRiding.fov), Time.deltaTime * 1.5f);
                     GetComponent<Camera>().fieldOfView = fov;
                 }
                 else {
@@ -215,7 +283,7 @@ public class CameraController : MonoBehaviour {
         offset = Vector3.Lerp(
             offset,
             targetOffset,
-            Time.deltaTime * smoothness
+            Time.deltaTime * (tim.aim ? AimValue(aimFollowResponse,combatAim.followResponse) : GroundValue(smoothness,combatRiding.followResponse))
         );
         transform.position = target.position - transform.TransformDirection(offset);
         transform.position-=transform.right*aimShoulderX;
@@ -228,6 +296,8 @@ public class CameraController : MonoBehaviour {
         launchEffects?.ApplyCamera(view);
         swordFinisher?.ApplyCamera(view);
         riderView?.Update(view,riderVisibility,tim.aim && gm.gameState==GameState.Playing,Time.deltaTime);
+        gm.GapDashEffects?.ApplyCamera(view);
+        gm.DodgeEffects?.ApplyCamera(view);
         gunFeedback?.ApplyCamera(view);
 
         //aimTarget.transform.position = transform.position + transform.forward * 30f;
@@ -262,15 +332,17 @@ public class CameraController : MonoBehaviour {
         Vector3 targetRotation;
         Vector3 targetRotationShift = new Vector3(rotationX, rotationY, 0);
 
-        rotationOffset = Mathf.Lerp(rotationOffset, playerController.xThrow * (tim.aim ? aimAngleShiftOffset : angleShiftOffset), Time.deltaTime);
+        rotationOffset = Mathf.Lerp(rotationOffset, playerController.xThrow * (tim.aim ? AimValue(aimAngleShiftOffset,combatAim.steeringRoll) : GroundValue(angleShiftOffset,combatRiding.steeringRoll)), Time.deltaTime);
 
         if (tim.aim) {
-            cameraXangle = Mathf.Lerp(cameraXangle, 0, Time.deltaTime * 2f);
+            cameraXangle = Mathf.Lerp(cameraXangle, AimValue(aimPitch,combatAim.pitch), Time.deltaTime * 2f);
         } else {
-            cameraXangle = Mathf.Lerp(cameraXangle, 2, Time.deltaTime * 1f);
+            cameraXangle = Mathf.Lerp(cameraXangle, IsGroundCamera ? GroundValue(ridingPitch,combatRiding.pitch) : airbornePitch, Time.deltaTime * 1f);
         }
 
-        targetRotation = new Vector3(cameraXangle, cameraYangle, rotationOffset);
+        float yaw=tim.aim ? AimValue(aimYawOffset,combatAim.yaw) : IsGroundCamera ? GroundValue(ridingYawOffset,combatRiding.yaw) : airborneYawOffset;
+        float roll=tim.aim ? AimValue(aimRoll,combatAim.roll) : IsGroundCamera ? GroundValue(ridingRoll,combatRiding.roll) : airborneRoll;
+        targetRotation = new Vector3(cameraXangle, cameraYangle+yaw, rotationOffset+roll);
 
         transform.rotation = Quaternion.Euler(targetRotation + targetRotationShift);
     }
@@ -305,7 +377,8 @@ public class CameraController : MonoBehaviour {
         }
         // Keep the side choice through the centre. Blend this channel once,
         // independently of steering, and fade it away when leaving Aim.
-        float desired=tim.aim && playing ? (dynamicAimShoulder ? Mathf.Abs(aimOffset.x)*aimShoulderSide : aimOffset.x) : 0;
+        float shoulder=CurrentAimOffset.x;
+        float desired=tim.aim && playing ? (dynamicAimShoulder ? Mathf.Abs(shoulder)*aimShoulderSide : shoulder) : 0;
         // Retain shoulder velocity across frames so a side change eases into
         // motion and brakes gently, instead of starting at maximum speed.
         float glideTime=2f/Mathf.Max(.5f,aimShoulderSwitchSpeed);

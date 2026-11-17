@@ -46,7 +46,29 @@ namespace CyberBiker.Player {
         [SerializeField, Range(0,2)] private float explosionBlastVolume = .9f;
         [SerializeField, Range(0,2)] private float explosionBassVolume = .65f;
         [SerializeField, Range(0,1)] private float explosionDebrisVolume = .25f;
-        [Header("Finishing camera")]
+        [Header("Finisher dash camera — independent of swing and impact")]
+        [SerializeField] private bool dashCameraEnabled=true;
+        [Tooltip("Added to riding FOV during the draw/approach. Positive widens the view; negative zooms in.")]
+        [SerializeField, Range(-25,25)] private float dashCameraFovOffset=1;
+        [Tooltip("Camera-local position: X sideways, Y up, Z forward.")]
+        [SerializeField] private Vector3 dashCameraPosition=new Vector3(.5f,0,-.25f);
+        [SerializeField] private Vector3 dashCameraRotation=new Vector3(0,0,1.5f);
+        [SerializeField] private bool dashCameraMirrorSide=true;
+        [SerializeField, Range(0,20)] private float dashCameraTargetTurn=1.25f;
+        [SerializeField, Range(.01f,1)] private float dashCameraBlendIn=.15f;
+        [SerializeField, Range(.01f,1.5f)] private float dashCameraBlendOut=.2f;
+        private float dashCameraBlend,dashCameraSide=1;
+        public float DashCameraAmount=>Mathf.SmoothStep(0,1,dashCameraBlend);
+        public float LastDashCameraFovOffset {get;private set;}
+        public Vector3 LastDashCameraPosition {get;private set;}
+        public Vector3 LastDashCameraRotation {get;private set;}
+        private Camera appliedCamera;
+        private bool cameraApplied;
+        private Vector3 cameraBasePosition,cameraFinalPosition;
+        private Quaternion cameraBaseRotation,cameraFinalRotation;
+        private float cameraBaseFov,cameraFinalFov;
+        [Header("Swing and impact camera")]
+        [SerializeField] private Vector3 cameraViewOffset,cameraViewEuler;
         [SerializeField, Range(0,20)] private float swingZoom = 2;
         [Tooltip("FOV change during the hit. Negative values widen the view; positive values tighten it.")]
         [SerializeField, Range(-20,25)] private float hitZoom = -8;
@@ -91,7 +113,8 @@ namespace CyberBiker.Player {
         public int SmokeParticleCount => smokeWake!=null ? smokeWake.particleCount : 0;
         public int LastImpactParticleCount { get; private set; }
         public int TrailVertexCount => mesh!=null ? mesh.vertexCount : 0;
-        public float CameraAmount => anticipation+hitEnvelope+aftermathEnvelope+Mathf.Abs(cameraZoom)*.01f+Mathf.Abs(cameraSide);
+        private float SwingCameraAmount=>anticipation+hitEnvelope+aftermathEnvelope+Mathf.Abs(cameraZoom)*.01f+Mathf.Abs(cameraSide);
+        public float CameraAmount => SwingCameraAmount+DashCameraAmount;
         public float LastCameraZoom { get; private set; }
         public float LastCameraSideOffset { get; private set; }
         public int VisibleWindRibbons {get {int count=0;foreach(var line in windRibbons)if(line!=null && line.enabled)count++;return count;}}
@@ -170,7 +193,8 @@ namespace CyberBiker.Player {
             }
             previousSmokePosition=rear;hadSmokePosition=true;
         }
-        public void BeginSwing(){samples.Clear();previousProgress=0;wasSwinging=true;swishPlayed=false;windClock=0;if(slowMotionEnabled)gameplay?.BeginCombatSlowMotion(dashTimeScale,dashSlowDuration);}
+        public void BeginDash(){windClock=0;if(dashCameraBlend<=.0001f)dashCameraSide=combat.LastAttackSide==BikeSwordCombat.AttackSide.Left ? -1 : 1;if(slowMotionEnabled)gameplay?.BeginCombatSlowMotion(dashTimeScale,dashSlowDuration);}
+        public void BeginSwing(){samples.Clear();previousProgress=0;wasSwinging=true;swishPlayed=false;}
         public void PlayHit(Vector3 position,Vector3 velocity,BikeSwordCombat.AttackSide side) {
             ImpactCount++;hitAge=0;aftermathAge=0;hitPosition=position;impactTravel=velocity;framingBlast=null;sideSign=side==BikeSwordCombat.AttackSide.Left ? -1 : 1;
             if(hitPrefab!=null) {
@@ -211,7 +235,7 @@ namespace CyberBiker.Player {
             if(combat==null || gameplay==null)return;
             if(!slowMotionEnabled && gameplay.CombatSlowMotionRemaining>0)gameplay.CancelCombatSlowMotion();
             if(gameplay.gameState!=GameState.Playing) {
-                if(gameplay.gameState!=GameState.Pause){anticipation=hitEnvelope=aftermathEnvelope=cameraZoom=cameraTravel=cameraLift=cameraFrame=cameraSide=cameraSideVelocity=windAmount=0;smokeUntil=0;hitAge=aftermathAge=100;screenEffect?.Clear();foreach(var line in windRibbons)line.enabled=false;}
+                if(gameplay.gameState!=GameState.Pause){dashCameraBlend=0;anticipation=hitEnvelope=aftermathEnvelope=cameraZoom=cameraTravel=cameraLift=cameraFrame=cameraSide=cameraSideVelocity=windAmount=0;smokeUntil=0;hitAge=aftermathAge=100;screenEffect?.Clear();foreach(var line in windRibbons)line.enabled=false;}
                 return;
             }
             float dt=FinisherClock.UnscaledDeltaTime;trailClock+=dt;
@@ -219,7 +243,12 @@ namespace CyberBiker.Player {
                 swishPlayed=true;
                 if(swordSwishes!=null && swordSwishes.Length>0)CyberBiker.Audio.GameAudio.Active?.PlaySwordSound(swordSwishes[ImpactCount%swordSwishes.Length],transform.position,transform,swishVolume,.94f);
             }
-            float desired=combat.Phase==BikeSwordCombat.CombatPhase.Striking ? 1 : combat.IsAssisting ? .25f : 0;
+            bool dashView=combat.Phase==BikeSwordCombat.CombatPhase.Drawing || combat.IsDashing;
+            bool useDash=dashCameraEnabled && dashView;
+            dashCameraBlend=Mathf.MoveTowards(dashCameraBlend,useDash ? 1 : 0,dt/Mathf.Max(.01f,useDash ? dashCameraBlendIn : dashCameraBlendOut));
+            float wantedSide=combat.LastAttackSide==BikeSwordCombat.AttackSide.Left ? -1 : 1;
+            dashCameraSide=Mathf.MoveTowards(dashCameraSide,wantedSide,dt*2/Mathf.Max(.01f,dashCameraBlendIn));
+            float desired=!dashView && combat.Phase==BikeSwordCombat.CombatPhase.Striking ? 1 : 0;
             anticipation=Mathf.Lerp(anticipation,desired,1-Mathf.Exp(-dt*12));
             windAmount=Mathf.MoveTowards(windAmount,combat.IsDashing ? 1 : 0,dt/(combat.IsDashing ? .045f : .16f));windClock+=dt;
             for(int i=0;i<windRibbons.Count;i++) {
@@ -239,10 +268,10 @@ namespace CyberBiker.Player {
             hitEnvelope=hitAge<hitCameraDuration ? Mathf.Sin(Mathf.Min(1,pulse/.12f)*Mathf.PI*.5f)*Mathf.Pow(1-pulse,2) : 0;
             float aftermathFade=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(.55f,Mathf.Max(.6f,aftermathCameraDuration),aftermathAge));
             aftermathEnvelope=Mathf.SmoothStep(0,1,aftermathAge/.1f)*aftermathFade;
-            float desiredZoom=anticipation*(combat.IsDashing ? -4 : swingZoom)+aftermathEnvelope*hitZoom;
+            float desiredZoom=anticipation*swingZoom+aftermathEnvelope*hitZoom;
             float response=1-Mathf.Exp(-dt*8);
             cameraZoom=Mathf.Lerp(cameraZoom,desiredZoom,response);
-            cameraTravel=Mathf.Lerp(cameraTravel,(combat.IsDashing ? -1 : 1)*cameraDolly*anticipation-aftermathPullback*aftermathEnvelope,response);
+            cameraTravel=Mathf.Lerp(cameraTravel,cameraDolly*anticipation-aftermathPullback*aftermathEnvelope,response);
             cameraLift=Mathf.Lerp(cameraLift,aftermathCameraLift*aftermathEnvelope,response);
             cameraFrame=Mathf.Lerp(cameraFrame,Mathf.Max(anticipation,aftermathEnvelope*.65f),response);
             float swingSide=combat.LastAttackSide==BikeSwordCombat.AttackSide.Left ? -1 : 1;
@@ -286,8 +315,16 @@ namespace CyberBiker.Player {
             }
             mesh.Clear();mesh.SetVertices(vertices);mesh.SetColors(colors);mesh.SetUVs(0,uvs);mesh.SetTriangles(triangles,0);mesh.RecalculateBounds();
         }
+        public void RemoveCamera(Camera view){
+            if(!cameraApplied || view==null || view!=appliedCamera)return;
+            if((view.transform.position-cameraFinalPosition).sqrMagnitude<.000001f)view.transform.position=cameraBasePosition;
+            if(Quaternion.Angle(view.transform.rotation,cameraFinalRotation)<.001f)view.transform.rotation=cameraBaseRotation;
+            if(Mathf.Abs(view.fieldOfView-cameraFinalFov)<.0001f)view.fieldOfView=cameraBaseFov;
+            cameraApplied=false;
+        }
         public void ApplyCamera(Camera view) {
             if(combat==null || view==null)return;
+            RemoveCamera(view);
             if(impactScreenShader!=null) {
                 if(screenEffect==null || screenEffect.gameObject!=view.gameObject)screenEffect=view.GetComponent<SwordImpactScreen>() ?? view.gameObject.AddComponent<SwordImpactScreen>();
                 float contrast=hitAge<contrastDuration ? Mathf.Pow(1-hitAge/contrastDuration,1.4f) : 0;
@@ -296,14 +333,21 @@ namespace CyberBiker.Player {
                 var center=point.z>0 ? new Vector2(Mathf.Clamp(point.x,.15f,.85f),Mathf.Clamp(point.y,.2f,.8f)) : new Vector2(.5f,.5f);
                 screenEffect.Configure(impactScreenShader,impactDarkening*contrast,impactDesaturation*contrast,slashFlash*flash,center,sideSign);
             }
+            LastDashCameraFovOffset=0;LastDashCameraPosition=LastDashCameraRotation=Vector3.zero;
             if(CameraAmount<.0001f){LastCameraZoom=LastCameraSideOffset=0;return;}
-            float zoom=cameraZoom;
+            appliedCamera=view;cameraBasePosition=view.transform.position;cameraBaseRotation=view.transform.rotation;cameraBaseFov=view.fieldOfView;
+            float dashWeight=DashCameraAmount,legacyWeight=1-dashWeight;
+            float viewWeight=Mathf.Clamp01(SwingCameraAmount)*legacyWeight;
+            view.transform.position+=view.transform.TransformDirection(cameraViewOffset)*viewWeight;
+            view.transform.rotation*=Quaternion.Euler(cameraViewEuler*viewWeight);
+            LastDashCameraFovOffset=dashCameraFovOffset*dashWeight;
+            float zoom=cameraZoom*legacyWeight-LastDashCameraFovOffset;
             LastCameraZoom=zoom;
             view.fieldOfView=Mathf.Clamp(view.fieldOfView-zoom,38,110);
-            view.transform.position+=view.transform.forward*cameraTravel+Vector3.up*cameraLift;
+            view.transform.position+=(view.transform.forward*cameraTravel+Vector3.up*cameraLift)*legacyWeight;
             float side=combat.LastAttackSide==BikeSwordCombat.AttackSide.Left ? -1 : 1;
-            LastCameraSideOffset=cameraSide;
-            view.transform.position+=view.transform.right*cameraSide;
+            LastCameraSideOffset=cameraSide*legacyWeight;
+            view.transform.position+=view.transform.right*LastCameraSideOffset;
             var playerFocus=transform.position+Vector3.up*2;
             var blastFocus=framingBlast!=null ? framingBlast.position+Vector3.up : hitPosition;
             // Frame the rider and nearby blast together without chasing an old
@@ -311,17 +355,29 @@ namespace CyberBiker.Player {
             blastFocus=playerFocus+Vector3.ClampMagnitude(blastFocus-playerFocus,8);
             var focus=aftermathEnvelope>.1f ? Vector3.Lerp(playerFocus,blastFocus,.3f) : combat.Target!=null ? Vector3.Lerp(playerFocus,combat.Target.transform.position+Vector3.up*2,.55f) : playerFocus;
             var direction=focus-view.transform.position;
-            float framingTurn=Mathf.Max(targetFramingTurn*cameraFrame,hitCameraLookTurn*aftermathEnvelope);
+            float framingTurn=Mathf.Max(targetFramingTurn*cameraFrame,hitCameraLookTurn*aftermathEnvelope)*legacyWeight;
             if(direction.sqrMagnitude>.01f)view.transform.rotation=Quaternion.RotateTowards(view.transform.rotation,Quaternion.LookRotation(direction),framingTurn);
-            view.transform.rotation*=Quaternion.Euler(0,0,side*cameraRoll*anticipation);
+            view.transform.rotation*=Quaternion.Euler(0,0,side*cameraRoll*anticipation*legacyWeight);
             if(hitEnvelope>0) {
                 float kick=Mathf.Sin(Mathf.Clamp01(hitAge/.2f)*Mathf.PI)*Mathf.Exp(-hitAge*7);
-                view.transform.position+=(view.transform.right*sideSign*.5f+view.transform.up*.4f-view.transform.forward*1.6f)*kick*hitShake;
+                view.transform.position+=(view.transform.right*sideSign*.5f+view.transform.up*.4f-view.transform.forward*1.6f)*kick*hitShake*legacyWeight;
                 float shake=Mathf.Sin(hitAge*90)*Mathf.Exp(-hitAge*14)*hitEnvelope;
-                view.transform.rotation*=Quaternion.Euler(-2.4f*kick+shake*.6f,sideSign*1.0f*kick,sideSign*1.3f*kick+shake*.5f);
+                view.transform.rotation*=Quaternion.Euler(new Vector3(-2.4f*kick+shake*.6f,sideSign*1.0f*kick,sideSign*1.3f*kick+shake*.5f)*legacyWeight);
             }
+            float mirror=dashCameraMirrorSide ? dashCameraSide : 1;
+            LastDashCameraPosition=new Vector3(dashCameraPosition.x*mirror,dashCameraPosition.y,dashCameraPosition.z)*dashWeight;
+            LastDashCameraRotation=new Vector3(dashCameraRotation.x,dashCameraRotation.y*mirror,dashCameraRotation.z*mirror)*dashWeight;
+            view.transform.position+=view.transform.TransformDirection(LastDashCameraPosition);
+            if(dashWeight>0 && dashCameraTargetTurn>0 && combat.Target!=null){
+                var dashFocus=Vector3.Lerp(playerFocus,combat.Target.transform.position+Vector3.up*2,.55f);
+                var dashDirection=dashFocus-view.transform.position;
+                if(dashDirection.sqrMagnitude>.01f)view.transform.rotation=Quaternion.RotateTowards(view.transform.rotation,Quaternion.LookRotation(dashDirection),dashCameraTargetTurn*dashWeight);
+            }
+            view.transform.rotation*=Quaternion.Euler(LastDashCameraRotation);
+            LastCameraSideOffset+=LastDashCameraPosition.x;
+            cameraFinalPosition=view.transform.position;cameraFinalRotation=view.transform.rotation;cameraFinalFov=view.fieldOfView;cameraApplied=true;
         }
-        private void OnDisable(){screenEffect?.Clear();samples.Clear();if(mesh!=null)mesh.Clear();if(smokeWake!=null)smokeWake.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);foreach(var line in windRibbons)if(line!=null)line.enabled=false;windAmount=0;anticipation=hitEnvelope=aftermathEnvelope=cameraZoom=cameraTravel=cameraLift=cameraFrame=cameraSide=cameraSideVelocity=0;LastCameraSideOffset=0;hitAge=aftermathAge=100;}
+        private void OnDisable(){RemoveCamera(appliedCamera);dashCameraBlend=0;LastDashCameraFovOffset=0;LastDashCameraPosition=LastDashCameraRotation=Vector3.zero;screenEffect?.Clear();samples.Clear();if(mesh!=null)mesh.Clear();if(smokeWake!=null)smokeWake.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);foreach(var line in windRibbons)if(line!=null)line.enabled=false;windAmount=0;anticipation=hitEnvelope=aftermathEnvelope=cameraZoom=cameraTravel=cameraLift=cameraFrame=cameraSide=cameraSideVelocity=0;LastCameraSideOffset=0;hitAge=aftermathAge=100;}
         private void OnDestroy(){if(screenEffect!=null)Destroy(screenEffect);if(mesh!=null)Destroy(mesh);if(ribbonObject!=null)Destroy(ribbonObject);}
     }
     public sealed class SwordImpactTravel : MonoBehaviour {

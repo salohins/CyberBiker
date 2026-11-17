@@ -1,0 +1,7 @@
+{
+  "low_band": "0-500Hz",
+  "old_rms": 0.0207937757949426,
+  "new_rms": 0.07484047307210981,
+  "low_band_gain_db": 11.124063341656425,
+  "peak_unchanged_dbfs": -3.1
+}

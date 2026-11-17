@@ -1,0 +1,16 @@
+RUNNING
+LevelCamera: cameraPitch=-0.002445643 bore=(0.000, 0.000, 1.000) shot=(0.000, 0.000, 1.000) headForward=(-0.016, 0.000, 1.000) headUp=(0.461, 0.888, 0.007) torso=(0.32, 1.62, 359.94)
+Head bind axis=(0.000, 0.004, 1.000) actual look=(-0.013, 0.004, 1.000)
+PitchedCamera: cameraPitch=29.63095 bore=(0.000, 0.000, 1.000) shot=(0.000, 0.000, 1.000) headForward=(-0.016, 0.000, 1.000) headUp=(0.461, 0.888, 0.007) torso=(0.32, 1.62, 359.94)
+Head bind axis=(0.000, 0.004, 1.000) actual look=(-0.013, 0.004, 1.000)
+PASS level head, barrel, laser/shot direction with level and 30-degree pitched cameras.
+EnemyTracking: cameraPitch=23.9059 bore=(0.203, 0.137, 0.969) shot=(0.195, 0.131, 0.972) headForward=(0.235, 0.148, 0.961) headUp=(0.408, 0.882, -0.236) torso=(356.35, 9.37, 359.83)
+Head bind axis=(0.000, 0.004, 1.000) actual look=(0.237, 0.152, 0.960)
+AfterTargetLoss: cameraPitch=29.90593 bore=(0.000, 0.000, 1.000) shot=(0.000, 0.000, 1.000) headForward=(-0.016, 0.000, 1.000) headUp=(0.461, 0.888, 0.007) torso=(0.32, 1.62, 359.94)
+Head bind axis=(0.000, 0.004, 1.000) actual look=(-0.013, 0.004, 1.000)
+PASS enemy acquisition/arm alignment and smooth return to forward gaze after losing the target.
+CruisingAuthored: cameraPitch=1.973364 bore=(0.149, -0.966, -0.213) shot=(0.000, 0.000, 1.000) headForward=(0.000, -0.583, 0.812) headUp=(0.000, 0.812, 0.583) torso=(41.18, 0.00, 0.00)
+Head bind axis=(0.000, 0.004, 1.000) actual look=(0.000, -0.580, 0.815)
+SteeringAuthored: cameraPitch=1.825107 bore=(-0.851, -0.496, -0.170) shot=(0.000, 0.000, 1.000) headForward=(0.285, -0.463, 0.839) headUp=(-0.134, 0.848, 0.513) torso=(33.83, 345.64, 344.65)
+Head bind axis=(-0.077, -0.039, 0.996) actual look=(0.215, -0.514, 0.830)
+PASS normal riding and steering retain the authored head rotation; correction is aiming only. PASS all neutral aim checks.

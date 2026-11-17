@@ -1,24 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
+using Gameplay;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private bool starting;
     public void StartGame() {
+        if(!starting)CyberBiker.UI.PlayModeMenu.Show(this);
+    }
+    public void StartProgression()=>StartMode(RunPlayMode.Progression);
+    public void StartConstantCombat()=>StartMode(RunPlayMode.ConstantCombat);
+    private void StartMode(RunPlayMode mode){
+        if(starting)return;starting=true;
+        RunModeSelection.Select(mode);
         Time.timeScale = 1;
         SceneManager.LoadScene(1);
-    }
-
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

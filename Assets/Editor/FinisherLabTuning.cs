@@ -9,7 +9,7 @@ namespace CyberBiker.EditorTools {
     public sealed class FinisherLabTuning {
         public const string PlayerPrefab = "Assets/Art/Models/Player_Last.prefab";
         [Serializable] public sealed class Value { public string field; public float number; public Color color; }
-        public int version = 1;
+        public int version = 2;
         public List<Value> values = new List<Value>();
         public sealed class Control {
             public string field, label, group, hint;
@@ -45,20 +45,32 @@ namespace CyberBiker.EditorTools {
             new Control("explosionSlowDuration","Explosion slow motion hold (s)","Dash & slow motion",.1f,3,true),
             new Control("slowMotionRecovery","Return to full speed (s)","Dash & slow motion",.1f,2,true),
             new Control("enemyExplosionDelay","Delay before explosion (s)","Dash & slow motion",.03f,.5f),
-            new Control("swingZoom","Swing camera zoom","Camera",0,20,true),
-            new Control("hitZoom","Hit camera FOV offset","Camera",-20,25,true, "Negative widens the view. Positive zooms in."),
-            new Control("cameraDolly","Swing camera travel","Camera",0,1,true),
-            new Control("cameraSideShift","Swing sideways travel","Camera",0,2,true),
-            new Control("hitCameraSideShift","Hit sideways travel","Camera",0,3,true),
-            new Control("hitCameraSideMoveTime","Side move blend (s)","Camera",.08f,.6f,true),
-            new Control("hitCameraSideReturnTime","Side return blend (s)","Camera",.15f,1.2f,true),
-            new Control("aftermathPullback","Explosion pullback","Camera",0,3,true),
-            new Control("aftermathCameraLift","Explosion camera lift","Camera",0,1,true),
-            new Control("aftermathCameraDuration","Explosion framing hold (s)","Camera",.5f,3,true),
-            new Control("hitCameraLookTurn","Look toward impact (degrees)","Camera",0,20,true),
-            new Control("cameraRoll","Swing camera roll (degrees)","Camera",0,6,true),
-            new Control("hitShake","Impact shake strength","Camera",0,.3f,true),
-            new Control("hitCameraDuration","Impact shake duration (s)","Camera",.1f,1,true),
+            new Control("dashCameraEnabled","Enable dash camera","Dash camera",0,1,true){toggle=true},
+            new Control("dashCameraFovOffset","FOV offset (+ = wider)","Dash camera",-25,25,true),
+            new Control("dashCameraPosition.x","Position X — sideways","Dash camera",-5,5,true),
+            new Control("dashCameraPosition.y","Position Y — height","Dash camera",-5,5,true),
+            new Control("dashCameraPosition.z","Position Z — forward","Dash camera",-10,10,true),
+            new Control("dashCameraRotation.x","Rotation — pitch","Dash camera",-45,45,true),
+            new Control("dashCameraRotation.y","Rotation — yaw","Dash camera",-45,45,true),
+            new Control("dashCameraRotation.z","Rotation — roll","Dash camera",-30,30,true),
+            new Control("dashCameraMirrorSide","Mirror X/yaw/roll for side","Dash camera",0,1,true){toggle=true},
+            new Control("dashCameraTargetTurn","Target framing (degrees)","Dash camera",0,20,true,"Maximum turn toward the enemy. Set 0 to use only your chosen rotation."),
+            new Control("dashCameraBlendIn","Blend into dash (real s)","Dash camera",.01f,1,true),
+            new Control("dashCameraBlendOut","Blend out of dash (real s)","Dash camera",.01f,1.5f,true),
+            new Control("swingZoom","Swing camera zoom","Swing & impact camera",0,20,true),
+            new Control("hitZoom","Hit camera FOV offset","Swing & impact camera",-20,25,true, "Negative widens the view. Positive zooms in."),
+            new Control("cameraDolly","Swing camera travel","Swing & impact camera",0,1,true),
+            new Control("cameraSideShift","Swing sideways travel","Swing & impact camera",0,2,true),
+            new Control("hitCameraSideShift","Hit sideways travel","Swing & impact camera",0,3,true),
+            new Control("hitCameraSideMoveTime","Side move blend (s)","Swing & impact camera",.08f,.6f,true),
+            new Control("hitCameraSideReturnTime","Side return blend (s)","Swing & impact camera",.15f,1.2f,true),
+            new Control("aftermathPullback","Explosion pullback","Swing & impact camera",0,3,true),
+            new Control("aftermathCameraLift","Explosion camera lift","Swing & impact camera",0,1,true),
+            new Control("aftermathCameraDuration","Explosion framing hold (s)","Swing & impact camera",.5f,3,true),
+            new Control("hitCameraLookTurn","Look toward impact (degrees)","Swing & impact camera",0,20,true),
+            new Control("cameraRoll","Swing camera roll (degrees)","Swing & impact camera",0,6,true),
+            new Control("hitShake","Impact shake strength","Swing & impact camera",0,.3f,true),
+            new Control("hitCameraDuration","Impact shake duration (s)","Swing & impact camera",.1f,1,true),
             new Control("hitScale","Slice particle scale","Particles & flash",.2f,3,true),
             new Control("trailLifetime","Sword trail lifetime (s)","Particles & flash",.05f,.5f,true),
             new Control("trailColor","Sword trail color (HDR)","Particles & flash",0,0,true) {color=true},
@@ -82,6 +94,11 @@ namespace CyberBiker.EditorTools {
             new Control("impactDuckRecovery","Engine / wind return (s)","Sound",.1f,.7f,true)
         };
         public Value Get(string field) => values.Find(value => value.field == field);
+        public static FinisherLabTuning ImportJson(string json){
+            var imported=JsonUtility.FromJson<FinisherLabTuning>(json);
+            if(imported==null || imported.values==null || imported.version<1 || imported.version>2)throw new ArgumentException("Unsupported finisher preset.");
+            imported.Normalize();return imported;
+        }
         public FinisherLabTuning Copy() => JsonUtility.FromJson<FinisherLabTuning>(JsonUtility.ToJson(this));
         public static FinisherLabTuning ReadSavedDefaults() {
             var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(PlayerPrefab);
@@ -98,6 +115,13 @@ namespace CyberBiker.EditorTools {
             return result;
         }
         public void Normalize() {
+            // Old drafts used quarter-strength shared swing offsets during draw.
+            // Migrate only absent dash controls, retaining every existing edit.
+            AddDashDefault("dashCameraEnabled",1);AddDashDefault("dashCameraFovOffset",1);
+            AddDashDefault("dashCameraPosition.x",(Get("cameraSideShift")?.number ?? .8f)*.25f);
+            AddDashDefault("dashCameraPosition.y",0);AddDashDefault("dashCameraPosition.z",-(Get("cameraDolly")?.number ?? .2f)*.25f);
+            AddDashDefault("dashCameraRotation.x",0);AddDashDefault("dashCameraRotation.y",0);AddDashDefault("dashCameraRotation.z",(Get("cameraRoll")?.number ?? 2)*.25f);
+            AddDashDefault("dashCameraMirrorSide",1);AddDashDefault("dashCameraTargetTurn",1.25f);AddDashDefault("dashCameraBlendIn",.15f);AddDashDefault("dashCameraBlendOut",.2f);version=Mathf.Max(2,version);
             // Older Lab presets predate the master slow-motion switch.
             if(Get("slowMotionEnabled")==null)values.Add(new Value{field="slowMotionEnabled",number=1});
             if(Get("trafficRecoveryGrace")==null)values.Add(new Value{field="trafficRecoveryGrace",number=.8f});
@@ -114,6 +138,7 @@ namespace CyberBiker.EditorTools {
             }
             Get("strikeWindowEnd").number=Mathf.Max(Get("strikeWindowEnd").number,Get("strikeContactTime").number);
         }
+        private void AddDashDefault(string field,float number){if(Get(field)==null)values.Add(new Value{field=field,number=number});}
         public void Apply(BikeSwordCombat sword, SwordFinisherEffects effects) {
             Normalize();var combat=new SerializedObject(sword);var fx=new SerializedObject(effects);
             foreach(var control in Controls) {

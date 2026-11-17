@@ -97,6 +97,7 @@ namespace CyberBiker.Player {
             steeringRecoveryRemaining=steeringRecoveryDuration;
             nextImpactTime=Time.time+impactCooldown;
             if(!sameImpact) KickCount++;
+            finisher?.BurnLaunchEnergy();
             return LastKickVelocity;
         }
 
@@ -136,6 +137,7 @@ namespace CyberBiker.Player {
             steeringRecoveryRemaining=Mathf.Max(steeringRecoveryRemaining,steeringRecoveryDuration);
             nextImpactTime=Time.time+impactCooldown;
             KickCount++;
+            finisher?.BurnLaunchEnergy();
         }
         private void FixedUpdate() {
             if (Time.timeScale<=0 || (manager!=null && manager.gameState==GameState.Pause)) return;

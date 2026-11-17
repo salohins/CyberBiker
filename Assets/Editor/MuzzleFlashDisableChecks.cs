@@ -16,6 +16,7 @@ public static class MuzzleFlashDisableChecks {
     private static GameObject owner,prefab,flash,newFlash,stale;
     private static MuzzleFlash muzzle;
     private static int stage,frame,spawnFrame,cycles,lastFrame=-1;
+    private static float spawnAt;
     private static double started;
     private static bool finishing;
     private static AsyncOperation unload;
@@ -31,7 +32,7 @@ public static class MuzzleFlashDisableChecks {
         var go=new GameObject("MuzzleFlashPosition");go.transform.SetParent(root.transform,false);
         var result=go.AddComponent<MuzzleFlash>();typeof(MuzzleFlash).GetField("muzzleFlash",Private).SetValue(result,prefab);return result;
     }
-    private static GameObject Spawn(){muzzle.Spawn();var live=(List<(GameObject instance,int expires)>)typeof(MuzzleFlash).GetField("flashes",Private).GetValue(muzzle);return live[live.Count-1].instance;}
+    private static GameObject Spawn(){muzzle.Spawn();return muzzle.LastFlash;}
     private static void Tick(){if(finishing || !EditorApplication.isPlaying || Time.timeSinceLevelLoad<.5f)return;try{
         Require(EditorApplication.timeSinceStartup-started<60,"Muzzle disable test timed out at "+stage);
         if(lastFrame==Time.frameCount)return;lastFrame=Time.frameCount;
@@ -50,7 +51,7 @@ public static class MuzzleFlashDisableChecks {
             owner.SetActive(true);Require(Spawn()==flash,"Disabled-owner flash must remain reusable");muzzle.enabled=false;Next();
         }else if(stage==2 && Time.frameCount>frame){
             Require(flash.GetComponent<PooledInstance>().IsCached,"Disabling only the component must return the flash");muzzle.enabled=true;flash=Spawn();
-            muzzle.gameObject.SetActive(false);muzzle.gameObject.SetActive(true);newFlash=Spawn();spawnFrame=Time.frameCount;Next();
+            muzzle.gameObject.SetActive(false);muzzle.gameObject.SetActive(true);newFlash=Spawn();spawnFrame=Time.frameCount;spawnAt=Time.time;Next();
         }else if(stage==3 && Time.frameCount>frame){
             Require(!flash.GetComponent<PooledInstance>().IsRented && newFlash.GetComponent<PooledInstance>().IsRented,"Rapid aim off/on must retire the old flash without retiring the new one");
             stale=PrefabPool.Rent(prefab,Vector3.up*2000,Quaternion.identity);
@@ -60,8 +61,8 @@ public static class MuzzleFlashDisableChecks {
             Require(stale.GetComponent<PooledInstance>().IsRented,"An old deferred request must not return a newer lease");PrefabPool.Release(stale);Next();
         }else if(stage==5){
             int age=Time.frameCount-spawnFrame;if(age<3)Require(newFlash.activeInHierarchy,"Keep the normal three-frame flash lifetime");
-            if(age<4)return;Require(newFlash.GetComponent<PooledInstance>().IsCached,"Normal flash expiry must still reuse the cache");
-            report+="PASS ancestor/component disable, immediate aim off/on, newer lease protection, original three-frame expiry and pooled reuse.\n";Next();
+            if(Time.time-spawnAt<muzzle.FlashDuration+.05f)return;Require(newFlash.GetComponent<PooledInstance>().IsCached,"Normal flash expiry must still reuse the cache");
+            report+="PASS ancestor/component disable, immediate aim off/on, newer lease protection, visible-duration expiry with a minimum of three frames and pooled reuse.\n";Next();
         }else if(stage==6 && Time.frameCount>frame){
             if(cycles++<40){Spawn();owner.SetActive(false);owner.SetActive(true);Spawn();frame=Time.frameCount;return;}
             report+="PASS 40 repeated aim off/on cycles with the actual Toon muzzle-flash prefab and no hierarchy errors.\n";

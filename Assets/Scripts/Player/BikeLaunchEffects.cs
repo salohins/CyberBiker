@@ -20,7 +20,8 @@ namespace CyberBiker.Player {
         [SerializeField] private AudioClip exhaustCrack;
         [SerializeField,Range(0,2)] private float exhaustVolume=1.35f;
         [Header("Launch camera")]
-        [SerializeField,Range(0,18)] private float fovIncrease=7;
+        [SerializeField,Range(-20,25)] private float fovIncrease=7;
+        [SerializeField] private Vector3 cameraViewOffset,cameraViewEuler;
         [SerializeField] private Shader borderShader;
         [SerializeField,Range(0,1)] private float borderGlow=.32f;
         [SerializeField,Range(.01f,.15f)] private float borderWidth=.045f;
@@ -308,6 +309,8 @@ namespace CyberBiker.Player {
             if(screen==null || screen.gameObject!=view.gameObject)screen=view.GetComponent<LaunchScreen>() ?? view.gameObject.AddComponent<LaunchScreen>();
             screen.Configure(borderShader,borderGlow*Amount,EntryPulse,borderWidth,borderColor);
             view.fieldOfView=Mathf.Clamp(view.fieldOfView+CameraFovOffset,15,120);
+            view.transform.position+=view.transform.TransformDirection(cameraViewOffset)*Amount;
+            view.transform.rotation*=Quaternion.Euler(cameraViewEuler*Amount);
             float attack=Mathf.Min(.035f,ignitionKickDuration*.3f);
             float kick=ignitionCameraAge<attack ? Mathf.SmoothStep(0,1,ignitionCameraAge/attack) : 1-Mathf.SmoothStep(0,1,(ignitionCameraAge-attack)/Mathf.Max(.01f,ignitionKickDuration-attack));
             float shakeTime=Mathf.Clamp01(ignitionCameraAge/Mathf.Max(.05f,ignitionShakeDuration));

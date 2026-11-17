@@ -54,6 +54,18 @@ MonoBehaviour:
   impactVolume: 1
   explosionVolume: 1
   interfaceVolume: 0.3
+  useCarbonScorePrototype: 1
+  scorePointVariants:
+  - {fileID: 8300000, guid: d1d5788baefc4c54b4a82c377a70994e, type: 3}
+  scoreMultiplier: {fileID: 8300000, guid: 32ea011c2efb4cffae9d44c6cb327da9, type: 3}
+  scoreBank: {fileID: 8300000, guid: 35f00d9a54c94877abc12095da512f8f, type: 3}
+  scoreBreak: {fileID: 8300000, guid: 92a98c53c4cf437c8e8c348c91f5e6ae, type: 3}
+  scorePointVolume: 0.65
+  scoreMultiplierVolume: 0.9
+  scoreBankVolume: 1
+  scoreBreakVolume: 0.65
+  scoreDrivingBonusVolume: 0.85
+  scoreCombatBonusVolume: 0.95
   finisherReadyVolume: 0.8
   finisherWarningVolume: 0.85
   finisherDuckDb: 5

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using Gameplay;
 
 namespace CyberBiker.Player {
     [DisallowMultipleComponent]
@@ -22,8 +23,18 @@ namespace CyberBiker.Player {
         [SerializeField, Range(1,15)] private float firingAlignment = 5;
         [Tooltip("The existing pistol/muzzle effect points along local +X.")]
         [SerializeField] private Vector3 muzzleForwardAxis = Vector3.right;
+        [Header("Neutral forward look")]
+        [SerializeField] private bool levelHeadWithoutTarget=true;
+        [SerializeField,Range(1,20)] private float neutralLookResponse=8;
+        [SerializeField,Range(0,60)] private float neutralLookPitchLimit=45;
 
-        private Transform muzzle, shoulder, gun, grip, torso, motorcycle, torsoTarget, targetPoint;
+        private Transform muzzle, shoulder, gun, grip, torso, head, motorcycle, torsoTarget, targetPoint;
+        private GameplayManager gameplay;
+        private PlayerController player;
+        private BikeSwordCombat sword;
+        private float neutralLookAmount;
+        private bool hasHeadRenderPose;
+        private Quaternion finalHeadRotation;
         private Rigidbody bikeBody;
         private Animator animator;
         private Quaternion uprightTorsoPose, finalTorsoRotation, finalArmRotation, finalGunRotation;
@@ -45,10 +56,13 @@ namespace CyberBiker.Player {
         public Transform Pistol => gun;
         public bool IsWeaponReady => active && ready;
         public float PistolExposureYaw => exposureYaw;
+        public Vector3 AimDirection=>trackedDirection;
+        public Vector3 HeadLookDirection=>head!=null ? head.forward : Vector3.forward;
 
         public void Initialize(Transform muzzleTransform, GameObject projectile, RigBuilder builder) {
             if(initialized || muzzleTransform==null || builder==null) return;
             muzzle=muzzleTransform;bikeBody=GetComponent<Rigidbody>();animator=GetComponent<Animator>();
+            player=GetComponent<PlayerController>();sword=GetComponent<BikeSwordCombat>();gameplay=FindAnyObjectByType<GameplayManager>();
             // Gameplay uses the animated muzzle even when the player is briefly
             // outside a camera's culling results.
             animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
@@ -61,6 +75,7 @@ namespace CyberBiker.Player {
                 if(bone.name=="Gun_Main") gun=bone;
                 if(bone.name=="GunTarget") grip=bone;
                 if(bone.name=="DEF-spine.001") torso=bone;
+                if(bone.name=="DEF-spine.006") head=bone;
             }
             initialized=shoulder!=null && gun!=null && grip!=null && torso!=null;
             if(!initialized) return;
@@ -98,6 +113,7 @@ namespace CyberBiker.Player {
             }
             float blend=1-Mathf.Exp(-dt*Mathf.Max(1,trackingSpeed));
             trackedDirection=Vector3.Slerp(trackedDirection,direction,blend).normalized;
+            if(Target==null)AimPoint=muzzle.position+trackedDirection*120;
             float yaw=Mathf.Atan2(trackedDirection.x,trackedDirection.z)*Mathf.Rad2Deg;
             float pitch=-Mathf.Asin(Mathf.Clamp(trackedDirection.y,-1,1))*Mathf.Rad2Deg;
             // Keep the full-body aim pose on its authored neutral clip. The
@@ -118,8 +134,10 @@ namespace CyberBiker.Player {
         }
 
         public void ApplyArmAim() {
-            CanFire=false;hasRenderPose=false;
-            if(!active || !ready || Time.deltaTime<=0) return;
+            CanFire=false;
+            if(Time.deltaTime<=0)return;
+            hasRenderPose=false;hasHeadRenderPose=false;
+            if(!active || !ready){ApplyNeutralHeadLook();return;}
             if(!hasTorsoPose) {
                 // Keep the complete authored aiming posture, including the
                 // spine's bone-axis orientation. Only remove the motorcycle bank.
@@ -128,28 +146,51 @@ namespace CyberBiker.Player {
             }
             torso.rotation=Quaternion.Euler(torsoPitch,torsoYaw+exposureYaw,0)*uprightTorsoPose;
             gun.SetPositionAndRotation(grip.position,grip.rotation);
+            // Keep the barrel aligned during the smooth return to road-forward
+            // as well as while tracking an enemy. Camera pitch is framing only.
+            Vector3 bore=muzzle.TransformDirection(muzzleForwardAxis).normalized;
+            Quaternion correction=Quaternion.FromToRotation(bore,trackedDirection);
+            correction=Quaternion.RotateTowards(Quaternion.identity,correction,70);
+            shoulder.rotation=correction*shoulder.rotation;
+            gun.SetPositionAndRotation(grip.position,grip.rotation);
             if(Target!=null && IsEligible(Target,out _)) {
-                Vector3 bore=muzzle.TransformDirection(muzzleForwardAxis).normalized;
-                Quaternion correction=Quaternion.FromToRotation(bore,trackedDirection);
-                correction=Quaternion.RotateTowards(Quaternion.identity,correction,70);
-                shoulder.rotation=correction*shoulder.rotation;
-                // This is the same hand-to-pistol offset used by the existing
-                // Gun rig; update it after the upper-body/arm correction.
-                gun.SetPositionAndRotation(grip.position,grip.rotation);
                 Vector3 desired=(AimPoint-muzzle.position).normalized;
                 CanFire=Vector3.Angle(muzzle.TransformDirection(muzzleForwardAxis),desired)<=firingAlignment
                     && HasLineOfSight(AimPoint,Target);
             }
             finalTorsoRotation=torso.rotation;finalArmRotation=shoulder.rotation;
             finalGunPosition=gun.position;finalGunRotation=gun.rotation;hasRenderPose=true;
+            ApplyNeutralHeadLook();
+        }
+
+        private void ApplyNeutralHeadLook(){
+            if(!Enabled || head==null || player==null || gameplay==null)return;
+            // The riding clip owns the relaxed helmet angle. This correction
+            // belongs only to the drawn-pistol pose, never ordinary riding.
+            if(!active || !ready){neutralLookAmount=0;return;}
+            bool mounted=sword==null || sword.Phase==BikeSwordCombat.CombatPhase.Idle || sword.Phase==BikeSwordCombat.CombatPhase.Pursuing;
+            bool neutral=levelHeadWithoutTarget && Target==null && mounted && player.IsAlive && gameplay.gameState==GameState.Playing;
+            neutralLookAmount=Mathf.MoveTowards(neutralLookAmount,neutral ? 1 : 0,Time.deltaTime*Mathf.Max(1,neutralLookResponse));
+            if(!mounted || !player.IsAlive || gameplay.gameState!=GameState.Playing || neutralLookAmount<=0)return;
+            var forward=head.forward;var level=Vector3.ProjectOnPlane(forward,Vector3.up);
+            if(level.sqrMagnitude<.001f)return;
+            var correction=Quaternion.FromToRotation(forward,level.normalized);
+            correction=Quaternion.RotateTowards(Quaternion.identity,correction,neutralLookPitchLimit);
+            // Correct only the helmet's vertical gaze. Preserve the riding
+            // crouch, steering bank, and the authored sword animation poses.
+            head.rotation=Quaternion.Slerp(Quaternion.identity,correction,neutralLookAmount)*head.rotation;
+            finalHeadRotation=head.rotation;hasHeadRenderPose=true;
         }
 
         private void ApplyRenderPose(Camera view) {
-            if(!hasRenderPose || !active || !ready || !Enabled || view.cameraType!=CameraType.Game) return;
+            if(!Enabled || view.cameraType!=CameraType.Game)return;
             // Apply absolute cached poses, so multiple cameras cannot accumulate
             // extra rotation or restore the animation's pre-tracking pose.
-            torso.rotation=finalTorsoRotation;shoulder.rotation=finalArmRotation;
-            gun.SetPositionAndRotation(finalGunPosition,finalGunRotation);
+            if(hasRenderPose && active && ready){
+                torso.rotation=finalTorsoRotation;shoulder.rotation=finalArmRotation;
+                gun.SetPositionAndRotation(finalGunPosition,finalGunRotation);
+            }
+            if(hasHeadRenderPose && head!=null)head.rotation=finalHeadRotation;
         }
         private void AcquireTarget() {
             nextSearch=Time.time+Mathf.Max(.02f,searchInterval);
@@ -218,7 +259,7 @@ namespace CyberBiker.Player {
             return point+velocity*travel;
         }
         private void ClearTarget() {Target=null;targetPoint=null;hadTargetSample=false;targetVelocity=Vector3.zero;CanFire=false;}
-        private void OnDisable() {active=false;hasRenderPose=false;ClearTarget();}
+        private void OnDisable() {active=false;hasRenderPose=hasHeadRenderPose=false;neutralLookAmount=0;ClearTarget();}
         private void OnDestroy() {Camera.onPreCull-=ApplyRenderPose;if(torsoTarget!=null) Destroy(torsoTarget.gameObject);}
     }
 }

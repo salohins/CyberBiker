@@ -1,0 +1,45 @@
+PASS: actual Level player and Car_01 prefab; immediate centre/left/right rear crashes, exactly-once damage, instant ragdoll and car collider release, no driving through a crash; left/right separation with steering held and motor active; actual left/right road-border mesh impacts, camera recoil, scratch particles and physical separation.
+centre rear immediately: state=Hit, health=100->80, velocity=(0.000, 0.000, -5.000), kick=(0.000, 0.000, -5.000)
+centre rear: hit by physics step 2, health 100->80, recoil=(0.000, 0.000, -5.000)
+left rear corner, front wheel misses immediately: state=Hit, health=80->60, velocity=(0.000, 0.000, -5.000), kick=(0.000, 0.000, -5.000)
+left rear corner, front wheel misses: hit by physics step 2, health 80->60, recoil=(0.000, 0.000, -5.000)
+right rear corner, front wheel misses immediately: state=Hit, health=60->40, velocity=(0.000, 0.000, -5.000), kick=(0.000, 0.000, -5.000)
+right rear corner, front wheel misses: hit by physics step 2, health 60->40, recoil=(0.000, 0.000, -5.000)
+side 1 setup: root physics=(0.000, 100.000, 0.000) visual=(0.000, 100.000, 0.000), car bounds=Center: (2.89, 101.50, 2.20), Extents: (1.97, 1.57, 3.64), active=True, collider=True
+ bike box Player_Last: Center: (0.00, 100.31, 0.89), Extents: (0.60, 0.33, 2.69), enabled=True
+ bike box Motorcycle: Center: (0.00, 101.71, 0.19), Extents: (0.68, 0.67, 1.71), enabled=True
+ bike box Motorcycle: Center: (0.00, 102.74, 1.90), Extents: (0.84, 0.17, 0.23), enabled=True
+ bike box Motorcycle: Center: (0.00, 102.37, 0.48), Extents: (0.87, 1.39, 1.09), enabled=True
+car pose 1: recoil lean=8.76, rider dragX=-0.292, vx=-2.391
+side 1 initial kick=(-2.391, 0.000, 0.000), velocity=(-2.391, 0.000, 84.973), held multiplier=0.000
+ side step 0: x=0.040, vx=-2.390, throttle=1.000, steering=0.000, wall=0, xThrow=1
+ side step 1: x=-0.008, vx=-2.390, throttle=1.000, steering=0.000, wall=0, xThrow=1
+ side step 2: x=-0.055, vx=-2.389, throttle=1.000, steering=0.000, wall=0, xThrow=1
+ side step 3: x=-0.100, vx=-2.210, throttle=1.000, steering=0.074, wall=0, xThrow=1
+ side step 4: x=-0.129, vx=-1.451, throttle=1.000, steering=0.316, wall=0, xThrow=1
+ side step 5: x=-0.128, vx=0.046, throttle=1.000, steering=0.624, wall=0, xThrow=1
+ side step 6: x=-0.084, vx=2.177, throttle=1.000, steering=0.888, wall=0, xThrow=1
+side 1: separation with held steering=0.217, kick=(-2.391, 0.000, 0.000)
+car powered recovery 1: full steering restored, bike/rider synchronized, normal lean speed=3, reversal settled within 1.5s, max pose step=0.120
+side -1 setup: root physics=(0.000, 100.000, 0.000) visual=(0.000, 100.000, 0.000), car bounds=Center: (-2.89, 101.50, 2.20), Extents: (1.97, 1.57, 3.64), active=True, collider=True
+ bike box Player_Last: Center: (0.00, 100.31, 0.89), Extents: (0.60, 0.33, 2.69), enabled=True
+ bike box Motorcycle: Center: (0.00, 101.71, 0.19), Extents: (0.68, 0.67, 1.71), enabled=True
+ bike box Motorcycle: Center: (0.00, 102.74, 1.90), Extents: (0.84, 0.17, 0.23), enabled=True
+ bike box Motorcycle: Center: (0.00, 102.37, 0.48), Extents: (0.87, 1.39, 1.09), enabled=True
+car pose -1: recoil lean=-8.73, rider dragX=0.291, vx=2.391
+side -1 initial kick=(2.391, 0.000, 0.000), velocity=(2.391, 0.000, 84.973), held multiplier=0.000
+ side step 0: x=-0.040, vx=2.390, throttle=1.000, steering=0.000, wall=0, xThrow=-1
+ side step 1: x=0.008, vx=2.390, throttle=1.000, steering=0.000, wall=0, xThrow=-1
+ side step 2: x=0.055, vx=2.389, throttle=1.000, steering=0.000, wall=0, xThrow=-1
+ side step 3: x=0.100, vx=2.210, throttle=1.000, steering=0.074, wall=0, xThrow=-1
+ side step 4: x=0.129, vx=1.451, throttle=1.000, steering=0.316, wall=0, xThrow=-1
+ side step 5: x=0.128, vx=-0.046, throttle=1.000, steering=0.624, wall=0, xThrow=-1
+ side step 6: x=0.084, vx=-2.177, throttle=1.000, steering=0.888, wall=0, xThrow=-1
+side -1: separation with held steering=0.217, kick=(2.391, 0.000, 0.000)
+car powered recovery -1: full steering restored, bike/rider synchronized, normal lean speed=3, reversal settled within 1.5s, max pose step=0.120
+border pose 1: recoil lean=8.73, rider dragX=-0.291, vx=-2.391
+border 1: separation=0.334, camera impacts=1, sparks=29
+border powered recovery 1: full steering restored, bike/rider synchronized, normal lean speed=3, reversal settled within 1.5s, max pose step=0.153
+border pose -1: recoil lean=-7.85, rider dragX=0.262, vx=2.155
+border -1: separation=0.301, camera impacts=1, sparks=29
+border powered recovery -1: full steering restored, bike/rider synchronized, normal lean speed=3, reversal settled within 1.5s, max pose step=0.150

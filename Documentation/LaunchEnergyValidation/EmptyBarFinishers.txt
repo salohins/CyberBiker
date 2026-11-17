@@ -1,0 +1,6 @@
+PASS 80m left target: Shoot tap starts immediate draw, full-distance dash, one-shot kill, correct swing, live particles and Launch off at contact; no buffered pistol shot.
+PASS sword returns to riding, carried explosion completes, boost fades, and another glowing enemy is not auto-finished.
+PASS 120m right target: Shoot tap starts immediate draw, full-distance dash, one-shot kill, correct swing, live particles and Launch off at contact; no buffered pistol shot.
+PASS sword returns to riding, carried explosion completes, boost fades, and another glowing enemy is not auto-finished.
+PASS healthy targets rejected; configured reach and solid walls respected; expiry during draw cancels without a false kill.
+PASS full-distance finisher integration checks.

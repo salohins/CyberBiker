@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77d2fedbdb5c4c8ca9caf5743c227e56, type: 3}
+  m_Name: GapDashTuning
+  m_EditorClassIdentifier: 
+  settings:
+    enabled: 1
+    snapRadius: 2
+    predictiveSideEntry: 1
+    approachTime: 0.51
+    maximumTriggerDistance: 20
+    sideClearance: 0.02
+    maximumGapWidth: 3.1
+    minimumSpeed: 25
+    cooldown: 0.5
+    maximumAlignmentSpeed: 30
+    alignmentTime: 0.168
+    maximumDashTime: 3
+    exitClearance: 1.78
+    cameraMotion: 1
+    cameraBlendIn: 0.4
+    cameraReturn: 1
+    cameraOffset: {x: 0, y: -0.81, z: 0.65}
+    cameraEuler: {x: -2, y: 0, z: 0}
+    zoomInFov: -7.1
+    cameraKick: 1.92
+    shake: 2
+    shakeDuration: 0.22
+    particles: 1
+    emission: 420
+    particleLifetime: 0.25
+    particleWidth: 0.022
+    particleLength: 1.1
+    particleRadius: 0.65
+    particleSpeed: 18
+    particleColor: {r: 0.12, g: 0.65, b: 1, a: 0.8}
+    whooshVolume: 1.22
+  windMaterial: {fileID: 2100000, guid: 8efb769b1df40a04d8fc49de1fed02a9, type: 2}
+  whoosh: {fileID: 8300000, guid: 2068fa340bf84695be1fcfc52a44b342, type: 3}

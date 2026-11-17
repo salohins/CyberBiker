@@ -1,0 +1,6 @@
+RUNNING
+LevelCamera: cameraPitch=-0.0001194969 bore=(0.017, 0.009, 1.000) shot=(0.008, 0.012, 1.000) headForward=(-0.007, -0.338, 0.941) headUp=(0.458, 0.835, 0.304) torso=(0.32, 2.06, 359.93)
+Head bind axis=(0.000, 0.004, 1.000) actual look=(-0.005, -0.334, 0.942)
+PitchedCamera: cameraPitch=29.58584 bore=(0.017, 0.009, 1.000) shot=(0.105, -0.452, 0.886) headForward=(-0.007, -0.338, 0.941) headUp=(0.458, 0.835, 0.304) torso=(0.32, 2.06, 359.93)
+Head bind axis=(0.000, 0.004, 1.000) actual look=(-0.005, -0.334, 0.942)
+PASS diagnostics captured

@@ -1,0 +1,15 @@
+RUNNING
+PASS saved Level references the old five-rider Difficulty 4; all eight progression stages and the five-minute loop remain intact.
+PASS runtime stage 1
+PASS runtime stage 2
+PASS runtime stage 3
+PASS the unmodified combat preset uses original traffic weights/spacing; all five join through smooth arrivals with measured movement and intermediate fade values; Difficulty 4 stays active and replacements arrive while the other four remain.
+PASS runtime stage 4
+PASS runtime stage 5
+PASS restart preserves the chosen mode; cancelling TUNE leaves it unchanged; applying another mode reloads cleanly into the peaceful progression opening.
+PASS runtime stage 6
+PASS runtime stage 7
+PASS real progression still starts without riders and then introduces its original single-rival first encounter.
+PASS runtime stage 8
+PASS the real TUNE Progression-to-Combat Apply path also starts through smooth arrivals, retaining the original traffic settings and five-rider target.
+PASS native two-play-mode checks.

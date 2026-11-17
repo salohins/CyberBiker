@@ -1,0 +1,5 @@
+PASS full initial bar; real-time drain; cancellation/reactivation preserve charge; pause freezes drain; exhaustion stops Launch; empty/low charge cannot activate; threshold re-enables it.
+PASS pistol hits/kills, gap passes and their incidental close shaves still score but never refill, including at bank time; independent driving/dodge rewards refill with multipliers; direct/distance score and clamping remain intact.
+PASS crash state empties the entire bar and immediately stops active Launch and boost.
+PASS TUNE fields remain draft until Apply; export/import retains energy controls; older JSON retains defaults; live Apply does not refill; configuration persists and starting charge applies on a fresh run.
+PASS Launch energy integration checks.

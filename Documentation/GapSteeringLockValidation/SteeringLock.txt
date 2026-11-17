@@ -1,0 +1,16 @@
+RUNNING
+PASS extra wide left; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS extra wide right; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS wide left; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS wide right; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS held steer left; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS held steer right; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS small correction left; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS small correction right; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS opposing right after commitment; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS opposing left after commitment; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS alternating steering during pass; input locked through the gap, no overlap or speed boost, normal steering restored after full exit.
+PASS rejected physically narrow gap.
+PASS rejected too late for wide correction.
+PASS rejected blocked exit.
+PASS eleven solid-collision passes, including held, opposing and alternating inputs locked during the pass, with normal steering restored after exit; speed retained and impossible routes rejected.

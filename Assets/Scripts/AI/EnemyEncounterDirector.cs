@@ -18,6 +18,8 @@ public sealed class EnemyEncounterDirector : MonoBehaviour {
     private TrafficSpawner owner;
     private AI.AIController navigation;
     private Enemy fighter;
+    private Difficulty waveSection;
+    private int observedSectionRevision = -1, wavesInSection;
     private int remaining;
     private float spawnTimer,waveTimer,handoffTimer;
     private bool initialized,waveStarted,waitingForWave,arrivalChosen,rearArrival;
@@ -52,6 +54,10 @@ public sealed class EnemyEncounterDirector : MonoBehaviour {
         if(!initialized || (owner!=null && !owner.isActiveAndEnabled) || gameplay==null || gameplay.gameState!=GameState.Playing || playerController==null || !playerController.IsAlive)return;
         var settings=difficulty.currentDifficulty;if(settings==null)return;
         float dt=Time.deltaTime;if(dt<=0)return;
+        if(waveSection!=settings || observedSectionRevision!=difficulty.SectionRevision) {
+            waveSection=settings;observedSectionRevision=difficulty.SectionRevision;
+            wavesInSection=0;remaining=0;waveStarted=false;waitingForWave=false;arrivalChosen=false;
+        }
         bool lostFighter=false;
         for(int i=riders.Count-1;i>=0;i--) {
             var enemy=riders[i];
@@ -68,11 +74,16 @@ public sealed class EnemyEncounterDirector : MonoBehaviour {
         }
         UpdateRoles();
         UpdateLaneChanges(settings);
+        if(difficulty.IsConstantCombat){MaintainCombatPack(settings,dt);return;}
         if(settings.enemiesPerWave<=0){remaining=0;waveStarted=false;waitingForWave=false;return;}
-        if(!waveStarted)BeginWave(settings,true);
+        if(!waveStarted) {
+            if(!CanBeginWave(settings))return;
+            BeginWave(settings,true);
+        }
         if(waitingForWave) {
             waveTimer=Mathf.Max(0,waveTimer-dt);
             if(waveTimer>0)return;
+            if(!CanBeginWave(settings))return;
             BeginWave(settings,false);
         }
         spawnTimer=Mathf.Max(0,spawnTimer-dt);
@@ -82,7 +93,24 @@ public sealed class EnemyEncounterDirector : MonoBehaviour {
         }
         if(remaining==0 && riders.Count==0 && !waitingForWave){waitingForWave=true;waveTimer=Mathf.Max(0,settings.enemyWaveCooldown);}
     }
+    private void MaintainCombatPack(Difficulty settings,float dt) {
+        int target=Mathf.Clamp(settings.maxEnemiesOnRoad,1,10);
+        if(!waveStarted){
+            waveStarted=true;WavesStarted++;
+            spawnTimer=riders.Count==0 ? Mathf.Max(0,settings.enemyInitialDelay) : 0;
+        }
+        waitingForWave=false;
+        remaining=Mathf.Max(0,target-riders.Count);
+        spawnTimer=Mathf.Max(0,spawnTimer-dt);
+        if(remaining==0 || spawnTimer>0)return;
+        if(TrySpawn(settings)){
+            SpawnedCount++;remaining--;
+            spawnTimer=Mathf.Max(0,settings.enemySpawnInterval);
+        }else spawnTimer=.25f;
+    }
+    private bool CanBeginWave(Difficulty settings) => settings.maxWavesPerSection<=0 || wavesInSection<settings.maxWavesPerSection;
     private void BeginWave(Difficulty settings,bool first) {
+        wavesInSection++;
         WavesStarted++;waveStarted=true;waitingForWave=false;
         remaining=Mathf.Max(0,Mathf.Clamp(settings.enemiesPerWave,0,10)-(first ? riders.Count : 0));
         spawnTimer=first && riders.Count==0 ? Mathf.Max(0,settings.enemyInitialDelay) : first ? Mathf.Max(0,settings.enemySpawnInterval) : 0;
